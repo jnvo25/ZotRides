@@ -21,8 +21,7 @@ function handleStarResult(resultData) {
     let carTableBodyElement = jQuery("#car_table_body");
 
     // Iterate through resultData, no more than 10 entries
-    for (let i = 0; i < Math.min(10, resultData.length); i++) {
-
+    for (let i = 0; i < Math.min(20, resultData.length); i++) {
         // Concatenate the html tags with resultData jsonObject
         let rowHTML = "";
         rowHTML += "<tr>";
@@ -40,6 +39,12 @@ function handleStarResult(resultData) {
         rowHTML += "<th>" + resultData[i]["car_model"] + "</th>";
         rowHTML += "<th>" + resultData[i]["car_make"] + "</th>";
         rowHTML += "<th>" + resultData[i]["car_year"] + "</th>";
+        rowHTML += "<th>" + resultData[i]["car_category"] + "</th>";
+        rowHTML += "<th>" + resultData[i]["car_rating"] + "</th>";
+        rowHTML += "<th>" + resultData[i]["car_votes"] + "</th>";
+        rowHTML += "<th>" + resultData[i]["location_address"] + "</th>";
+        rowHTML += "<th>" + resultData[i]["location_phone"] + "</th>";
+
         rowHTML += "</tr>";
 
         // Append the row created to the table body, which will refresh the page
