@@ -43,21 +43,44 @@ public class CarsServlet extends HttpServlet {
             // Declare our statement
             Statement statement = dbcon.createStatement();
 
-            String query = "WITH car_info(id, model, make, year, name, rating, numVotes) AS\n" +
+            /*String query = "WITH car_info(id, model, make, year, name, rating, numVotes) AS\n" +
                     "\t(SELECT Cars.id, model, make, year, name, rating, numVotes\n" +
-                    "\tFROM Cars, category_of_car, Category, Ratings\n" +
+                    "\tFROM (Cars, category_of_car, Category) LEFT OUTER JOIN Ratings ON Ratings.carID = Cars.id\n" +
                     "\tWHERE Cars.id = category_of_car.carID \n" +
-                    "\t\t\tAND category_of_car.categoryID = Category.id\n" +
-                    "\t\t\tAND Ratings.carID = Cars.id),\n" +
+                    "\t\t\tAND category_of_car.categoryID = Category.id),\n" +
                     "\n" +
                     "numbered_pickup(carID, pickupLocationID, num) AS\n" +
                     "\t(SELECT carID, pickupLocationID, ROW_NUMBER() OVER(PARTITION BY carID) \n" +
                     "\tFROM pickup_car_from)\n" +
                     "\n" +
-                    "SELECT car_info.id as id, group_concat(DISTINCT concat_ws(' ', make, model, year)) as name, name as category, rating, numVotes, group_concat(DISTINCT address SEPARATOR '\\n') as address, group_concat(DISTINCT phoneNumber SEPARATOR '\\n') as phoneNumber\n" +
-                    "FROM car_info, PickupLocation, numbered_pickup\n" +
-                    "WHERE car_info.id = numbered_pickup.carID AND numbered_pickup.pickupLocationID = PickupLocation.id AND numbered_pickup.num < 4\n" +
-                    "GROUP BY carID\n" +
+                    "SELECT car_info.id as id, group_concat(DISTINCT concat_ws(' ', make, model, year)) as name, \n" +
+                    "\t\tname as category, rating, numVotes,\n" +
+                    "        group_concat(DISTINCT address SEPARATOR ';') as address, \n" +
+                    "        group_concat(DISTINCT phoneNumber SEPARATOR ';') as phoneNumber,\n" +
+                    "        group_concat(DISTINCT pickupLocationID SEPARATOR ';') as pickupID\n" +
+                    "FROM (car_info LEFT OUTER JOIN numbered_pickup ON car_info.id = numbered_pickup.carID)\n" +
+                    "\t\t\tLEFT OUTER JOIN PickupLocation ON numbered_pickup.pickupLocationID = PickupLocation.id AND numbered_pickup.num < 4\n" +
+                    "GROUP BY car_info.id\n" +
+                    "ORDER BY rating DESC; ";*/
+
+            String query = "WITH car_info(id, model, make, year, name, rating, numVotes) AS\n" +
+                    "\t(SELECT Cars.id, model, make, year, name, rating, numVotes\n" +
+                    "\tFROM (Cars, category_of_car, Category) LEFT OUTER JOIN Ratings ON Ratings.carID = Cars.id\n" +
+                    "\tWHERE Cars.id = category_of_car.carID \n" +
+                    "\t\t\tAND category_of_car.categoryID = Category.id),\n" +
+                    "\n" +
+                    "numbered_pickup(carID, pickupLocationID, num) AS\n" +
+                    "\t(SELECT carID, pickupLocationID, ROW_NUMBER() OVER(PARTITION BY carID) \n" +
+                    "\tFROM pickup_car_from)\n" +
+                    "\n" +
+                    "SELECT car_info.id as id, group_concat(DISTINCT concat_ws(' ', make, model, year)) as name, \n" +
+                    "\t\tname as category, rating, numVotes,\n" +
+                    "        group_concat(DISTINCT address ORDER BY pickupLocationID SEPARATOR ';') as address, \n" +
+                    "        group_concat(DISTINCT phoneNumber ORDER BY pickupLocationID SEPARATOR ';') as phoneNumber,\n" +
+                    "        group_concat(DISTINCT pickupLocationID ORDER BY pickupLocationID SEPARATOR ';') as pickupID\n" +
+                    "FROM (car_info LEFT OUTER JOIN numbered_pickup ON car_info.id = numbered_pickup.carID)\n" +
+                    "\t\t\tLEFT OUTER JOIN PickupLocation ON numbered_pickup.pickupLocationID = PickupLocation.id AND numbered_pickup.num < 4\n" +
+                    "GROUP BY car_info.id\n" +
                     "ORDER BY rating DESC; ";
 
             // Perform the query
@@ -72,8 +95,9 @@ public class CarsServlet extends HttpServlet {
                 String car_category = rs.getString("category");
                 double car_rating = rs.getDouble("rating");
                 int car_votes = rs.getInt("numVotes");
-                String location_address = rs.getString("address").replace(";", "<br>");
+                String location_address = rs.getString("address");
                 String location_phone = rs.getString("phoneNumber").replace(";", "<br>");
+                String location_ids = rs.getString("pickupID");
 
                 /* NOTE : unlike previous example, we are wrapping everything into JSON to return it
                 while previous example returned HTML.  Now HTML is generated by front-end
@@ -88,6 +112,7 @@ public class CarsServlet extends HttpServlet {
                 jsonObject.addProperty("car_votes", car_votes);
                 jsonObject.addProperty("location_address", location_address);
                 jsonObject.addProperty("location_phone", location_phone);
+                jsonObject.addProperty("location_ids", location_ids);
                 // FOR DEBUGGING: System.out.println(jsonObject.toString());
                 jsonArray.add(jsonObject);
             }

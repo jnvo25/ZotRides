@@ -41,42 +41,38 @@ function handleResult(resultData) {
 
     // populate the star info h3
     // find the empty h3 body by id "star_info"
-    let carInfoElement = jQuery("#car_info");
+    let locInfoElement = jQuery("#loc_info");
     console.log(resultData[0])
 
     // append two html <p> created to the h3 body, which will refresh the page
-    carInfoElement.append("<p>Car name: " + resultData[0]["car_name"] + "</p>" +
-        "<p>Car category: " + resultData[0]["car_category"] + "</p>");
+    locInfoElement.append("<p>Location address: " + resultData[0]["location_address"] + "</p>" +
+        "<p>Location phone: " + resultData[0]["location_phone"] + "</p>");
 
-    console.log("handleResult: populating car table from resultData");
+    console.log("handleResult: populating pickup locations table from resultData");
 
-    let carTableBodyElement = jQuery("#car_table_body");
+    let locTableBodyElement = jQuery("#loc_table_body");
     // Concatenate the html tags with resultData jsonObject to create table rows
     let rowHTML = "";
     rowHTML += "<tr>";
-    rowHTML += "<th>" + resultData[0]["car_name"] + "</th>";
-    rowHTML += "<th>" + resultData[0]["car_category"] + "</th>";
-    rowHTML += "<th>" + resultData[0]["car_rating"] + "</th>";
-    rowHTML += "<th>" + resultData[0]["car_votes"] + "</th>";
+    rowHTML += "<th>" + resultData[0]["location_address"] + "</th>";
+    rowHTML += "<th>" + resultData[0]["location_phone"] + "</th>";
 
     rowHTML += "<th>";
-    let locations = resultData[0]["location_address"].split(";");
-    let location_ids = resultData[0]["location_ids"].split(";");
-    if (locations.length > 0) {
-        rowHTML += '<a href="single-location.html?id=' + location_ids[0] + '">' + locations[0] + '</a>';
+
+    let cars = resultData[0]["cars_offered"].split(";");
+    let carIDs = resultData[0]["cars_ids"].split(";");
+    if (cars.length > 0) {
+        rowHTML += '<a href="single-star.html?id=' + carIDs[0] + '">' + cars[0] + '</a>';
     }
-    for (let j = 1; j < locations.length; j++) {
-        rowHTML += '<br><a href="single-location.html?id=' + location_ids[j] + '">' + locations[j] + '</a>';
+    for (let j = 1; j < cars.length; j++) {
+        rowHTML += '<br><a href="single-star.html?id=' + carIDs[j] + '">' + cars[j] + '</a>';
     }
     rowHTML += "</th>";
 
-    // rowHTML += "<th>" + resultData[0]["location_address"] + "</th>";
-
-    rowHTML += "<th>" + resultData[0]["location_phone"] + "</th>";
     rowHTML += "</tr>";
 
     // Append the row created to the table body, which will refresh the page
-    carTableBodyElement.append(rowHTML);
+    locTableBodyElement.append(rowHTML);
 }
 
 /**
@@ -90,6 +86,6 @@ let carId = getParameterByName('id');
 jQuery.ajax({
     dataType: "json",  // Setting return data type
     method: "GET",// Setting request method
-    url: "api/single-car?id=" + carId, // Setting request url, which is mapped by StarsServlet in Stars.java
+    url: "api/single-loc?id=" + carId, // Setting request url, which is mapped by StarsServlet in Stars.java
     success: (resultData) => handleResult(resultData) // Setting callback function to handle data returned successfully by the SingleStarServlet
 });

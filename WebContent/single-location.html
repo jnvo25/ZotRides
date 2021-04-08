@@ -17,29 +17,26 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <title>Single Car</title>
+    <title>Single Location</title>
 </head>
 <body>
-<h1>Single Car Page</h1>
+<h1>Single Location Page</h1>
 
 <!-- H3 body is left empty here, will be populated with the data retrieved with single-car.js -->
 <!-- single-car.js will find this html element by it's id "star_info" -->
-<h3 id="car_info"></h3>
-<table id=car_table class="table table-striped">
+<h3 id="loc_info"></h3>
+<table id=loc_table class="table table-striped">
     <thead>
     <tr>
-        <th>Name</th>
-        <th>Category</th>
-        <th>Rating</th>
-        <th>Votes</th>
-        <th>Pickup Location(s)</th>
-        <th>Pickup Location Phone Number(s)</th>
+        <th>Pickup Location Address</th>
+        <th>Pickup Location Phone Number</th>
+        <th>Car(s) Offered for Rent</th>
     </tr>
     </thead>
 
     <!-- Table body is left empty here, will be populated with the data retrieved with single-car.js -->
     <!-- single-car.js will find this html element by it's id "movie_table_body" -->
-    <tbody id=car_table_body></tbody>
+    <tbody id=loc_table_body></tbody>
 </table>
 
 <a href="index.html"><< Back to Movies List</a>
@@ -53,7 +50,7 @@
 <!-- The path is relative to single-star.html, since these two files are in the same directory -->
 <!-- Note the url does not contain a "/" in the beginning, which means the url is relative to current path
      otherwise the url is relative to the root path-->
-<script src="single-car.js"></script>
+<script src="single-location.js"></script>
 </body>
 
 

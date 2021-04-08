@@ -43,7 +43,19 @@ function handleStarResult(resultData) {
         rowHTML += "<th>" + resultData[i]["car_category"] + "</th>";
         rowHTML += "<th>" + resultData[i]["car_rating"] + "</th>";
         rowHTML += "<th>" + resultData[i]["car_votes"] + "</th>";
-        rowHTML += "<th>" + resultData[i]["location_address"] + "</th>";
+
+        rowHTML += "<th>";
+        let locations = resultData[i]["location_address"].split(";");
+        let location_ids = resultData[i]["location_ids"].split(";");
+        if (locations.length > 0) {
+            rowHTML += '<a href="single-location.html?id=' + location_ids[0] + '">' + locations[0] + '</a>';
+        }
+        for (let j = 1; j < locations.length; j++) {
+            rowHTML += '<br><a href="single-location.html?id=' + location_ids[j] + '">' + locations[j] + '</a>';
+        }
+        rowHTML += "</th>";
+
+        // rowHTML += "<th>" + resultData[i]["location_address"] + "</th>";
         rowHTML += "<th>" + resultData[i]["location_phone"] + "</th>";
 
         rowHTML += "</tr>";
