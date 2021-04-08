@@ -13,8 +13,8 @@
  * Handles the data returned by the API, read the jsonObject and populate data into html elements
  * @param resultData jsonObject
  */
-function handleStarResult(resultData) {
-    console.log("handleStarResult: populating star table from resultData");
+function handleCarResult(resultData) {
+    console.log("handleCarResult: populating movies table from resultData");
 
     // Populate the star table
     // Find the empty table body by id "car_table_body"
@@ -43,7 +43,17 @@ function handleStarResult(resultData) {
         rowHTML += "<th>" + resultData[i]["car_category"] + "</th>";
         rowHTML += "<th>" + resultData[i]["car_rating"] + "</th>";
         rowHTML += "<th>" + resultData[i]["car_votes"] + "</th>";
-        rowHTML += "<th>" + resultData[i]["location_address"] + "</th>";
+
+        rowHTML += "<th>";
+        var locations = resultData[i]["location_address"].split(";");
+        if (locations.length > 0) {
+            rowHTML += '<a href="single-location.html">' + locations[0] + '</a>';
+        }
+        for (let j = 1; j < locations.length; j++) {
+            rowHTML += '<br><a href="single-location.html">' + locations[j] + '</a>';
+        }
+        rowHTML += "</th>"
+
         rowHTML += "<th>" + resultData[i]["location_phone"] + "</th>";
 
         rowHTML += "</tr>";
@@ -58,10 +68,10 @@ function handleStarResult(resultData) {
  * Once this .js is loaded, following scripts will be executed by the browser
  */
 
-// Makes the HTTP GET request and registers on success callback function handleStarResult
+// Makes the HTTP GET request and registers on success callback function handleCarResult
 jQuery.ajax({
     dataType: "json", // Setting return data type
     method: "GET", // Setting request method
     url: "api/cars", // Setting request url, which is mapped by StarsServlet in Stars.java
-    success: (resultData) => handleStarResult(resultData) // Setting callback function to handle data returned successfully by the StarsServlet
+    success: (resultData) => handleCarResult(resultData) // Setting callback function to handle data returned successfully by the StarsServlet
 });

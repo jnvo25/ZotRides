@@ -49,6 +49,7 @@ public class SingleCarServlet extends HttpServlet {
             // Construct a query with parameter represented by "?"
             Statement statement = dbcon.createStatement();
 
+            /*
             String query = "WITH car_info(id, model, make, year, name, rating, numVotes) AS\n" +
                     "\t(SELECT Cars.id, model, make, year, name, rating, numVotes\n" +
                     "\tFROM Cars, category_of_car, Category, Ratings\n" +
@@ -64,7 +65,19 @@ public class SingleCarServlet extends HttpServlet {
                     "FROM car_info, PickupLocation, numbered_pickup\n" +
                     "WHERE car_info.id = numbered_pickup.carID AND numbered_pickup.pickupLocationID = PickupLocation.id AND numbered_pickup.num < 4\n AND car_info.id = \"" + id + "\"" +
                     "GROUP BY carID\n" +
-                    "ORDER BY rating DESC; ";
+                    "ORDER BY rating DESC; "; */
+
+            String query = "WITH car_info(id, model, make, year, name, rating, numVotes) AS\n" +
+                    "\t(SELECT Cars.id, model, make, year, name, rating, numVotes\n" +
+                    "\tFROM Cars, category_of_car, Category, Ratings\n" +
+                    "\tWHERE Cars.id = '" + id + "' \n" +
+                    "\t\t\tAND category_of_car.carID = '" + id + "' \n" +
+                    "\t\t\tAND Category.id = category_of_Car.categoryID\n" +
+                    "\t\t\tAND Ratings.carID = '" + id + "')\n" +
+                    "\n" +
+                    "SELECT car_info.id as id, group_concat(DISTINCT concat_ws(' ', make, model, year)) as name, name as category, rating, numVotes, group_concat(DISTINCT address SEPARATOR ';') as address, group_concat(DISTINCT phoneNumber SEPARATOR ';') as phoneNumber\n" +
+                    "FROM car_info, pickup_car_from, PickupLocation\n" +
+                    "WHERE car_info.id = pickup_car_from.carID AND pickup_car_from.pickupLocationID = PickupLocation.id;";
 
             // Perform the query
             ResultSet rs = statement.executeQuery(query);
