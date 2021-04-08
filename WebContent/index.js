@@ -20,7 +20,7 @@ function handleStarResult(resultData) {
     // Find the empty table body by id "car_table_body"
     let carTableBodyElement = jQuery("#car_table_body");
 
-    // Iterate through resultData, no more than 10 entries
+    // Iterate through resultData, no more than 20 entries
     for (let i = 0; i < Math.min(20, resultData.length); i++) {
         // Concatenate the html tags with resultData jsonObject
         let rowHTML = "";
