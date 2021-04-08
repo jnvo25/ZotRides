@@ -36,9 +36,7 @@ function handleStarResult(resultData) {
             "</th>";
 
                 resultData[i]["car_id"];*/
-        rowHTML += "<th>" + resultData[i]["car_model"] + "</th>";
-        rowHTML += "<th>" + resultData[i]["car_make"] + "</th>";
-        rowHTML += "<th>" + resultData[i]["car_year"] + "</th>";
+        rowHTML += "<th>" + resultData[i]["car_name"] + "</th>";
         rowHTML += "<th>" + resultData[i]["car_category"] + "</th>";
         rowHTML += "<th>" + resultData[i]["car_rating"] + "</th>";
         rowHTML += "<th>" + resultData[i]["car_votes"] + "</th>";

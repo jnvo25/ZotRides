@@ -54,7 +54,7 @@ public class CarsServlet extends HttpServlet {
                     "\t(SELECT carID, pickupLocationID, ROW_NUMBER() OVER(PARTITION BY carID) \n" +
                     "\tFROM pickup_car_from)\n" +
                     "\n" +
-                    "SELECT car_info.id as id, model, make, year, name, rating, numVotes, group_concat(DISTINCT address SEPARATOR ';') as address, group_concat(DISTINCT phoneNumber SEPARATOR ';') as phoneNumber\n" +
+                    "SELECT car_info.id as id, group_concat(DISTINCT concat_ws(' ', make, model, year)) as name, name as category, rating, numVotes, group_concat(DISTINCT address SEPARATOR '\\n') as address, group_concat(DISTINCT phoneNumber SEPARATOR '\\n') as phoneNumber\n" +
                     "FROM car_info, PickupLocation, numbered_pickup\n" +
                     "WHERE car_info.id = numbered_pickup.carID AND numbered_pickup.pickupLocationID = PickupLocation.id AND numbered_pickup.num < 4\n" +
                     "GROUP BY carID\n" +
@@ -68,10 +68,8 @@ public class CarsServlet extends HttpServlet {
             int count = 0;
             while (rs.next() && count++ < 20) {
                 String car_id = rs.getString("id");
-                String car_model = rs.getString("model");
-                String car_make = rs.getString("make");
-                int car_year = rs.getInt("year");
-                String car_category = rs.getString("name");
+                String car_name = rs.getString("name");
+                String car_category = rs.getString("category");
                 double car_rating = rs.getDouble("rating");
                 int car_votes = rs.getInt("numVotes");
                 String location_address = rs.getString("address").replace(";", "<br>");
@@ -84,15 +82,13 @@ public class CarsServlet extends HttpServlet {
                 // Create a JsonObject based on the data we retrieve from rs
                 JsonObject jsonObject = new JsonObject();
                 jsonObject.addProperty("car_id", car_id);
-                jsonObject.addProperty("car_model", car_model);
-                jsonObject.addProperty("car_make", car_make);
-                jsonObject.addProperty("car_year", car_year);
+                jsonObject.addProperty("car_name", car_name);
                 jsonObject.addProperty("car_category", car_category);
                 jsonObject.addProperty("car_rating", car_rating);
                 jsonObject.addProperty("car_votes", car_votes);
                 jsonObject.addProperty("location_address", location_address);
                 jsonObject.addProperty("location_phone", location_phone);
-                System.out.println(jsonObject.toString());
+                // FOR DEBUGGING: System.out.println(jsonObject.toString());
                 jsonArray.add(jsonObject);
             }
             
@@ -111,7 +107,7 @@ public class CarsServlet extends HttpServlet {
 			jsonObject.addProperty("errorMessage", e.getMessage());
 			out.write(jsonObject.toString());
 
-			// set reponse status to 500 (Internal Server Error)
+			// set response status to 500 (Internal Server Error)
 			response.setStatus(500);
 
         }
