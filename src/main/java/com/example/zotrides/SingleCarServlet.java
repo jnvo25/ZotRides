@@ -66,7 +66,7 @@ public class SingleCarServlet extends HttpServlet {
                     "\tFROM Cars, category_of_car, Category, Ratings\n" +
                     "\tWHERE Cars.id = '" + id + "' \n" +
                     "\t\t\tAND category_of_car.carID = '" + id + "' \n" +
-                    "\t\t\tAND Category.id = category_of_Car.categoryID\n" +
+                    "\t\t\tAND Category.id = category_of_car.categoryID\n" +
                     "\t\t\tAND Ratings.carID = '" + id + "')\n" +
                     "\n" +
                     "SELECT car_info.id as id, group_concat(DISTINCT concat_ws(' ', make, model, year)) as name, name as category, rating, numVotes, \n" +
@@ -114,7 +114,7 @@ public class SingleCarServlet extends HttpServlet {
                 jsonObject.addProperty("location_address", location_address);
                 jsonObject.addProperty("location_phone", location_phone);
                 jsonObject.addProperty("location_ids", location_ids);
-                // FOR DEBUGGING:  System.out.println(jsonObject.toString());
+                System.out.println(jsonObject.toString());
                 jsonArray.add(jsonObject);
             }
 
