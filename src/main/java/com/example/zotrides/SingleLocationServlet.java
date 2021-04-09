@@ -3,8 +3,9 @@ package com.example.zotrides;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import javax.annotation.Resource;
-import javax.servlet.ServletException;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.servlet.ServletConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -14,24 +15,29 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.PreparedStatement;
 
-
-// Declaring a WebServlet called SingleStarServlet, which maps to url "/api/single-star"
+// Declaring a WebServlet called SingleLocationServlet, which maps to url "/api/single-loc"
 @WebServlet(name = "SingleLocationServlet", urlPatterns = "/api/single-loc")
 public class SingleLocationServlet extends HttpServlet {
     private static final long serialVersionUID = 2L;
 
     // Create a dataSource which registered in web.xml
-    @Resource(name = "jdbc/zotrides")
     private DataSource dataSource;
+
+    public void init(ServletConfig config) {
+        try {
+            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides");
+        } catch (NamingException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
      *      response)
      */
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         response.setContentType("application/json"); // Response mime type
 
@@ -41,13 +47,7 @@ public class SingleLocationServlet extends HttpServlet {
         // Output stream to STDOUT
         PrintWriter out = response.getWriter();
 
-        try {
-            // Get a connection from dataSource
-            Connection dbcon = dataSource.getConnection();
-
-            // Construct a query with parameter represented by "?"
-            Statement statement = dbcon.createStatement();
-
+        try (Connection conn = dataSource.getConnection()) {
             String query = "WITH pickup_info(id, address, phoneNumber) AS \n" +
                     "\t(SELECT *\n" +
                     "\tFROM PickupLocation\n" +
@@ -61,8 +61,16 @@ public class SingleLocationServlet extends HttpServlet {
                     "\tAND Cars.id = pickup_car_from.carID\n" +
                     "GROUP BY pickup_info.id;";
 
+            // Declare our statement
+            PreparedStatement statement = conn.prepareStatement(query);
+
+            // Set the parameter represented by "?" in the query to the id we get from url,
+            // num 1 indicates the first "?" in the query
+            // THIS DOESN'T WORK !?
+            // statement.setString(1, id);
+
             // Perform the query
-            ResultSet rs = statement.executeQuery(query);
+            ResultSet rs = statement.executeQuery();
             JsonArray jsonArray = new JsonArray();
 
             // Iterate through each row of rs
@@ -85,7 +93,7 @@ public class SingleLocationServlet extends HttpServlet {
                 jsonObject.addProperty("location_phone", location_phone);
                 jsonObject.addProperty("cars_offered", cars_offered);
                 jsonObject.addProperty("cars_ids", cars_ids);
-//                System.out.println(jsonObject.toString());
+                System.out.println(jsonObject.toString());
                 jsonArray.add(jsonObject);
             }
 
@@ -96,7 +104,6 @@ public class SingleLocationServlet extends HttpServlet {
 
             rs.close();
             statement.close();
-            dbcon.close();
         } catch (Exception e) {
             // write error message JSON object to output
             JsonObject jsonObject = new JsonObject();
@@ -105,8 +112,9 @@ public class SingleLocationServlet extends HttpServlet {
 
             // set reponse status to 500 (Internal Server Error)
             response.setStatus(500);
+        } finally {
+            out.close();
         }
-        out.close();
 
     }
 

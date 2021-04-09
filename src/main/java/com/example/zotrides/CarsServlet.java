@@ -3,8 +3,9 @@ package com.example.zotrides;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import javax.annotation.Resource;
-import javax.servlet.ServletException;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.servlet.ServletConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,25 +24,29 @@ public class CarsServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     // Create a dataSource which registered in web.xml
-    @Resource(name = "jdbc/zotrides")
     private DataSource dataSource;
+
+    public void init(ServletConfig config) {
+        try {
+            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides");
+        } catch (NamingException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
      */
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json"); // Response mime type
 
         // Output stream to STDOUT
         PrintWriter out = response.getWriter();
 
-        try {
-            // Get a connection from dataSource
-            Connection dbcon = dataSource.getConnection();
+        try (Connection conn = dataSource.getConnection()) {
 
             // Declare our statement
-            Statement statement = dbcon.createStatement();
+            Statement statement = conn.createStatement();
 
             /*String query = "WITH car_info(id, model, make, year, name, rating, numVotes) AS\n" +
                     "\t(SELECT Cars.id, model, make, year, name, rating, numVotes\n" +
@@ -63,26 +68,7 @@ public class CarsServlet extends HttpServlet {
                     "GROUP BY car_info.id\n" +
                     "ORDER BY rating DESC; ";*/
 
-            String query = /*"WITH car_info(id, model, make, year, name, rating, numVotes) AS\n" +
-                    "\t(SELECT Cars.id, model, make, year, name, rating, numVotes\n" +
-                    "\tFROM (Cars, category_of_car, Category) LEFT OUTER JOIN Ratings ON Ratings.carID = Cars.id\n" +
-                    "\tWHERE Cars.id = category_of_car.carID \n" +
-                    "\t\t\tAND category_of_car.categoryID = Category.id),\n" +
-                    "\n" +
-                    "numbered_pickup(carID, pickupLocationID, num) AS\n" +
-                    "\t(SELECT carID, pickupLocationID, ROW_NUMBER() OVER(PARTITION BY carID) \n" +
-                    "\tFROM pickup_car_from)\n" +
-                    "\n" +
-                    "SELECT car_info.id as id, group_concat(DISTINCT concat_ws(' ', make, model, year)) as name, \n" +
-                    "\t\tname as category, rating, numVotes,\n" +
-                    "        group_concat(DISTINCT address ORDER BY pickupLocationID SEPARATOR ';') as address, \n" +
-                    "        group_concat(DISTINCT phoneNumber ORDER BY pickupLocationID SEPARATOR ';') as phoneNumber,\n" +
-                    "        group_concat(DISTINCT pickupLocationID ORDER BY pickupLocationID SEPARATOR ';') as pickupID\n" +
-                    "FROM (car_info LEFT OUTER JOIN numbered_pickup ON car_info.id = numbered_pickup.carID)\n" +
-                    "\t\t\tLEFT OUTER JOIN PickupLocation ON numbered_pickup.pickupLocationID = PickupLocation.id AND numbered_pickup.num < 4\n" +
-                    "GROUP BY car_info.id\n" +
-                    "ORDER BY rating DESC; ";*/
-
+            String query =
                     "WITH car_info(id, model, make, year, name, rating, numVotes) AS\n" +
                             "\t(SELECT Cars.id, model, make, year, name, rating, numVotes\n" +
                             "\tFROM (Cars, category_of_car, Category) LEFT OUTER JOIN Ratings ON Ratings.carID = Cars.id\n" +
@@ -144,7 +130,7 @@ public class CarsServlet extends HttpServlet {
 
             rs.close();
             statement.close();
-            dbcon.close();
+
         } catch (Exception e) {
         	
 			// write error message JSON object to output
@@ -155,8 +141,9 @@ public class CarsServlet extends HttpServlet {
 			// set response status to 500 (Internal Server Error)
 			response.setStatus(500);
 
+        } finally {
+            out.close();
         }
-        out.close();
 
     }
 }
