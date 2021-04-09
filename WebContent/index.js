@@ -19,50 +19,46 @@ function handleStarResult(resultData) {
     // Populate the star table
     // Find the empty table body by id "car_table_body"
     let carTableBodyElement = jQuery("#car_table_body");
+    let cardrow = jQuery("#card-row");
+
 
     // Iterate through resultData, no more than 20 entries
+    console.log(resultData[0]["location_phone"]);
     for (let i = 0; i < Math.min(20, resultData.length); i++) {
-        // Concatenate the html tags with resultData jsonObject
-        let rowHTML = "";
-        rowHTML += "<tr>";
-        /*
-        rowHTML +=
-            "<th>" +
-            /*
-            // Add a link to single-star.html with id passed with GET url parameter
-            '<a href="single-star.html?id=' + resultData[i]['star_id'] + '">'
-            + resultData[i]["star_name"] +     // display star_name for the link text
-            '</a>' +
-            "</th>";
-
-                resultData[i]["car_id"];*/
-        rowHTML += "<th>";
-        rowHTML += '<a href="single-star.html?id=' + resultData[i]["car_id"] + '">' + resultData[i]["car_name"] + '</a>';
-        rowHTML += "</th>"
-
-        rowHTML += "<th>" + resultData[i]["car_category"] + "</th>";
-        rowHTML += "<th>" + resultData[i]["car_rating"] + "</th>";
-        rowHTML += "<th>" + resultData[i]["car_votes"] + "</th>";
-
-        rowHTML += "<th>";
-        let locations = resultData[i]["location_address"].split(";");
-        let location_ids = resultData[i]["location_ids"].split(";");
-        if (locations.length > 0) {
-            rowHTML += '<a href="single-location.html?id=' + location_ids[0] + '">' + locations[0] + '</a>';
-        }
-        for (let j = 1; j < locations.length; j++) {
-            rowHTML += '<br><a href="single-location.html?id=' + location_ids[j] + '">' + locations[j] + '</a>';
-        }
-        rowHTML += "</th>";
-
-        // rowHTML += "<th>" + resultData[i]["location_address"] + "</th>";
-        rowHTML += "<th>" + resultData[i]["location_phone"] + "</th>";
-
-        rowHTML += "</tr>";
-
-        // Append the row created to the table body, which will refresh the page
-        carTableBodyElement.append(rowHTML);
+        cardrow.append(
+            createCard(
+                resultData[i]["car_name"],
+                resultData[i]["car_category"],
+                resultData[i]["car_rating"],
+                resultData[i]["car_votes"],
+                resultData[i]["location_address"].split(";"),
+                resultData[i]["location_ids"].split(";"),
+                resultData[i]["location_phone"].split(";")
+        ));
     }
+}
+
+function createCard(name, category, rating, votes, locations, location_ids, phonenumber) {
+    var rowHTML = "";
+    rowHTML += '<div class="col-4">';
+    rowHTML += '<div class="card">';
+    rowHTML += '<img src="https://d1zgdcrdir5wgt.cloudfront.net/media/vehicle/images/ZPBASTzWQm29XWKlBjoT0g.730x390.jpg" class="card-img-top" alt="...">';
+    rowHTML += '<div class="card-body">';
+    rowHTML += '<h5 class="card-title">' + name + '</h5>';
+    rowHTML += '<p><i>' + category + '</i></p>';
+    rowHTML += '<p>' + rating + '&#9733; (' + votes + ' votes)</p>';
+    rowHTML += '<ul class="list-group list-group-flush">';
+    for(var i=0; i<locations.length; i++) {
+        rowHTML += '<a href="single-location.html?id=' + location_ids[i] + '">';
+        rowHTML +='<li class="list-group-item">' + locations[i] + "</li>";
+        rowHTML += "</a>";
+        rowHTML += "<p>" + phonenumber[i] + "</p>";
+    }
+    rowHTML += '</ul>';
+    rowHTML += '</div>';
+    rowHTML += '</div>';
+    rowHTML += '</div>';
+    return rowHTML;
 }
 
 

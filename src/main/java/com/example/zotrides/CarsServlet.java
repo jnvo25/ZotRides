@@ -116,7 +116,7 @@ public class CarsServlet extends HttpServlet {
                 double car_rating = rs.getDouble("rating");
                 int car_votes = rs.getInt("numVotes");
                 String location_address = rs.getString("address");
-                String location_phone = rs.getString("phoneNumber").replace(";", "<br>");
+                String location_phone = rs.getString("phoneNumber");
                 String location_ids = rs.getString("pickupID");
 
                 /* NOTE : unlike previous example, we are wrapping everything into JSON to return it
