@@ -3,8 +3,9 @@ package com.example.zotrides;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import javax.annotation.Resource;
-import javax.servlet.ServletException;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.servlet.ServletConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +16,6 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 
 
 // Declaring a WebServlet called SingleStarServlet, which maps to url "/api/single-star"
@@ -24,16 +24,21 @@ public class SingleCarServlet extends HttpServlet {
     private static final long serialVersionUID = 2L;
 
     // Create a dataSource which registered in web.xml
-    @Resource(name = "jdbc/zotrides")
     private DataSource dataSource;
+
+    public void init(ServletConfig config) {
+        try {
+            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides");
+        } catch (NamingException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
      *      response)
      */
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json"); // Response mime type
 
         // Retrieve parameter id from url request.
@@ -42,13 +47,7 @@ public class SingleCarServlet extends HttpServlet {
         // Output stream to STDOUT
         PrintWriter out = response.getWriter();
 
-        try {
-            // Get a connection from dataSource
-            Connection dbcon = dataSource.getConnection();
-
-            // Construct a query with parameter represented by "?"
-            Statement statement = dbcon.createStatement();
-
+        try (Connection conn = dataSource.getConnection()) {
             /*
             String query = "WITH car_info(id, model, make, year, name, rating, numVotes) AS\n" +
                     "\t(SELECT Cars.id, model, make, year, name, rating, numVotes\n" +
@@ -77,8 +76,17 @@ public class SingleCarServlet extends HttpServlet {
                     "FROM car_info, pickup_car_from, PickupLocation\n" +
                     "WHERE car_info.id = pickup_car_from.carID AND pickup_car_from.pickupLocationID = PickupLocation.id;";
 
+            // Declare our statement
+            PreparedStatement statement = conn.prepareStatement(query);
+
+            // Set the parameter represented by "?" in the query to the id we get from url,
+            // num 1 indicates the first "?" in the query
+            // DOESN'T WORK
+            // statement.setString(1, id);
+
             // Perform the query
-            ResultSet rs = statement.executeQuery(query);
+            ResultSet rs = statement.executeQuery();
+
             JsonArray jsonArray = new JsonArray();
 
             // Iterate through each row of rs
@@ -106,7 +114,7 @@ public class SingleCarServlet extends HttpServlet {
                 jsonObject.addProperty("location_address", location_address);
                 jsonObject.addProperty("location_phone", location_phone);
                 jsonObject.addProperty("location_ids", location_ids);
-                System.out.println(jsonObject.toString());
+                // FOR DEBUGGING:  System.out.println(jsonObject.toString());
                 jsonArray.add(jsonObject);
             }
 
@@ -117,17 +125,19 @@ public class SingleCarServlet extends HttpServlet {
 
             rs.close();
             statement.close();
-            dbcon.close();
+
         } catch (Exception e) {
             // write error message JSON object to output
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("errorMessage", e.getMessage());
             out.write(jsonObject.toString());
 
-            // set reponse status to 500 (Internal Server Error)
+            // set response status to 500 (Internal Server Error)
             response.setStatus(500);
+        } finally {
+            out.close();
         }
-        out.close();
+
 
     }
 
