@@ -17,7 +17,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 
-// Declaring a WebServlet called StarsServlet, which maps to url "/api/stars"
+// Declaring a WebServlet called StarsServlet, which maps to url "/api/cars"
 @WebServlet(name = "CarsServlet", urlPatterns = "/api/cars")
 public class CarsServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -63,7 +63,7 @@ public class CarsServlet extends HttpServlet {
                     "GROUP BY car_info.id\n" +
                     "ORDER BY rating DESC; ";*/
 
-            String query = "WITH car_info(id, model, make, year, name, rating, numVotes) AS\n" +
+            String query = /*"WITH car_info(id, model, make, year, name, rating, numVotes) AS\n" +
                     "\t(SELECT Cars.id, model, make, year, name, rating, numVotes\n" +
                     "\tFROM (Cars, category_of_car, Category) LEFT OUTER JOIN Ratings ON Ratings.carID = Cars.id\n" +
                     "\tWHERE Cars.id = category_of_car.carID \n" +
@@ -81,7 +81,27 @@ public class CarsServlet extends HttpServlet {
                     "FROM (car_info LEFT OUTER JOIN numbered_pickup ON car_info.id = numbered_pickup.carID)\n" +
                     "\t\t\tLEFT OUTER JOIN PickupLocation ON numbered_pickup.pickupLocationID = PickupLocation.id AND numbered_pickup.num < 4\n" +
                     "GROUP BY car_info.id\n" +
-                    "ORDER BY rating DESC; ";
+                    "ORDER BY rating DESC; ";*/
+
+                    "WITH car_info(id, model, make, year, name, rating, numVotes) AS\n" +
+                            "\t(SELECT Cars.id, model, make, year, name, rating, numVotes\n" +
+                            "\tFROM (Cars, category_of_car, Category) LEFT OUTER JOIN Ratings ON Ratings.carID = Cars.id\n" +
+                            "\tWHERE Cars.id = category_of_car.carID \n" +
+                            "\t\t\tAND category_of_car.categoryID = Category.id),\n" +
+                            "\n" +
+                            "numbered_pickup(carID, pickupLocationID, num) AS\n" +
+                            "\t(SELECT carID, pickupLocationID, ROW_NUMBER() OVER(PARTITION BY carID) \n" +
+                            "\tFROM pickup_car_from)\n" +
+                            "\n" +
+                            "SELECT car_info.id as id, group_concat(DISTINCT concat_ws(' ', make, model, year)) as name, \n" +
+                            "\t\tname as category, rating, numVotes,\n" +
+                            "        group_concat(DISTINCT address ORDER BY pickupLocationID SEPARATOR ';') as address, \n" +
+                            "        group_concat(DISTINCT phoneNumber ORDER BY pickupLocationID SEPARATOR ';') as phoneNumber,\n" +
+                            "        group_concat(DISTINCT pickupLocationID ORDER BY pickupLocationID SEPARATOR ';') as pickupID\n" +
+                            "FROM (car_info LEFT OUTER JOIN numbered_pickup ON car_info.id = numbered_pickup.carID AND numbered_pickup.num < 4)\n" +
+                            "\t\t\tLEFT OUTER JOIN PickupLocation ON numbered_pickup.pickupLocationID = PickupLocation.id\n" +
+                            "GROUP BY car_info.id\n" +
+                            "ORDER BY rating DESC; ";
 
             // Perform the query
             ResultSet rs = statement.executeQuery(query);
