@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="zotrides" target="1.8" />
+      <module name="zotrides" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -21,32 +21,17 @@
 </head>
 <body>
 
-
-<h1>Cars</h1>
+<section class="jumbotron text-center" style="height: 65rem; background-image: url(https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80);background-size: cover; background-position: center;">
+    <div class="container">
+        <h1 class="jumbotron-heading">Welcome to ZotRides</h1>
+        <p class="lead text-muted">Book unforgettable cars from locations around the world</p>
+    </div>
+</section>
 <div class="container-fluid">
+
     <div id=card-row class="row">
     </div>
 </div>
-
-<!-- Id "car_table" is useful for jQuery to find the html element with id, class here is mapping to Bootstrap defined class CSS -->
-<table id=car_table class="table table-striped">
-    <!-- Create a table header -->
-    <thead>
-    <tr>
-        <!-- Titles of each column-->
-        <th>Name</th>
-        <th>Category</th>
-        <th>Rating</th>
-        <th>Votes</th>
-        <th>Pickup Location Address(es)</th>
-        <th>Pickup Location Phone Number(s)</th>
-    </tr>
-
-    </thead>
-    <!-- Table body is left empty here, will be populated with the data retrieved with index.js -->
-    <!-- Again, id "car_table_body" is useful for jQuery to find this html element -->
-    <tbody id=car_table_body></tbody>
-</table>
 
 <!-- Load jQuery and Bootstrap JS -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
