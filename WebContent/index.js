@@ -28,6 +28,7 @@ function handleStarResult(resultData) {
         cardrow.append(
             createCard(
                 resultData[i]["car_name"],
+                resultData[i]["car_id"],
                 resultData[i]["car_category"],
                 resultData[i]["car_rating"],
                 resultData[i]["car_votes"],
@@ -38,13 +39,15 @@ function handleStarResult(resultData) {
     }
 }
 
-function createCard(name, category, rating, votes, locations, location_ids, phonenumber) {
+function createCard(name, id, category, rating, votes, locations, location_ids, phonenumber) {
     var rowHTML = "";
     rowHTML += '<div class="col-4">';
     rowHTML += '<div class="card">';
     rowHTML += '<img src="https://d1zgdcrdir5wgt.cloudfront.net/media/vehicle/images/ZPBASTzWQm29XWKlBjoT0g.730x390.jpg" class="card-img-top" alt="...">';
     rowHTML += '<div class="card-body">';
+    rowHTML += '<a href="single-star.html?id=' + id + '">';
     rowHTML += '<h5 class="card-title">' + name + '</h5>';
+    rowHTML += '</a>';
     rowHTML += '<p><i>' + category + '</i></p>';
     rowHTML += '<p>' + rating + '&#9733; (' + votes + ' votes)</p>';
     rowHTML += '<ul class="list-group list-group-flush">';
