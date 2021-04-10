@@ -4,6 +4,9 @@
 
 ZotRides is a web application for a car rental service.  Users can currently view the top 20 rated cars and all associated information (model, make, year, category, pickup locations, etc.) for that car. Users can also view information about pickup locations and the cars they offer for rental.
 
+### Notes
+Since this is a custom schema, we provided a very small sample data insertion sql script (as per instructed to on Piazza) called "sampledata.sql" inside our repository.  Our actual data insertion script is larger in size than the movies data insertion script and has around the same number of data entries.
+
 ### Demo Video URL
 View Our Demo Video : https://youtu.be/17lYLFmbk7Y
 
