@@ -11,7 +11,7 @@ export default function CarCard(props) {
                     <Card.Img
                         className={'mx-auto'}
                         variant={'top'}
-                        src={'https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fimg1.cookinglight.timeinc.net%2Fsites%2Fdefault%2Ffiles%2Fstyles%2Fmedium_2x%2Fpublic%2Fimage%2F2018%2F07%2Fmain%2F1807w-avocado-toast-recipe.jpg%3Fitok%3D_dDi7ZQQ'}
+                        src={'https://d1zgdcrdir5wgt.cloudfront.net/media/vehicle/images/-GWIN1aUTRO8HI2WwVEzIA.1440x700.jpg'}
                     />
                 </LinkContainer>
                 <Card.Body className={'pt-1'}>
