@@ -15,8 +15,8 @@ export default function Home() {
             dataType: "json",
             method: "GET",
             // TODO: REMOVE HTTP://LOCALHOST WHEN BUILDING
-            // url: "http://localhost:8080/cs122b_spring21_team_16_war/api/cars",
-            url: "api/cars",
+            url: "http://localhost:8080/cs122b_spring21_team_16_war/api/cars",
+            // url: "api/cars",
             success: (resultData) => {
                 setCars(resultData);
                 setLoading(false);

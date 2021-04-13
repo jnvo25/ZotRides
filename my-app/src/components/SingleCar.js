@@ -14,8 +14,8 @@ export default function SingleCar(props) {
             dataType: "json",
             method: "GET",
             // TODO: REMOVE HTTP://LOCALHOST WHEN BUILDING
-            // url: "http://localhost:8080/cs122b_spring21_team_16_war/api/single-car?id=" + props.match.params.carId,
-            url: "api/single-car?id=" + props.match.params.carId,
+            url: "http://localhost:8080/cs122b_spring21_team_16_war/api/single-car?id=" + props.match.params.carId,
+            // url: "api/single-car?id=" + props.match.params.carId,
             success: (resultData) => {
                 setCar(resultData[0]);
                 setLoading(false);

@@ -14,8 +14,8 @@ export default function SingleLocation(props) {
             dataType: "json",  // Setting return data type
             method: "GET",// Setting request method
             // TODO: REMOVE HTTP://LOCALHOST WHEN BUILDING
-            // url: "http://localhost:8080/cs122b_spring21_team_16_war/api/single-loc?id=" + props.match.params.locationId,
-            url: "api/single-loc?id=" + props.match.params.locationId,
+            url: "http://localhost:8080/cs122b_spring21_team_16_war/api/single-loc?id=" + props.match.params.locationId,
+            // url: "api/single-loc?id=" + props.match.params.locationId,
             success: (resultData) => {
                 setLocation(resultData[0]);
                 setLoading(false);
