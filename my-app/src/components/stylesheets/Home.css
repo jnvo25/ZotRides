@@ -1,0 +1,11 @@
+.hero-section {
+    height: 900px;
+    border-radius: 0;
+    background-size: cover;
+    background-position: center;
+    background-image: url("https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80");
+}
+
+.hero-section .subtitle {
+    font-size: 25px;
+}
