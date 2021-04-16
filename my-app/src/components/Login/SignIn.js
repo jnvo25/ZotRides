@@ -1,6 +1,7 @@
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import { Form, Button } from 'react-bootstrap';
+import jQuery from 'jquery';
 
 export default function(props) {
     return (
@@ -8,7 +9,21 @@ export default function(props) {
             initialValues={{ username: "", password: ""}}
             onSubmit={(async (values) => {
                 // props.setLoading(true);
-                console.log(values);
+                // console.log(JSON.parse(JSON.stringify(values)));
+                jQuery.ajax({
+                    dataType: "json",
+                    method: "POST",
+                    data: values,
+                    // TODO: REMOVE HTTP://LOCALHOST WHEN BUILDING
+                    url: "http://localhost:8080/cs122b_spring21_team_16_war/api/login",
+                    // url: "api/single-car?id=" + props.match.params.carId,
+                    success: (resultData) => {
+                        //setCar(resultData[0]);
+                        //setLoading(false);
+                        console.log(JSON.stringify(resultData));
+                        // TODO : link to home page if succeeded, otherwise tell them to try again
+                    }
+                });
             })}
         >
             {({
