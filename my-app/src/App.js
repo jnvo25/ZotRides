@@ -7,12 +7,15 @@ import Home from './components/Home';
 import SingleCar from './components/SingleCar';
 import SingleLocation from './components/SingleLocation';
 import Navbar from './components/NavBar';
+import Browse from "./components/Browse";
 
 function App() {
   return (
     <Router basename={"/cs122b_spring21_team_16_war"}>
         <Navbar />
         <Switch>
+            <Route path="/browse/:query" render={(props) => <Browse {...props} />} />
+            <Route path="/browse/:query/:category" render={(props) => <Browse {...props} />} />
             <Route path="/login" render={() => <Login />} />
             <Route path="/" exact render={() => <Home />} />
             <Route path="/cars/:carId" render={(props) => <SingleCar {...props} />} />

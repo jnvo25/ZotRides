@@ -2,9 +2,12 @@ import {useState} from 'react';
 import {Nav, Navbar} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import SearchModal from "./Search/SearchModal";
+import {Link} from "react-router-dom";
 
 export default function MyNav() {
     const [modalShow, setModalShow] = useState(false);
+
+    const handleClick = () => setModalShow(true);
 
     return (
         <div>
@@ -22,16 +25,25 @@ export default function MyNav() {
                 </LinkContainer>
                 <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                 <Navbar.Collapse id="basic-navbar-nav">
+                    <Nav className={"mr-auto"}>
+                        <Nav.Link onClick={handleClick}>Search</Nav.Link>
+                        <LinkContainer to={"/browse/type"}>
+                            <Nav.Link>Browse by Vehicle Types</Nav.Link>
+                        </LinkContainer>
+                        <LinkContainer to={"/browse/name"}>
+                            <Nav.Link>Browse by Vehicle Name</Nav.Link>
+                        </LinkContainer>
+                    </Nav>
                     <Nav className={"ml-auto"}>
                         {/*// TODO: Connecting search with variable flag*/}
-                        <LinkContainer to="/search" exact>
-                            <Nav.Link>Search</Nav.Link>
-                        </LinkContainer>
                         <LinkContainer to="/profile">
                             <Nav.Link>Profile</Nav.Link>
                         </LinkContainer>
                         <LinkContainer to="/cart">
                             <Nav.Link>My Cart</Nav.Link>
+                        </LinkContainer>
+                        <LinkContainer to="/cart">
+                            <Nav.Link>Sign out</Nav.Link>
                         </LinkContainer>
                     </Nav>
                 </Navbar.Collapse>

@@ -35,7 +35,6 @@ public class LoginFilter implements Filter {
 
         // Redirect to login page if the "user" attribute doesn't exist in session
         if (httpRequest.getSession().getAttribute("user") == null) {
-            // TODO : how to link this to login page?
             System.out.println("redirecting away from: " + httpRequest.getRequestURI());
             httpResponse.sendRedirect("/cs122b_spring21_team_16_war/login");
         } else {
@@ -53,7 +52,6 @@ public class LoginFilter implements Filter {
     }
 
     public void init(FilterConfig fConfig) {
-        // TODO : what's the URI of the js stuff?
         allowedURIs.add("login");
         allowedURIs.add("api/login");
         allowedURIs.add("css");
