@@ -4,6 +4,7 @@ import './stylesheets/Template.css';
 import jQuery from 'jquery';
 import {LinkContainer} from "react-router-bootstrap";
 import React from "react";
+import Header from "./Template/Header";
 
 export default function SingleCar(props) {
     const [isLoading, setLoading] = useState(true);
@@ -27,11 +28,7 @@ export default function SingleCar(props) {
     }
     return (
         <div>
-            <Jumbotron className={"header"}>
-                <Container>
-                    <h1>Single Car Page</h1>
-                </Container>
-            </Jumbotron>
+            <Header title={"Single Car Page"}/>
             <Container>
                 <Row>
                     <Col>
