@@ -6,10 +6,11 @@ import LoadingOverlay from 'react-loading-overlay';
 
 import SignIn from "./Login/SignIn";
 import SignUp from "./Login/SignUp";
+import {Redirect} from "react-router";
 
 export default function() {
     const [formType, setForm] = useState('login');
-    const [signUpStatus, setSignUp] = useState(false);
+    const [success, setSuccess] = useState(false);
     const [error, setError] = useState();
     const [isLoading, setLoading] = useState(false);
 
@@ -28,6 +29,9 @@ export default function() {
         return err;
     }
 
+    if(success)
+        return (<Redirect to={"/"} />)
+
     return(
         <Container>
             <Row>
@@ -40,14 +44,11 @@ export default function() {
                     <Card>
                         <LoadingOverlay active={isLoading} spinner text={'Logging in...'}>
                         <Card.Body>
-                            {
-                                formType === 'login' &&
-                                <SignIn switchForm={switchForm} setLoading={setLoading} />
-                            }
-                            {
-                                formType === 'register' &&
-                                <SignUp switchForm={switchForm} setLoading={setLoading} />
-                            }
+                            <SignIn switchForm={switchForm} setLoading={setLoading} setError={setError} setSuccess={setSuccess}/>
+                            {/*{*/}
+                            {/*    formType === 'register' &&*/}
+                            {/*    <SignUp switchForm={switchForm} setLoading={setLoading} />*/}
+                            {/*}*/}
                             {
                                 error &&
                                 <Fade in={true}>

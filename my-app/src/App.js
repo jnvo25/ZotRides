@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
@@ -7,10 +6,12 @@ import Login from './components/Login';
 import Home from './components/Home';
 import SingleCar from './components/SingleCar';
 import SingleLocation from './components/SingleLocation';
+import Navbar from './components/NavBar';
 
 function App() {
   return (
     <Router basename={"/cs122b_spring21_team_16_war"}>
+        <Navbar />
         <Switch>
             <Route path="/login" render={() => <Login />} />
             <Route path="/" exact render={() => <Home />} />

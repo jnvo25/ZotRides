@@ -10,6 +10,7 @@ export default function(props) {
             onSubmit={(async (values) => {
                 // props.setLoading(true);
                 // console.log(JSON.parse(JSON.stringify(values)));
+
                 jQuery.ajax({
                     dataType: "json",
                     method: "POST",
@@ -21,6 +22,10 @@ export default function(props) {
                         //setCar(resultData[0]);
                         //setLoading(false);
                         console.log(JSON.stringify(resultData));
+                        if(resultData.status === "fail")
+                            props.setError("Login failed (Invalid username/password");
+                        else
+                            props.setSuccess(true);
                         // TODO : link to home page if succeeded, otherwise tell them to try again
                     }
                 });
