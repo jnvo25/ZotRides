@@ -23,7 +23,7 @@ export default function MyNav() {
                 <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className={"ml-auto"}>
-                        // TODO: Connecting search with variable flag
+                        {/*// TODO: Connecting search with variable flag*/}
                         <LinkContainer to="/search" exact>
                             <Nav.Link>Search</Nav.Link>
                         </LinkContainer>
