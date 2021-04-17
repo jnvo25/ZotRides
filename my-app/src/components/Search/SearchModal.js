@@ -16,7 +16,7 @@ export default function (props) {
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <SearchForm />
+                <SearchForm setModalShow={props.setModalShow}/>
             </Modal.Body>
             <Modal.Footer>
                 {/*<Button onClick={props.onHide}>Close</Button>*/}

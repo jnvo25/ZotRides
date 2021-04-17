@@ -4,7 +4,7 @@ import {LinkContainer} from 'react-router-bootstrap';
 import SearchModal from "./Search/SearchModal";
 import {Link} from "react-router-dom";
 
-export default function MyNav() {
+export default function MyNav(props) {
     const [modalShow, setModalShow] = useState(false);
 
     const handleClick = () => setModalShow(true);
@@ -13,6 +13,7 @@ export default function MyNav() {
         <div>
             <SearchModal show={modalShow}
                          onHide={() => setModalShow(false)}
+                         setModalShow={setModalShow}
             />
             <Navbar variant="light" className={"myNav"}>
                 <LinkContainer to="/">

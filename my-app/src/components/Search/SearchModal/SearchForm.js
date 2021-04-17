@@ -1,7 +1,14 @@
 import {Button, Form} from "react-bootstrap";
 import {Formik} from "formik";
+import {Redirect} from "react-router";
+import {useState} from "react";
 
-export default function() {
+export default function(props) {
+    const [complete, setComplete] = useState(false);
+    if (complete) {
+        props.setModalShow(false);
+        return (<Redirect to={"/search"}/>);
+    }
     return (
         <Formik
             // TODO: When all are empty return movie list
@@ -9,6 +16,7 @@ export default function() {
             onSubmit={(async (values) => {
                 // props.setLoading(true);
                 console.log(values);
+                setComplete(true);
             })}
         >
             {({
@@ -73,4 +81,11 @@ export default function() {
             )}
         </Formik>
     )
+}
+
+const defaultQuery = {
+    name: "null",
+    year: "null",
+    make: "null",
+    location: "null"
 }
