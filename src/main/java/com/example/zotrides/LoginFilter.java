@@ -37,7 +37,7 @@ public class LoginFilter implements Filter {
         if (httpRequest.getSession().getAttribute("user") == null) {
             // TODO : how to link this to login page?
             System.out.println("redirecting away from: " + httpRequest.getRequestURI());
-            httpResponse.sendRedirect("/login");
+            httpResponse.sendRedirect("/cs122b_spring21_team_16_war/login");
         } else {
             chain.doFilter(request, response);
         }
@@ -56,6 +56,8 @@ public class LoginFilter implements Filter {
         // TODO : what's the URI of the js stuff?
         allowedURIs.add("login");
         allowedURIs.add("api/login");
+        allowedURIs.add("css");
+        allowedURIs.add("js");
     }
 
     public void destroy() {

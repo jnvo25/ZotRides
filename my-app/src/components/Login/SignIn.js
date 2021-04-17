@@ -6,7 +6,7 @@ import jQuery from 'jquery';
 export default function(props) {
     return (
         <Formik
-            initialValues={{ username: "", password: ""}}
+            initialValues={{ username: "mcosley@gmail.com", password: "peiod3"}}
             onSubmit={(async (values) => {
                 // props.setLoading(true);
                 // console.log(JSON.parse(JSON.stringify(values)));
