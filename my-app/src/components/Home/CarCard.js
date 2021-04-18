@@ -1,5 +1,5 @@
 import React from 'react';
-import {Card, ListGroup, Col} from 'react-bootstrap';
+import {Card, ListGroup, Col, Button} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 
 export default function CarCard(props) {
@@ -32,6 +32,10 @@ export default function CarCard(props) {
                             </LinkContainer>
                         ))}
                     </ListGroup>
+                    <LinkContainer to={'/cars/' + props.id}>
+                        <Button>Add to Cart</Button>
+                    </LinkContainer>
+
                 </Card.Body>
             </Card>
         </Col>
