@@ -1,14 +1,17 @@
 import react, {useEffect, useState} from 'react';
-import {Jumbotron, Container, Row, Col} from 'react-bootstrap';
+import {Jumbotron, Container, Row, Col, Button, Dropdown} from 'react-bootstrap';
 import './stylesheets/Template.css';
 import jQuery from 'jquery';
 import {LinkContainer} from "react-router-bootstrap";
 import React from "react";
 import Header from "./Template/Header";
+import ReservationForm from "./SingleCar/ReservationForm";
+
 
 export default function SingleCar(props) {
     const [isLoading, setLoading] = useState(true);
     const [car, setCar] = useState(EMPTY_CAR);
+
 
     useEffect(() => {
         jQuery.ajax({
@@ -26,24 +29,51 @@ export default function SingleCar(props) {
     if(isLoading) {
         return (<div>Loading...</div>)
     }
+    console.log(props)
     return (
         <div>
             <Header title={"Single Car Page"}/>
-            <Container>
+            <Container fluid className={"pl-5"}>
                 <Row>
+                    <Col xs={7}>
+                        <Row>
+                            {/*<Col>*/}
+                            {/*    <p>{car.car_id}</p>*/}
+                            {/*    <p>{car.car_name}</p>*/}
+                            {/*    <p>{car.car_category}</p>*/}
+                            {/*    <p>{car.car_rating}</p>*/}
+                            {/*    <p>{car.car_votes}</p>*/}
+                            {/*    <p>{car.location_address}</p>*/}
+                            {/*    <p>{car.location_phone}</p>*/}
+                            {/*</Col>*/}
+                            <Col xs={2}>
+                                <p style={{textAlign: 'right'}}>The car</p>
+                            </Col>
+                            <Col>
+                                <h1>{car.car_name}</h1>
+                                <p>{car.car_rating} &#9733; ({car.car_votes} votes)</p>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col xs={2}>
+                                <p style={{textAlign: 'right'}}>Hosted at</p>
+                            </Col>
+                            <Col>
+                                {
+                                    car.location_address.split(';').map((location, index) => (
+                                        <h4 key={index}>{location}</h4>
+                                ))}
+                            </Col>
+                        </Row>
+                    </Col>
                     <Col>
-                        <p>{car.car_id}</p>
-                        <p>{car.car_name}</p>
-                        <p>{car.car_category}</p>
-                        <p>{car.car_rating}</p>
-                        <p>{car.car_votes}</p>
-                        <p>{car.location_address}</p>
-                        <p>{car.location_phone}</p>
+                        <ReservationForm locationids={car.location_ids.split(';')} locations={car.location_address.split(';')}/>
                     </Col>
                 </Row>
+
                 <Row>
                     <LinkContainer to={'/'}>
-                        <a>>>Back to homepage</a>
+                        <a>>> Back to homepage</a>
                     </LinkContainer>
                 </Row>
             </Container>
