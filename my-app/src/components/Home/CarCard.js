@@ -33,7 +33,7 @@ export default function CarCard(props) {
                         ))}
                     </ListGroup>
                     <LinkContainer to={'/cars/' + props.id}>
-                        <Button>Add to Cart</Button>
+                        <Button>Reserve</Button>
                     </LinkContainer>
 
                 </Card.Body>
