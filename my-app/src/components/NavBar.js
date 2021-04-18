@@ -40,7 +40,7 @@ export default function MyNav(props) {
                         <LinkContainer to="/profile">
                             <Nav.Link>Profile</Nav.Link>
                         </LinkContainer>
-                        <LinkContainer to="/cart">
+                        <LinkContainer to="/mycart">
                             <Nav.Link>My Cart</Nav.Link>
                         </LinkContainer>
                         <LinkContainer to="/cart">

@@ -9,6 +9,7 @@ import SingleLocation from './components/SingleLocation';
 import Navbar from './components/NavBar';
 import Browse from "./components/Browse";
 import SearchResults from "./components/SearchResults";
+import MyCart from "./components/MyCart";
 
 function App() {
     return (
@@ -20,6 +21,7 @@ function App() {
                 <Route path="/login" render={() => <Login />} />
                 <Route path="/" exact render={() => <Home />} />
                 <Route path="/search" render={() => <SearchResults />} />
+                <Route path="/mycart" render={() => <MyCart />} />
                 <Route path="/cars/:carId" render={(props) => <SingleCar {...props} />} />
                 <Route path="/locations/:locationId" render={(props) => <SingleLocation {...props} />} />
             </Switch>
