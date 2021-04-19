@@ -10,23 +10,44 @@ export default function (props) {
     const [cars, setCars] = useState([]);
 
     useEffect(() => {
-        console.log(props.match.params);
+        let data;
+        if(props.match.params.query === "type") {
+            data = {category: 'pickup'};
+        } else {
+            data = {model: 'a'};
+        }
         jQuery.ajax({
             dataType: "json",
             method: "GET",
-            // TODO: REMOVE HTTP://LOCALHOST WHEN BUILDING
-            url: "http://localhost:8080/cs122b_spring21_team_16_war/api/cars",
-            // url: "api/cars",
+            data: data,
+            url: "http://localhost:8080/cs122b_spring21_team_16_war/api/browse-car",
+            success: (resultData) => {
+                setCars(resultData);
+                setLoading(false);
+            }
+        });
+    }, [])
+
+    const handleOptionSelect = (event) => {
+        let data;
+
+        if(props.match.params.query === "type") {
+            data = {category: event.target.id.toString().toLowerCase()};
+        } else {
+            data = {model: event.target.id.toString()};
+        }
+        console.log(data)
+        jQuery.ajax({
+            dataType: "json",
+            method: "GET",
+            data: data,
+            url: "http://localhost:8080/cs122b_spring21_team_16_war/api/browse-car",
             success: (resultData) => {
                 setCars(resultData);
                 setLoading(false);
                 console.log(resultData);
             }
         });
-    }, [])
-
-    const handleOptionSelect = (event) => {
-        console.log(event.target.id);
     }
 
     if (isLoading) {
