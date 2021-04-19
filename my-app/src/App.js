@@ -14,19 +14,31 @@ import MyCart from "./components/MyCart";
 function App() {
     return (
         <Router basename={"/cs122b_spring21_team_16_war"}>
-            <Navbar />
             <Switch>
-                <Route path="/browse/:query" render={(props) => <Browse {...props} />} />
-                <Route path="/browse/:query/:category" render={(props) => <Browse {...props} />} />
-                <Route path="/login" render={() => <Login />} />
-                <Route path="/" exact render={() => <Home />} />
-                <Route path="/search" render={() => <SearchResults />} />
-                <Route path="/mycart" render={() => <MyCart />} />
-                <Route path="/cars/:carId" render={(props) => <SingleCar {...props} />} />
-                <Route path="/locations/:locationId" render={(props) => <SingleLocation {...props} />} />
+                <Route exact path={"/(login)"} component={LoginContainer} />
+                <Route component={DefaultContainer} />
             </Switch>
         </Router>
     );
 }
+
+const LoginContainer = () => (
+    <div>
+        <Route path="/login" render={() => <Login />} />
+    </div>
+)
+
+const DefaultContainer = () => (
+    <div>
+        <Navbar />
+        <Route path="/browse/:query" render={(props) => <Browse {...props} />} />
+        <Route path="/browse/:query/:category" render={(props) => <Browse {...props} />} />
+        <Route path="/" exact render={() => <Home />} />
+        <Route path="/search" render={() => <SearchResults />} />
+        <Route path="/mycart" render={() => <MyCart />} />
+        <Route path="/cars/:carId" render={(props) => <SingleCar {...props} />} />
+        <Route path="/locations/:locationId" render={(props) => <SingleLocation {...props} />} />
+    </div>
+)
 
 export default App;

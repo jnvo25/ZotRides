@@ -33,7 +33,7 @@ export default function() {
         return (<Redirect to={"/"} />)
 
     return(
-        <Container>
+        <Container className={"pt-5"}>
             <Row>
                 <Col>
                     <h1>Welcome to ZotRides</h1>
