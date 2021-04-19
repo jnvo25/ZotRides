@@ -34,7 +34,7 @@ const DefaultContainer = () => (
         <Route path="/browse/:query" render={(props) => <Browse {...props} />} />
         <Route path="/browse/:query/:category" render={(props) => <Browse {...props} />} />
         <Route path="/" exact render={() => <Home />} />
-        <Route path="/search" render={() => <SearchResults />} />
+        <Route path="/search/:model?/:year?/:make?/:location?" render={(props) => <SearchResults {...props}/>} />
         <Route path="/mycart" render={() => <MyCart />} />
         <Route path="/cars/:carId" render={(props) => <SingleCar {...props} />} />
         <Route path="/locations/:locationId" render={(props) => <SingleLocation {...props} />} />

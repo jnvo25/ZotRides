@@ -2,12 +2,14 @@ import {Button, Form} from "react-bootstrap";
 import {Formik} from "formik";
 import {Redirect} from "react-router";
 import {useState} from "react";
+import jQuery from "jquery";
 
 export default function(props) {
     const [complete, setComplete] = useState(false);
+    const [query, setQuery] = useState({defaultQuery});
     if (complete) {
         props.setModalShow(false);
-        return (<Redirect to={"/search"}/>);
+        return (<Redirect to={"/search" + "/" + query.model + "/" + query.year + "/" + query.make + "/" + query.location}/>);
     }
     return (
         <Formik
@@ -15,8 +17,17 @@ export default function(props) {
             initialValues={{}}
             onSubmit={(async (values) => {
                 // props.setLoading(true);
-                console.log(values);
+                if (values.model == null)
+                    values.model = 'na';
+                if (values.year == null)
+                    values.year = 'na';
+                if (values.make == null)
+                    values.make = 'na';
+                if (values.location == null)
+                    values.location = 'na';
+                setQuery(values);
                 setComplete(true);
+                window.location.reload(false);
             })}
         >
             {({
@@ -29,15 +40,15 @@ export default function(props) {
               }) => (
                 <Form noValidate onSubmit={handleSubmit}>
                     <Form.Group>
-                        <Form.Label>Car Name</Form.Label>
+                        <Form.Label>Car Model</Form.Label>
                         <Form.Control
                             type={"string"}
-                            name={"name"}
-                            id={"name"}
+                            name={"model"}
+                            id={"model"}
                             onChange={handleChange}
                             onBlur={handleBlur}
-                            value={values.name}
-                            placeholder={"Enter name"}
+                            value={values.model}
+                            placeholder={"Enter model name"}
                         />
                     </Form.Group>
                     <Form.Group>
@@ -84,8 +95,8 @@ export default function(props) {
 }
 
 const defaultQuery = {
-    name: "null",
-    year: "null",
-    make: "null",
-    location: "null"
+    model: "na",
+    year: "na",
+    make: "na",
+    location: "na"
 }
