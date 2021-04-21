@@ -9,6 +9,18 @@ import HOST from "../Host";
 export default function (props) {
     const [isLoading, setLoading] = useState(true);
     const [cars, setCars] = useState([]);
+    const [categories, setCategories] = useState([]);
+
+    // get categories for browsing
+    jQuery.ajax({
+        dataType: "json",
+        method: "GET",
+        url: HOST + "api/categories",
+        success: (resultData) => {
+            setCategories(resultData.map(type => type.category));
+            // console.log(categories);
+        }
+    });
 
     useEffect(() => {
         let data;
@@ -54,6 +66,7 @@ export default function (props) {
     if (isLoading) {
         return (<div>Loading...</div>)
     }
+
     return (
         <div>
             <Header title={"Browse by Vehicle " + props.match.params.query} />
@@ -62,7 +75,8 @@ export default function (props) {
                 <Content
                     handleOptionSelect={handleOptionSelect}
                     cars={cars}
-                    options={["Pickup", "Wagon", "Van", "Coupe", "Sedan", "Hatchback", "Convertible", "SUV"]}
+                    // TODO : double check get categories via a servlet instead of hardcode
+                    options={categories}
                 />
             }
             {
