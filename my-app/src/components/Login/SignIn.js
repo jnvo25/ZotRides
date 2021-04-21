@@ -2,6 +2,7 @@ import { Formik } from 'formik';
 import * as yup from 'yup';
 import { Form, Button } from 'react-bootstrap';
 import jQuery from 'jquery';
+import HOST from '../../Host';
 
 export default function(props) {
     return (
@@ -16,7 +17,7 @@ export default function(props) {
                     method: "POST",
                     data: values,
                     // TODO: REMOVE HTTP://LOCALHOST WHEN BUILDING
-                    url: "http://localhost:8080/cs122b_spring21_team_16_war/api/login",
+                    url: HOST + "api/login",
                     // url: "api/single-car?id=" + props.match.params.carId,
                     success: (resultData) => {
                         //setCar(resultData[0]);

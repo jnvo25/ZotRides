@@ -36,7 +36,7 @@ public class LoginFilter implements Filter {
         // Redirect to login page if the "user" attribute doesn't exist in session
         if (httpRequest.getSession().getAttribute("user") == null) {
             System.out.println("redirecting away from: " + httpRequest.getRequestURI());
-            httpResponse.sendRedirect("/cs122b_spring21_team_16_war/login");
+            httpResponse.sendRedirect("/ZotRides/login");
         } else {
             chain.doFilter(request, response);
         }

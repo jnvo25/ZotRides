@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import jQuery from "jquery";
 import {Container, Row, Col} from "react-bootstrap";
 import CarCard from "./Home/CarCard";
+import HOST from "../Host";
 
 export default function(props) {
     const [isLoading, setLoading] = useState(true);
@@ -13,7 +14,7 @@ export default function(props) {
             dataType: "json",
             method: "GET",
             data: removeEmpty(props.match.params),
-            url: "http://localhost:8080/cs122b_spring21_team_16_war/api/search-car",
+            url: HOST + "api/search-car",
             success: (resultData) => {
                 if (resultData.status === "fail")
                     props.setError("Login failed (Invalid username/password");

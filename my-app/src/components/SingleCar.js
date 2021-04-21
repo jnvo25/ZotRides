@@ -6,6 +6,7 @@ import {LinkContainer} from "react-router-bootstrap";
 import React from "react";
 import Header from "./Template/Header";
 import ReservationForm from "./SingleCar/ReservationForm";
+import HOST from "../Host";
 
 
 export default function SingleCar(props) {
@@ -17,9 +18,7 @@ export default function SingleCar(props) {
         jQuery.ajax({
             dataType: "json",
             method: "GET",
-            // TODO: REMOVE HTTP://LOCALHOST WHEN BUILDING
-            url: "http://localhost:8080/cs122b_spring21_team_16_war/api/single-car?id=" + props.match.params.carId,
-            // url: "api/single-car?id=" + props.match.params.carId,
+            url: HOST + "api/single-car?id=" + props.match.params.carId,
             success: (resultData) => {
                 setCar(resultData[0]);
                 setLoading(false);

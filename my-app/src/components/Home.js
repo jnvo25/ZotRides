@@ -4,6 +4,7 @@ import './stylesheets/Home.css';
 
 import CarCard from "./Home/CarCard";
 import jQuery from 'jquery';
+import HOST from '../Host';
 
 export default function Home() {
     const [isLoading, setLoading] = useState(true);
@@ -15,7 +16,7 @@ export default function Home() {
             dataType: "json",
             method: "GET",
             // TODO: REMOVE HTTP://LOCALHOST WHEN BUILDING
-            url: "http://localhost:8080/cs122b_spring21_team_16_war/api/cars",
+            url: HOST + "api/cars",
             // url: "api/cars",
             success: (resultData) => {
                 setCars(resultData);

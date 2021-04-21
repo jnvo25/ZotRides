@@ -5,6 +5,7 @@ import jQuery from 'jquery';
 import {LinkContainer} from "react-router-bootstrap";
 import React from "react";
 import Header from "./Template/Header";
+import HOST from "../Host";
 
 export default function SingleLocation(props) {
     const [isLoading, setLoading] = useState(true);
@@ -15,7 +16,7 @@ export default function SingleLocation(props) {
             dataType: "json",  // Setting return data type
             method: "GET",// Setting request method
             // TODO: REMOVE HTTP://LOCALHOST WHEN BUILDING
-            url: "http://localhost:8080/cs122b_spring21_team_16_war/api/single-loc?id=" + props.match.params.locationId,
+            url: HOST + "api/single-loc?id=" + props.match.params.locationId,
             // url: "api/single-loc?id=" + props.match.params.locationId,
             success: (resultData) => {
                 setLocation(resultData[0]);

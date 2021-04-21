@@ -4,6 +4,7 @@ import {useEffect, useState} from "react";
 import jQuery from "jquery";
 import Header from "./Template/Header";
 import Content from "./Browse/Content";
+import HOST from "../Host";
 
 export default function (props) {
     const [isLoading, setLoading] = useState(true);
@@ -20,7 +21,7 @@ export default function (props) {
             dataType: "json",
             method: "GET",
             data: data,
-            url: "http://localhost:8080/cs122b_spring21_team_16_war/api/browse-car",
+            url: HOST + "api/browse-car",
             success: (resultData) => {
                 setCars(resultData);
                 setLoading(false);
@@ -41,7 +42,7 @@ export default function (props) {
             dataType: "json",
             method: "GET",
             data: data,
-            url: "http://localhost:8080/cs122b_spring21_team_16_war/api/browse-car",
+            url: HOST + "api/browse-car",
             success: (resultData) => {
                 setCars(resultData);
                 setLoading(false);

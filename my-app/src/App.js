@@ -13,7 +13,7 @@ import MyCart from "./components/MyCart";
 
 function App() {
     return (
-        <Router basename={"/cs122b_spring21_team_16_war"}>
+        <Router basename={"/ZotRides"}>
             <Switch>
                 <Route exact path={"/(login)"} component={LoginContainer} />
                 <Route component={DefaultContainer} />
