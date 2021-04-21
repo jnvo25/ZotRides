@@ -15,9 +15,7 @@ export default function SingleLocation(props) {
         jQuery.ajax({
             dataType: "json",  // Setting return data type
             method: "GET",// Setting request method
-            // TODO: REMOVE HTTP://LOCALHOST WHEN BUILDING
             url: HOST + "api/single-loc?id=" + props.match.params.locationId,
-            // url: "api/single-loc?id=" + props.match.params.locationId,
             success: (resultData) => {
                 setLocation(resultData[0]);
                 setLoading(false);

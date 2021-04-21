@@ -15,9 +15,7 @@ export default function(props) {
                     dataType: "json",
                     method: "POST",
                     data: values,
-                    // TODO: REMOVE HTTP://LOCALHOST WHEN BUILDING
                     url: HOST + "api/login",
-                    // url: "api/single-car?id=" + props.match.params.carId,
                     success: (resultData) => {
                         //setCar(resultData[0]);
                         //setLoading(false);
@@ -26,7 +24,6 @@ export default function(props) {
                             props.setError("Login failed (Invalid username/password");
                         else
                             props.setSuccess(true);
-                        // TODO : link to home page if succeeded, otherwise tell them to try again
                     }
                 });
             })}
