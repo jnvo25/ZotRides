@@ -11,7 +11,6 @@ export default function(props) {
             onSubmit={(async (values) => {
                 // props.setLoading(true);
                 // console.log(JSON.parse(JSON.stringify(values)));
-
                 jQuery.ajax({
                     dataType: "json",
                     method: "POST",
