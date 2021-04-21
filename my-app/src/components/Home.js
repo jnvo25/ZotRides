@@ -15,9 +15,7 @@ export default function Home() {
         jQuery.ajax({
             dataType: "json",
             method: "GET",
-            // TODO: REMOVE HTTP://LOCALHOST WHEN BUILDING
             url: HOST + "api/cars",
-            // url: "api/cars",
             success: (resultData) => {
                 setCars(resultData);
                 setLoading(false);
