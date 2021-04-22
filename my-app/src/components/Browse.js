@@ -11,17 +11,6 @@ export default function (props) {
     const [cars, setCars] = useState([]);
     const [categories, setCategories] = useState([]);
 
-    // get categories for browsing
-    jQuery.ajax({
-        dataType: "json",
-        method: "GET",
-        url: HOST + "api/categories",
-        success: (resultData) => {
-            setCategories(resultData.map(type => type.category));
-            // console.log(categories);
-        }
-    });
-
     useEffect(() => {
         let data;
         if(props.match.params.query === "type") {
@@ -37,6 +26,17 @@ export default function (props) {
             success: (resultData) => {
                 setCars(resultData);
                 setLoading(false);
+            }
+        });
+
+        // get categories for browsing
+        jQuery.ajax({
+            dataType: "json",
+            method: "GET",
+            url: HOST + "api/categories",
+            success: (resultData) => {
+                setCategories(resultData.map(type => type.category));
+                // console.log(categories);
             }
         });
     }, [])

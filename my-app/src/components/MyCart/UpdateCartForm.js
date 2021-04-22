@@ -4,19 +4,31 @@ import React, {useState} from "react";
 import jQuery from "jquery";
 import {Formik} from "formik";
 import {LinkContainer} from "react-router-bootstrap";
+import HOST from "../../Host";
 
 export default function(props) {
     return (
         <Formik
             initialValues={{}}
             onSubmit={(async (values) => {
-                console.log(values);
+                jQuery.ajax({
+                    dataType: "json",
+                    method: "POST",
+                    data: {
+                        endDate: dateToString(values.endDate),
+                        startDate: dateToString(values.startDate),
+                        itemID: props.id
+                    },
+                    url: HOST + "api/modify-cart-item",
+                    success: (resultData) => {
+                        console.log(resultData)
+                        window.location.reload(false);
+                    }
+                });
             })}
         >
             {({
                   handleSubmit,
-                  handleChange,
-                  handleBlur,
                   values,
                   errors,
                   setFieldValue,
@@ -46,89 +58,28 @@ export default function(props) {
                             {errors.password}
                         </Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group>
-                        <Form.Label>Pickup Location</Form.Label>
-                        <select
-                            name="location"
-                            value={values.location}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            style={{ display: 'block' }}
-                        >
-                            <option value="" label="Select a location" />
-                            {
-                                props.locations.map((location, index) => (
-                                    <option value={props.locationids[index]} key={index}>
-                                        {location}
-                                    </option>
-                                ))
-                            }
-                        </select>
-
-                    </Form.Group>
-
-                    <Button variant={"primary"} type={"submit"}>Update</Button>
+                    <Button variant={"primary"} type={"submit"}>Add to cart</Button>
                 </Form>
             )}
         </Formik>
-        // <div>
-        //     <Form
-        //     <h2>$317/day</h2>
-        //     <hr />
-        //     <h4>Trip start</h4>
-        //     <DatePicker onChange={onStartChange} value={startDate}/>
-        //     <h4>Trip end</h4>
-        //     <DatePicker onChange={onEndChange} value={endDate}/>
-        //     <h4>Pickup location</h4>
-        //     <Dropdown>
-        //         <Dropdown.Toggle variant="success" id="dropdown-basic">
-        //             Pickup Location
-        //         </Dropdown.Toggle>
-        //
-        //         <Dropdown.Menu>
-        //             <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-        //             <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-        //             <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-        //         </Dropdown.Menu>
-        //     </Dropdown>
-        //     <Button>Continue</Button>
-        //     <hr />
-        // </div>
     )
 }
-const difficultyOptions = [
-    { value: 'beginner', label: 'Beginner'},
-    { value: 'intermediate', label: 'Intermediate'},
-    { value: 'advanced', label: 'Advanced'},
-];
-
-const mealTimeOptions = [
-    { value: 'breakfast', label: 'Breakfast'},
-    { value: 'lunch', label: 'Lunch'},
-    { value: 'dinner', label: 'Dinner'},
-    { value: 'snacks', label: 'Snack'},
-];
-
-const dishTypeOptions = [
-    { value: 'entrees', label: 'Entree'},
-    { value: 'sides', label: 'Side'},
-    { value: 'sauces', label: 'Sauce'},
-    { value: 'appetizers', label: 'Appetizer'},
-    { value: 'pastries', label: 'Pastry'},
-]
 
 
-const groupedOptions = [
-    {
-        label: 'Difficulty',
-        options: difficultyOptions
-    },
-    {
-        label: 'Meal Time',
-        options: mealTimeOptions
-    },
-    {
-        label: 'Dish Type',
-        options: dishTypeOptions
-    }
-]
+function dateToString(input) {
+    return formatDate(input)
+}
+
+function formatDate(date) {
+    var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2)
+        month = '0' + month;
+    if (day.length < 2)
+        day = '0' + day;
+
+    return [year, month, day].join('/');
+}

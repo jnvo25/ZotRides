@@ -76,7 +76,7 @@ public class ModifyCartItemServlet extends HttpServlet {
             for (CartItem item : previousItems) {
                 if (item.getItemID() == id) {
                     item.setStartDate(startDate);
-                    item.setEndDate(startDate);
+                    item.setEndDate(endDate);
                     break;
                 }
             }

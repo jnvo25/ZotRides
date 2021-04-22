@@ -1,10 +1,11 @@
 import {Col, Modal, Row} from "react-bootstrap";
 import UpdateCartForm from "../UpdateCartForm";
 
-export default function() {
+export default function(props) {
     return (
         <Modal
-            show={false}
+            show={props.showUpdate}
+            onHide={() => props.setUpdate(false)}
             size="lg"
             aria-labelledby="contained-modal-title-vcenter"
             centered
@@ -27,6 +28,7 @@ export default function() {
                         <UpdateCartForm
                             locations={['a', 'b']}
                             locationids={['a','b']}
+                            id={props.carID}
                         />
                     </Col>
                 </Row>

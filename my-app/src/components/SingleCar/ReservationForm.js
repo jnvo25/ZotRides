@@ -79,7 +79,7 @@ export default function(props) {
                             <option value="" label="Select a location" />
                             {
                                 props.locations.map((location, index) => (
-                                    <option value={props.locationids[index]} key={index}>
+                                    <option value={location} key={index}>
                                         {location}
                                     </option>
                                 ))
