@@ -17,8 +17,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-// TODO : have to edit SignIn.js jQuery ajax to serialize data and make sure default action disabled
-
 @WebServlet(name = "LoginServlet", urlPatterns = "/api/login")
 public class LoginServlet extends HttpServlet {
 
@@ -45,10 +43,11 @@ public class LoginServlet extends HttpServlet {
 
         /* verify username / password from database */
         boolean isValid = false;
+        int customerID = -1;
         try (Connection conn = dataSource.getConnection()) {
             Statement statement = conn.createStatement();
 
-            String query = "SELECT COUNT(*) as isValid\n" +
+            String query = "SELECT id\n" +
                     "FROM Customers\n" +
                     "WHERE email = \"" + username + "\" AND password = \"" + password + "\";";
 
@@ -57,7 +56,11 @@ public class LoginServlet extends HttpServlet {
             // Perform the query
             ResultSet rs = statement.executeQuery(query);
 
-            isValid = rs.next() && rs.getInt("isValid") > 0;
+            isValid = rs.next();
+            if (isValid) {
+                customerID = rs.getInt("id");
+                System.out.println("success");
+            }
 
             System.out.println("the user/pass combo is: " + isValid);
 
@@ -86,6 +89,7 @@ public class LoginServlet extends HttpServlet {
 
             // set this user into the session
             request.getSession().setAttribute("user", new User(username));
+            request.getSession().setAttribute("customerID", customerID);
 
             responseJsonObject.addProperty("status", "success");
             responseJsonObject.addProperty("message", "success");
