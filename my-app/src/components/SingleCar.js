@@ -66,7 +66,7 @@ export default function SingleCar(props) {
                         </Row>
                     </Col>
                     <Col>
-                        <ReservationForm locationids={car.location_ids.split(';')} locations={car.location_address.split(';')}/>
+                        <ReservationForm name={car.car_name} carID={car.car_id} unitPrice={120} locationids={car.location_ids.split(';')} locations={car.location_address.split(';')}/>
                     </Col>
                 </Row>
 

@@ -4,16 +4,34 @@ import React, {useState} from "react";
 import jQuery from "jquery";
 import {Formik} from "formik";
 import {LinkContainer} from "react-router-bootstrap";
+import HOST from "../../Host";
 
 export default function(props) {
     return (
         <Formik
-            initialValues={{}}
+            initialValues={{
+                name: props.name,
+                cardID: props.cardID,
+                unitPrice: props.unitPrice
+            }}
             onSubmit={(async (values) => {
-                // props.setLoading(true);
-                // console.log(JSON.parse(JSON.stringify(values)));
-                console.log(values);
-
+                jQuery.ajax({
+                    dataType: "json",
+                    method: "POST",
+                    data: {
+                        ...values,
+                        endDate: dateToString(values.endDate),
+                        startDate: dateToString(values.startDate)
+                    },
+                    url: HOST + "api/shopping-cart",
+                    success: (resultData) => {
+                        console.log(JSON.stringify(resultData));
+                        // if(resultData.status === "fail")
+                        //     props.setError("Login failed (Invalid username/password");
+                        // else
+                        //     props.setSuccess(true);
+                    }
+                });
             })}
         >
             {({
@@ -52,8 +70,8 @@ export default function(props) {
                     <Form.Group>
                         <Form.Label>Pickup Location</Form.Label>
                         <select
-                            name="location"
-                            value={values.location}
+                            name="pickupLocation"
+                            value={values.pickLocation}
                             onChange={handleChange}
                             onBlur={handleBlur}
                             style={{ display: 'block' }}
@@ -99,39 +117,21 @@ export default function(props) {
         // </div>
     )
 }
-const difficultyOptions = [
-    { value: 'beginner', label: 'Beginner'},
-    { value: 'intermediate', label: 'Intermediate'},
-    { value: 'advanced', label: 'Advanced'},
-];
 
-const mealTimeOptions = [
-    { value: 'breakfast', label: 'Breakfast'},
-    { value: 'lunch', label: 'Lunch'},
-    { value: 'dinner', label: 'Dinner'},
-    { value: 'snacks', label: 'Snack'},
-];
+function dateToString(input) {
+    return formatDate(input)
+}
 
-const dishTypeOptions = [
-    { value: 'entrees', label: 'Entree'},
-    { value: 'sides', label: 'Side'},
-    { value: 'sauces', label: 'Sauce'},
-    { value: 'appetizers', label: 'Appetizer'},
-    { value: 'pastries', label: 'Pastry'},
-]
+function formatDate(date) {
+    var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
 
+    if (month.length < 2)
+        month = '0' + month;
+    if (day.length < 2)
+        day = '0' + day;
 
-const groupedOptions = [
-    {
-        label: 'Difficulty',
-        options: difficultyOptions
-    },
-    {
-        label: 'Meal Time',
-        options: mealTimeOptions
-    },
-    {
-        label: 'Dish Type',
-        options: dishTypeOptions
-    }
-]
+    return [year, month, day].join('/');
+}
