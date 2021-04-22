@@ -61,21 +61,22 @@ public class SingleCarServlet extends HttpServlet {
                     "FROM car_info, pickup_car_from, PickupLocation\n" +
                     "WHERE car_info.id = pickup_car_from.carID AND pickup_car_from.pickupLocationID = PickupLocation.id;";*/
 
-            String query = "WITH car_info(id, model, make, year, name, rating, numVotes) AS\n" +
-                    "\t(SELECT Cars.id, model, make, year, name, rating, numVotes\n" +
-                    "\tFROM Cars, category_of_car, Category, Ratings\n" +
+            String query = "WITH car_info(id, model, make, year, name, price, rating, numVotes) AS\n" +
+                    "\t(SELECT Cars.id, model, make, year, name, price, rating, numVotes\n" +
+                    "\tFROM Cars, category_of_car, Category, CarPrices, Ratings\n" +
                     "\tWHERE Cars.id = '" + id + "' \n" +
                     "\t\t\tAND category_of_car.carID = '" + id + "' \n" +
                     "\t\t\tAND Category.id = category_of_car.categoryID\n" +
+                    "\t\t\tAND CarPrices.carID = '" + id + "' \n" +
                     "\t\t\tAND Ratings.carID = '" + id + "')\n" +
                     "\n" +
-                    "SELECT car_info.id as id, group_concat(DISTINCT concat_ws(' ', make, model, year)) as name, name as category, rating, numVotes, \n" +
+                    "SELECT car_info.id as id, group_concat(DISTINCT concat_ws(' ', make, model, year)) as name, name as category, price, rating, numVotes, \n" +
                     "\t\tgroup_concat(DISTINCT address ORDER BY PickupLocation.id SEPARATOR ';') as address, \n" +
                     "        group_concat(DISTINCT phoneNumber ORDER BY PickupLocation.id SEPARATOR ';') as phoneNumber,\n" +
                     "        group_concat(DISTINCT PickupLocation.id ORDER BY PickupLocation.id SEPARATOR ';') as pickupID\n" +
                     "FROM car_info, pickup_car_from, PickupLocation\n" +
                     "WHERE car_info.id = pickup_car_from.carID AND pickup_car_from.pickupLocationID = PickupLocation.id;";
-
+//            System.out.println("query is\n" + query);
             // Declare our statement
             PreparedStatement statement = conn.prepareStatement(query);
 
@@ -95,6 +96,7 @@ public class SingleCarServlet extends HttpServlet {
                 String car_id = rs.getString("id");
                 String car_name = rs.getString("name");
                 String car_category = rs.getString("category");
+                int unit_price = rs.getInt("price");
                 double car_rating = rs.getDouble("rating");
                 int car_votes = rs.getInt("numVotes");
                 String location_address = rs.getString("address");
@@ -109,6 +111,7 @@ public class SingleCarServlet extends HttpServlet {
                 jsonObject.addProperty("car_id", car_id);
                 jsonObject.addProperty("car_name", car_name);
                 jsonObject.addProperty("car_category", car_category);
+                jsonObject.addProperty("unit_price", unit_price);
                 jsonObject.addProperty("car_rating", car_rating);
                 jsonObject.addProperty("car_votes", car_votes);
                 jsonObject.addProperty("location_address", location_address);
