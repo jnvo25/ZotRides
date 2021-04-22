@@ -16,6 +16,8 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 // Declaring a WebServlet called BrowseServlet, which maps to url "/api/browse-car"
@@ -86,7 +88,7 @@ public class BrowseServlet extends HttpServlet {
             if (yearDigit != null && !yearDigit.isEmpty())
                 additional += " AND year LIKE \"" + yearDigit + "%\"";
 
-            String query = "SELECT Cars.id as id, group_concat(DISTINCT concat_ws(' ', make, model, year)) as name, \n" +
+            /* String query = "SELECT Cars.id as id, group_concat(DISTINCT concat_ws(' ', make, model, year)) as name, \n" +
                     "\t\tname as category, rating, numVotes,\n" +
                     "        group_concat(DISTINCT address ORDER BY pickupLocationID SEPARATOR ';') as address, \n" +
                     "        group_concat(DISTINCT phoneNumber ORDER BY pickupLocationID SEPARATOR ';') as phoneNumber,\n" +
@@ -96,7 +98,39 @@ public class BrowseServlet extends HttpServlet {
                     "\tAND Ratings.carID = Cars.id AND pickup_car_from.carID = Cars.id AND pickup_car_from.pickupLocationID = PickupLocation.id\n" +
                     "GROUP BY Cars.id\n" +
                     "ORDER BY rating DESC\n"+
-                    "LIMIT 100;";
+                    "LIMIT 100;"; */
+
+            /*String query = "WITH numberedPickup AS\n" +
+                    "\t(SELECT carID, pickupLocationID, numCars \n" +
+                    "\tFROM pickup_car_from NATURAL JOIN (SELECT pickupLocationID, COUNT(DISTINCT carID) as numCars FROM pickup_car_from GROUP BY pickupLocationID) as numberedPickup)\n" +
+                    "    \n" +
+                    "SELECT Cars.id as id, group_concat(DISTINCT concat_ws(' ', make, model, year)) as name, \n" +
+                    "\t\tname as category, price, rating, numVotes,\n" +
+                    "        group_concat(DISTINCT address ORDER BY numCars DESC, address SEPARATOR ';') as address, \n" +
+                    "        group_concat(DISTINCT phoneNumber ORDER BY numCars DESC, address SEPARATOR ';') as phoneNumber,\n" +
+                    "        group_concat(DISTINCT pickupLocationID ORDER BY numCars DESC, address SEPARATOR ';') as pickupID\n" +
+                    "FROM category_of_car, Category, Cars, CarPrices, Ratings, numberedPickup, PickupLocation\n" +
+                    "WHERE category_of_car.categoryID = Category.id AND category_of_car.carID = Cars.id AND Cars.id = CarPrices.carID"+ additional + "\n" +
+                    "\tAND Ratings.carID = Cars.id AND numberedPickup.carID = Cars.id AND numberedPickup.pickupLocationID = PickupLocation.id\n" +
+                    "GROUP BY Cars.id\n" +
+                    "ORDER BY rating DESC\n" +
+                    "LIMIT 100;";*/
+
+            String query = "WITH pickupCarCounts AS (SELECT pickupLocationID, COUNT(DISTINCT carID) as numCars \n" +
+                    "\tFROM pickup_car_from \n" +
+                    "    GROUP BY pickupLocationID)\n" +
+                    "    \n" +
+                    "SELECT Cars.id as id, group_concat(DISTINCT concat_ws(' ', make, model, year)) as name, \n" +
+                    "\t\tname as category, price, rating, numVotes,\n" +
+                    "        group_concat(DISTINCT address ORDER BY numCars DESC, address SEPARATOR ';') as address, \n" +
+                    "        group_concat(DISTINCT phoneNumber ORDER BY numCars DESC, address SEPARATOR ';') as phoneNumber,\n" +
+                    "        group_concat(DISTINCT PickupLocation.id ORDER BY numCars DESC, address SEPARATOR ';') as pickupID\n" +
+                    "FROM category_of_car, Category, Cars, CarPrices, Ratings, pickupCarCounts, pickup_car_from, PickupLocation\n" +
+                    "WHERE category_of_car.categoryID = Category.id AND category_of_car.carID = Cars.id AND Cars.id = CarPrices.carID" + additional + " \n" +
+                    "\tAND Ratings.carID = Cars.id AND pickup_car_from.carID = Cars.id AND pickup_car_from.pickupLocationID = pickupCarCounts.pickupLocationID AND pickup_car_from.pickupLocationID = PickupLocation.id\n" +
+                    "GROUP BY Cars.id\n" +
+                    "ORDER BY rating DESC\n" +
+                    "LIMIT 100; ";
 
             System.out.println("query:\n" + query);
 
@@ -110,6 +144,7 @@ public class BrowseServlet extends HttpServlet {
 
             // Iterate through each row of rs
             int count = 0;
+            Pattern firstThree = Pattern.compile("^([^;]+;[^;]+;[^;]+).*");
             while (rs.next() && count++ < 20) {
                 String car_id = rs.getString("id");
                 String car_name = rs.getString("name");
@@ -130,9 +165,17 @@ public class BrowseServlet extends HttpServlet {
                 jsonObject.addProperty("car_category", car_category);
                 jsonObject.addProperty("car_rating", car_rating);
                 jsonObject.addProperty("car_votes", car_votes);
-                jsonObject.addProperty("location_address", location_address);
-                jsonObject.addProperty("location_phone", location_phone);
-                jsonObject.addProperty("location_ids", location_ids);
+
+                Matcher addresses = firstThree.matcher(location_address);
+                Matcher phones = firstThree.matcher(location_phone);
+                Matcher ids = firstThree.matcher(location_ids);
+                addresses.find();
+                phones.find();
+                ids.find();
+
+                jsonObject.addProperty("location_address", addresses.group(1));
+                jsonObject.addProperty("location_phone", phones.group(1));
+                jsonObject.addProperty("location_ids", ids.group(1));
                 System.out.println(jsonObject.toString());
                 jsonArray.add(jsonObject);
             }
