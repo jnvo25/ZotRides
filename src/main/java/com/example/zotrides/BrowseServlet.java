@@ -48,7 +48,6 @@ public class BrowseServlet extends HttpServlet {
         String yearDigit = request.getParameter("year");
         String modelLetter = request.getParameter("model");
 
-
         // Output stream to STDOUT
         PrintWriter out = response.getWriter();
 
@@ -84,7 +83,13 @@ public class BrowseServlet extends HttpServlet {
                 additional += " AND categoryID = " + catID;
             }
             if (modelLetter != null && !modelLetter.isEmpty())
-                additional += " AND model LIKE \"" + modelLetter + "%\"";
+                if (modelLetter.equals("*")) {
+                    // wild card
+                    additional += " AND model RLIKE \"^[^A-Za-z0-9].*\"";
+                } else {
+                    // alphabetical
+                    additional += " AND model LIKE \"" + modelLetter + "%\"";
+                }
             if (yearDigit != null && !yearDigit.isEmpty())
                 additional += " AND year LIKE \"" + yearDigit + "%\"";
 
