@@ -25,17 +25,6 @@ import java.util.ArrayList;
 @WebServlet(name = "ShoppingCartServlet", urlPatterns = "/api/shopping-cart")
 public class ShoppingCartServlet extends HttpServlet {
 
-    // Create a dataSource which registered in web.xml
-    private DataSource dataSource;
-
-    public void init(ServletConfig config) {
-        try {
-            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides");
-        } catch (NamingException e) {
-            e.printStackTrace();
-        }
-    }
-
     /**
      * handles GET requests to view shopping cart
      */
@@ -81,7 +70,6 @@ public class ShoppingCartServlet extends HttpServlet {
         System.out.println("name: " + name + " pickupLocation: " + pickupLocation + " dates: " + startDate + " " + endDate
             + " unitPrice: " + unitPrice);
 
-        // TODO: store customerID in LoginServlet to session
         HttpSession session = request.getSession();
 
         // get the previous items in a ArrayList
@@ -98,37 +86,6 @@ public class ShoppingCartServlet extends HttpServlet {
             }
         }
 
-        try (Connection conn = dataSource.getConnection()) {
-
-            // Declare our statement
-            Statement statement = conn.createStatement();
-
-            String query = "";
-            for (CartItem item : previousItems) {
-                // TODO : need to access customer ID
-                String customerID = request.getSession().getAttribute("customerID").toString();
-                query += item.toQuery(customerID);
-            }
-
-            // Perform the query
-            int numLinesEdited = statement.executeUpdate(query);
-
-            // set response status to 200 (OK)
-            response.setStatus(200);
-            statement.close();
-
-        } catch (Exception e) {
-
-            // write error message JSON object to output
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("status", "fail");
-            jsonObject.addProperty("message", e.getMessage());
-            response.getWriter().write(jsonObject.toString());
-
-            // set response status to 500 (Internal Server Error)
-            response.setStatus(500);
-
-        }
         JsonObject responseJsonObject = new JsonObject();
         responseJsonObject.addProperty("status", "success");
         responseJsonObject.addProperty("message", "success");
