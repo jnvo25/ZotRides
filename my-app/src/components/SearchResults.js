@@ -12,7 +12,7 @@ export default function(props) {
     useEffect(() => {
         jQuery.ajax({
             dataType: "json",
-            method: "GET",
+            method: "POST",
             data: removeEmpty(props.match.params),
             url: HOST + "api/search-car",
             success: (resultData) => {

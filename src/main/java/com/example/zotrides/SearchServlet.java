@@ -11,6 +11,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -41,6 +42,7 @@ public class SearchServlet extends HttpServlet {
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
      *      response)
      */
+    /*
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json"); // Response mime type
 
@@ -68,7 +70,7 @@ public class SearchServlet extends HttpServlet {
             if (location != null && !location.isEmpty())
                 addtionalLoc += " AND address LIKE \"%" + location + "%\"";
 
-            /*
+
             String query = "SELECT Cars.id as id, group_concat(DISTINCT concat_ws(' ', make, model, year)) as name, \n" +
                     "\t\tname as category, rating, numVotes,\n" +
                     "        group_concat(DISTINCT address ORDER BY pickupLocationID SEPARATOR ';') as address, \n" +
@@ -79,9 +81,9 @@ public class SearchServlet extends HttpServlet {
                     "\tAND Ratings.carID = Cars.id AND pickup_car_from.carID = Cars.id AND pickup_car_from.pickupLocationID = PickupLocation.id\n" +
                     "GROUP BY Cars.id\n" +
                     "ORDER BY rating DESC\n"+
-                    "LIMIT 100;";*/
+                    "LIMIT 100;";
 
-            /*
+
             String query = "WITH car_info(id, model, make, year, name, price, rating, numVotes) AS\n" +
                     "\t(SELECT Cars.id, model, make, year, name, price, rating, numVotes\n" +
                     "\tFROM Cars, category_of_car, Category, CarPrices, Ratings\n" +
@@ -103,7 +105,7 @@ public class SearchServlet extends HttpServlet {
                     "WHERE car_info.id = numbered_pickup.carID AND numbered_pickup.num < 4 AND numbered_pickup.pickupLocationID = PickupLocation.id"+ addtionalLoc + "\n" +
                     "GROUP BY car_info.id\n" +
                     "ORDER BY rating DESC\n" +
-                    "LIMIT 100;";*/
+                    "LIMIT 100;";
 
             String query = "WITH pickupCarCounts AS (SELECT pickupLocationID, COUNT(DISTINCT carID) as numCars \n" +
                     "\tFROM pickup_car_from \n" +
@@ -121,6 +123,89 @@ public class SearchServlet extends HttpServlet {
                     "GROUP BY Cars.id\n" +
                     "ORDER BY rating DESC\n" +
                     "LIMIT 100; ";
+
+            System.out.println("query:\n" + query);
+
+            // Declare our statement
+            PreparedStatement statement = conn.prepareStatement(query);
+
+            // Perform the query
+            ResultSet rs = statement.executeQuery();
+
+            JsonArray jsonArray = new JsonArray();
+
+            // Iterate through each row of rs
+            int count = 0;
+            Pattern firstThree = Pattern.compile("^([^;]+;[^;]+;[^;]+).*");
+            while (rs.next() && count++ < 20) {
+                String car_id = rs.getString("id");
+                String car_name = rs.getString("name");
+                String car_category = rs.getString("category");
+                double car_rating = rs.getDouble("rating");
+                int car_votes = rs.getInt("numVotes");
+                String location_address = rs.getString("address");
+                String location_phone = rs.getString("phoneNumber");
+                String location_ids = rs.getString("pickupID");
+
+                // Create a JsonObject based on the data we retrieve from rs
+                JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("car_id", car_id);
+                jsonObject.addProperty("car_name", car_name);
+                jsonObject.addProperty("car_category", car_category);
+                jsonObject.addProperty("car_rating", car_rating);
+                jsonObject.addProperty("car_votes", car_votes);
+
+                Matcher addresses = firstThree.matcher(location_address);
+                Matcher phones = firstThree.matcher(location_phone);
+                Matcher ids = firstThree.matcher(location_ids);
+                addresses.find();
+                phones.find();
+                ids.find();
+
+                jsonObject.addProperty("location_address", addresses.group(1));
+                jsonObject.addProperty("location_phone", phones.group(1));
+                jsonObject.addProperty("location_ids", ids.group(1));
+
+                System.out.println(jsonObject.toString());
+                jsonArray.add(jsonObject);
+            }
+
+            // write JSON string to output
+            out.write(jsonArray.toString());
+            // set response status to 200 (OK)
+            response.setStatus(200);
+
+            rs.close();
+            statement.close();
+
+        } catch (Exception e) {
+            // write error message JSON object to output
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("errorMessage", e.getMessage());
+            out.write(jsonObject.toString());
+
+            // set response status to 500 (Internal Server Error)
+            response.setStatus(500);
+        } finally {
+            out.close();
+        }
+    }*/
+
+    /**
+     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+     *      response)
+     */
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("application/json"); // Response mime type
+
+        // Output stream to STDOUT
+        PrintWriter out = response.getWriter();
+
+        try (Connection conn = dataSource.getConnection()) {
+            // retrieve query
+            HttpSession session = request.getSession();
+            CarListSettings previousSettings = (CarListSettings) session.getAttribute("previousSettings");
+            String query = previousSettings.toQuery();
 
             System.out.println("query:\n" + query);
 
@@ -190,8 +275,64 @@ public class SearchServlet extends HttpServlet {
         } finally {
             out.close();
         }
+    }
 
+    /**
+     * handles POST requests to store query in session
+     */
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // Retrieve parameters from url request
+        String model = request.getParameter("model");
+        String year = request.getParameter("year");
+        String make = request.getParameter("make");
+        String location = request.getParameter("location");
 
+        // Process parameters to get query restrictions
+        String additional = "";
+        if (model != null && !model.isEmpty())
+            additional += " AND model LIKE \"%" + model + "%\"";
+        if (year != null && !year.isEmpty())
+            additional += " AND year = " + year;
+        if (make != null && !make.isEmpty())
+            additional += " AND make LIKE \"%" + make + "%\"";
+
+        String addtionalLoc = "";
+        if (location != null && !location.isEmpty())
+            addtionalLoc += " AND address LIKE \"%" + location + "%\"";
+
+        // Integrate into a base form of the query
+        String query = "WITH pickupCarCounts AS (SELECT pickupLocationID, COUNT(DISTINCT carID) as numCars \n" +
+                "\tFROM pickup_car_from \n" +
+                "    GROUP BY pickupLocationID)\n" +
+                "    \n" +
+                "SELECT Cars.id as id, group_concat(DISTINCT concat_ws(' ', make, model, year)) as name, \n" +
+                "\t\tname as category, price, rating, numVotes,\n" +
+                "        group_concat(DISTINCT address ORDER BY numCars DESC, address SEPARATOR ';') as address, \n" +
+                "        group_concat(DISTINCT phoneNumber ORDER BY numCars DESC, address SEPARATOR ';') as phoneNumber,\n" +
+                "        group_concat(DISTINCT PickupLocation.id ORDER BY numCars DESC, address SEPARATOR ';') as pickupID\n" +
+                "FROM category_of_car, Category, Cars, CarPrices, Ratings, pickupCarCounts, pickup_car_from, PickupLocation\n" +
+                "WHERE category_of_car.categoryID = Category.id AND category_of_car.carID = Cars.id AND Cars.id = CarPrices.carID" + additional + " \n" +
+                "\tAND Ratings.carID = Cars.id AND pickup_car_from.carID = Cars.id AND pickup_car_from.pickupLocationID = pickupCarCounts.pickupLocationID AND pickup_car_from.pickupLocationID = PickupLocation.id"+
+                addtionalLoc + "\n" +
+                "GROUP BY Cars.id\n";
+
+        // Store base query into session (to maintain consistency when jumping back to CarsList page)
+        HttpSession session = request.getSession();
+
+        CarListSettings previousSettings = (CarListSettings) session.getAttribute("previousSettings");
+        if (previousSettings == null) {
+            previousSettings = new CarListSettings(query, 1, 10);
+            session.setAttribute("previousSettings", previousSettings);
+        } else {
+            // prevent corrupted states through sharing under multi-threads
+            // will only be executed by one thread at a time
+            synchronized (previousSettings) {
+                previousSettings.reset(query, 1, 10);
+            }
+        }
+
+        // call GET request to return the main page
+        doGet(request, response);
     }
 
 }
