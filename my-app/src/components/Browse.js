@@ -20,7 +20,7 @@ export default function (props) {
         }
         jQuery.ajax({
             dataType: "json",
-            method: "GET",
+            method: "POST",
             data: data,
             url: HOST + "api/browse-car",
             success: (resultData) => {
@@ -52,7 +52,7 @@ export default function (props) {
         console.log(data)
         jQuery.ajax({
             dataType: "json",
-            method: "GET",
+            method: "POST",
             data: data,
             url: HOST + "api/browse-car",
             success: (resultData) => {
