@@ -41,8 +41,7 @@ public class CartItem {
     public void setEndDate(String date) {this.endDate = date;}
 
     public String toQuery(String customerID) {
-        return "INSERT INTO Reservations(startDate, endDate, customerID, carID, saleDate) VALUES('" +
-                startDate + "', '" + endDate + "', '" + customerID + "', '" + carID + "', '" + saleDate + "');";
+        return "('" + startDate + "', '" + endDate + "', '" + customerID + "', '" + carID + "', '" + saleDate + "')";
     }
 
 }

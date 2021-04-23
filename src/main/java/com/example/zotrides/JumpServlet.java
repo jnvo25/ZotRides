@@ -13,29 +13,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 // Declaring a WebServlet called JumpServlet, which maps to url "/api/jump"
 @WebServlet(name = "JumpServlet", urlPatterns = "/api/jump")
 public class JumpServlet extends HttpServlet {
     private static final long serialVersionUID = 2L;
-
-    // Create a dataSource which registered in web.xml
-    private DataSource dataSource;
-
-    public void init(ServletConfig config) {
-        try {
-            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides");
-        } catch (NamingException e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * handles GET requests & returns exact same previous query results with the same page / # results per page
