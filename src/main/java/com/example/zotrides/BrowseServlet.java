@@ -436,13 +436,14 @@ public class BrowseServlet extends HttpServlet {
                 firstTen.add(jsonArray.get(i));
             }
             //TODO: REPLACE WITH THIS SECTION & MAKE SURE THIS GETS PRINTED ON FRONTEND
-            /*
+
             JsonObject result = new JsonObject();
             result.add("results", firstTen);
             result.addProperty("message", previousSettings.getPaginationMessage());
-            out.write(result.toString());*/
+            out.write(result.toString());
             System.out.println("here");
-            out.write(firstTen.toString()); // write JSON string to output
+
+//            out.write(firstTen.toString()); // write JSON string to output
             response.setStatus(200);         // set response status to 200 (OK)
             rs.close();
             statement.close();

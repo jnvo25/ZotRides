@@ -28,6 +28,8 @@ public class CartItem {
         this.itemID = currentID++; // TODO: verify that ID is changing for each item
     }
 
+    //TODO: IMPLEMENT DATE QUANTITY + PRICE CALCULATION?
+
     /* accessor methods */
     public String getCarName() {return carName;}
     public String getPickupLocation() {return pickupLocation;}
