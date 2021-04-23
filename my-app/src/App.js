@@ -10,6 +10,7 @@ import Navbar from './components/NavBar';
 import Browse from "./components/Browse";
 import SearchResults from "./components/SearchResults";
 import MyCart from "./components/MyCart";
+import Payments from "./components/Payments";
 
 function App() {
     return (
@@ -36,6 +37,7 @@ const DefaultContainer = () => (
         <Route path="/" exact render={() => <Home />} />
         <Route path="/search/:model?/:year?/:make?/:location?" render={(props) => <SearchResults {...props}/>} />
         <Route path="/mycart" render={() => <MyCart />} />
+        <Route path="/payment" render={() => <Payments />} />
         <Route path="/cars/:carId" render={(props) => <SingleCar {...props} />} />
         <Route path="/locations/:locationId" render={(props) => <SingleLocation {...props} />} />
     </div>
