@@ -26,8 +26,6 @@ export default function(props) {
                     </Col>
                     <Col>
                         <UpdateCartForm
-                            locations={['a', 'b']}
-                            locationids={['a','b']}
                             id={props.carID}
                         />
                     </Col>

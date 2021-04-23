@@ -58,7 +58,7 @@ export default function(props) {
                             {errors.password}
                         </Form.Control.Feedback>
                     </Form.Group>
-                    <Button variant={"primary"} type={"submit"}>Add to cart</Button>
+                    <Button variant={"primary"} type={"submit"}>Update Reservation</Button>
                 </Form>
             )}
         </Formik>
