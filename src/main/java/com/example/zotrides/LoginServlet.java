@@ -51,7 +51,7 @@ public class LoginServlet extends HttpServlet {
                     "FROM Customers\n" +
                     "WHERE email = \"" + username + "\" AND password = \"" + password + "\";";
 
-            System.out.println("query is:\n" + query);
+//            System.out.println("query is:\n" + query);
 
             // Perform the query
             ResultSet rs = statement.executeQuery(query);
@@ -62,7 +62,7 @@ public class LoginServlet extends HttpServlet {
                 System.out.println("success");
             }
 
-            System.out.println("the user/pass combo is: " + isValid);
+//            System.out.println("the user/pass combo is: " + isValid);
 
             rs.close();
             statement.close();
