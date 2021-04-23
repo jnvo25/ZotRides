@@ -1,6 +1,8 @@
 import {Button, Card, Col} from "react-bootstrap";
 import {useState} from "react";
 import UpdateModal from "./CartItem/UpdateModal";
+import jQuery from "jquery";
+import HOST from "../../Host";
 
 export default function(props) {
 
@@ -8,6 +10,21 @@ export default function(props) {
 
     function handleUpdate() {
         setUpdate(!showUpdate);
+    }
+
+    function removeItem() {
+        jQuery.ajax({
+            dataType: "json",
+            method: "POST",
+            data: {
+                itemID: props.id
+            },
+            url: HOST + "api/delete-cart-item",
+            success: (resultData) => {
+                console.log(resultData);
+                window.location.reload(false);
+            }
+        });
     }
 
     return (
@@ -28,6 +45,7 @@ export default function(props) {
                     <p>Start Date: {props.start}</p>
                     <p>End Date: {props.end}</p>
                     <Button onClick={handleUpdate}>Update</Button>
+                    <Button className={"ml-4"} onClick={removeItem}>Remove</Button>
                 </Card.Body>
 
             </Card>
