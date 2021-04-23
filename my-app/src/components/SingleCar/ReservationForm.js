@@ -5,8 +5,12 @@ import jQuery from "jquery";
 import {Formik} from "formik";
 import {LinkContainer} from "react-router-bootstrap";
 import HOST from "../../Host";
+import {Redirect} from "react-router";
 
 export default function(props) {
+    const [submitted, setSubmitted] = useState(false);
+    if(submitted)
+        return <Redirect to={"/mycart"} />
     return (
         <Formik
             initialValues={{
@@ -26,6 +30,7 @@ export default function(props) {
                     url: HOST + "api/shopping-cart",
                     success: (resultData) => {
                         console.log(JSON.stringify(resultData));
+                        setSubmitted(true);
                         // if(resultData.status === "fail")
                         //     props.setError("Login failed (Invalid username/password");
                         // else
