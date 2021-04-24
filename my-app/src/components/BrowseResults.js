@@ -105,11 +105,27 @@ export default function(props) {
         });
     }
 
-    function setShown() {
-
+    function setShown(event) {
+        console.log(event.target.value);
+        setLoading(true);
+        jQuery.ajax({
+            dataType: "json",
+            method: "POST",
+            data: {resultsPerPage: event.target.value},
+            url: HOST + "api/paginate",
+            success: (resultData) => {
+                if (resultData.status === "fail")
+                    props.setError("Login failed (Invalid username/password");
+                else {
+                    console.log(resultData);
+                    setMessage(resultData.message);
+                    setCars(resultData.results);
+                    setLoading(false);
+                }
+            }
+        });
     }
-    console.log(isLoading);
-    console.log(cars);
+
     if(isLoading)
         return(<div>LOADING</div>)
     return (
@@ -117,10 +133,19 @@ export default function(props) {
             <Row>
                 <Col>
                     <Button onClick={handlePrevious}>Previous</Button>
-                    <Button onClick={handleNext}>Next</Button>
+                    <Button className={"ml-3"} onClick={handleNext}>Next</Button>
                 </Col>
                 <Col>
                     <p>{message}</p>
+                </Col>
+                <Col>
+                    <select name="show" id="cars" onChange={setShown}>
+                        <option>Set show</option>
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
                 </Col>
             </Row>
             <Row>
