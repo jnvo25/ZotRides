@@ -32,7 +32,8 @@ export default function(props) {
                 data: {model: query.key},
                 url: HOST + "api/browse-car",
                 success: (resultData) => {
-                    setCars(resultData);
+                    setCars(resultData.results);
+                    setMessage(resultData.message);
                     setLoading(false);
                 }
             });

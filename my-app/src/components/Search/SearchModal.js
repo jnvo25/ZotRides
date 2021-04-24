@@ -1,5 +1,8 @@
 import {Modal} from "react-bootstrap";
 import SearchForm from "./SearchModal/SearchForm";
+import {useEffect} from "react";
+import jQuery from "jquery";
+import HOST from "../../Host";
 
 export default function (props) {
 

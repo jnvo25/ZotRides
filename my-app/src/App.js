@@ -12,6 +12,7 @@ import SearchResults from "./components/SearchResults";
 import MyCart from "./components/MyCart";
 import Payments from "./components/Payments";
 import BrowseResults from "./components/BrowseResults";
+import BrowseBy from "./components/BrowseBy";
 
 function App() {
     return (
@@ -42,6 +43,7 @@ const DefaultContainer = () => (
         <Route path="/payment" render={() => <Payments />} />
         <Route path="/cars/:carId" render={(props) => <SingleCar {...props} />} />
         <Route path="/locations/:locationId" render={(props) => <SingleLocation {...props} />} />
+        <Route path="/browseby" render={() => <BrowseBy />} />
     </div>
 )
 

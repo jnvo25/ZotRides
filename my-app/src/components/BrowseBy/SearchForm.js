@@ -4,11 +4,10 @@ import {Redirect} from "react-router";
 import {useState} from "react";
 import jQuery from "jquery";
 
-export default function(props) {
+export default function() {
     const [complete, setComplete] = useState(false);
     const [query, setQuery] = useState({defaultQuery});
     if (complete) {
-        props.setModalShow(false);
         return (<Redirect to={"/browse" + "/" + query.model + "/" + query.year + "/" + query.make + "/" + query.location}/>);
     }
     return (
