@@ -11,6 +11,7 @@ import Browse from "./components/Browse";
 import SearchResults from "./components/SearchResults";
 import MyCart from "./components/MyCart";
 import Payments from "./components/Payments";
+import BrowseResults from "./components/BrowseResults";
 
 function App() {
     return (
@@ -32,10 +33,11 @@ const LoginContainer = () => (
 const DefaultContainer = () => (
     <div>
         <Navbar />
-        <Route path="/browse/:query" render={(props) => <Browse {...props} />} />
-        <Route path="/browse/:query/:category" render={(props) => <Browse {...props} />} />
+        {/*<Route path="/browse/:query" render={(props) => <Browse {...props} />} />*/}
+        {/*<Route path="/browse/:query/:category" render={(props) => <Browse {...props} />} />*/}
         <Route path="/" exact render={() => <Home />} />
         <Route path="/search/:model?/:year?/:make?/:location?" render={(props) => <SearchResults {...props}/>} />
+        <Route path="/browse/:model?/:year?/:make?/:location?/:key?/:retrace?" render={(props) => <BrowseResults {...props}/>} />
         <Route path="/mycart" render={() => <MyCart />} />
         <Route path="/payment" render={() => <Payments />} />
         <Route path="/cars/:carId" render={(props) => <SingleCar {...props} />} />
