@@ -43,14 +43,8 @@ export default function MyNav(props) {
                     </Nav>
                     <Nav className={"ml-auto"}>
                         {/*// TODO: Connecting search with variable flag*/}
-                        <LinkContainer to="/profile">
-                            <Nav.Link>Profile</Nav.Link>
-                        </LinkContainer>
                         <LinkContainer to="/mycart">
                             <Nav.Link>My Cart</Nav.Link>
-                        </LinkContainer>
-                        <LinkContainer to="/cart">
-                            <Nav.Link>Sign out</Nav.Link>
                         </LinkContainer>
                     </Nav>
                 </Navbar.Collapse>

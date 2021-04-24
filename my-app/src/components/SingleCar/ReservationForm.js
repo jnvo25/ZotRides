@@ -15,7 +15,7 @@ export default function(props) {
         <Formik
             initialValues={{
                 name: props.name,
-                cardID: props.cardID,
+                carID: props.carID,
                 unitPrice: props.unitPrice
             }}
             onSubmit={(async (values) => {

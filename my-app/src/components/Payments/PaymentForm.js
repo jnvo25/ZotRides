@@ -7,22 +7,30 @@ import React from "react";
 export default function() {
     return (
         <Formik
-            initialValues={{}}
+            initialValues={{firstname:"Terry", lastname:"Mitchell", cc:"107001", month:"06", day:"12", year:"2008"}}
             onSubmit={(async (values) => {
-                console.log(values);
-                // props.setLoading(true);
-                // console.log(JSON.parse(JSON.stringify(values)));
-                // jQuery.ajax({
-                //     dataType: "json",
-                //     method: "POST",
-                //     data: values,
-                //     url: HOST + "api/login",
-                //     success: (resultData) => {
-                //         //setCar(resultData[0]);
-                //         //setLoading(false);
-                //         console.log(JSON.stringify(resultData));
-                //     }
-                // });
+                console.log({
+                    firstName: values.firstname,
+                    lastName: values.lastname,
+                    ccNumber: values.cc,
+                    expDate: values.year + "/" + values.month + "/" + values.day
+                });
+                jQuery.ajax({
+                    dataType: "json",
+                    method: "POST",
+                    data: {
+                        firstName: values.firstname,
+                        lastName: values.lastname,
+                        ccNumber: values.cc,
+                        expDate: values.year + "/" + values.month + "/" + values.day
+                    },
+                    url: HOST + "api/payment",
+                    success: (resultData) => {
+                        //setCar(resultData[0]);
+                        //setLoading(false);
+                        console.log(resultData);
+                    }
+                });
             })}
         >
             {({
@@ -30,7 +38,6 @@ export default function() {
                   handleChange,
                   handleBlur,
                   values,
-                  touched,
                   errors,
               }) => (
                 <Form noValidate onSubmit={handleSubmit}>

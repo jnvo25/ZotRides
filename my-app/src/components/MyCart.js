@@ -1,8 +1,9 @@
 import Header from "./Template/Header";
 import CartItem from "./MyCart/CartItem";
-import {Container, Modal, Row, Col, Image} from "react-bootstrap";
+import {Container, Button, Row, Col, Image} from "react-bootstrap";
 import UpdateCartForm from './MyCart/UpdateCartForm';
 import SearchForm from "./Search/SearchModal/SearchForm";
+import {LinkContainer} from 'react-router-bootstrap';
 import {useState, useEffect} from "react";
 import jQuery from "jquery";
 import HOST from "../Host";
@@ -13,7 +14,6 @@ export default function() {
     const [cars, setCars] = useState([]);
 
     useEffect(() => {
-
         jQuery.ajax({
             dataType: "json",
             method: "GET",
@@ -33,18 +33,26 @@ export default function() {
         <div>
         <Header title={"My Cart"}/>
         <Container>
-
             <Row>
-                {cars.map((car, index) => (
-                    <CartItem
-                        key={index}
-                        id={car.id}
-                        name={car.name}
-                        location={car.pickupLocation}
-                        start={car.startDate}
-                        end={car.endDate}
-                    />
-                ))}
+                <Col xs={8}>
+                    {cars.map((car, index) => (
+                        <CartItem
+                            key={index}
+                            id={car.id}
+                            name={car.name}
+                            location={car.pickupLocation}
+                            start={car.startDate}
+                            end={car.endDate}
+                            price={car.unitPrice}
+                        />
+                    ))}
+                </Col>
+                <Col>
+                    <LinkContainer to={"/payment"}>
+                        <Button>Continue to Payment</Button>
+                    </LinkContainer>
+
+                </Col>
             </Row>
         </Container>
         </div>
