@@ -7,11 +7,13 @@ import React from "react";
 import Header from "./Template/Header";
 import ReservationForm from "./SingleCar/ReservationForm";
 import HOST from "../Host";
+import {Redirect} from "react-router";
 
 
 export default function SingleCar(props) {
     const [isLoading, setLoading] = useState(true);
     const [car, setCar] = useState(EMPTY_CAR);
+    const [redirect, setRedirect] = useState(false);
 
 
     useEffect(() => {
@@ -25,10 +27,17 @@ export default function SingleCar(props) {
             }
         });
     }, [])
+
+    function handleClick() {
+        setRedirect(true);
+    }
+
     if(isLoading) {
         return (<div>Loading...</div>)
     }
-    console.log(props)
+    console.log(redirect);
+    if(redirect) return <Redirect to={"/browse/na/na/na/na/na/t"} />
+
     return (
         <div>
             <Header title={"Single Car Page"}/>
@@ -71,9 +80,10 @@ export default function SingleCar(props) {
                 </Row>
 
                 <Row>
-                    <LinkContainer to={'/'}>
-                        <a>>> Back to homepage</a>
-                    </LinkContainer>
+                    <Button variant="link" onClick={handleClick}>
+                        >> Back to Browse
+                    </Button>
+
                 </Row>
             </Container>
         </div>
