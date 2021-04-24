@@ -8,6 +8,9 @@ export default function(props) {
     const [cars, setCars] = useState({});
     const [isLoading, setLoading] = useState(true);
     const [message, setMessage] = useState("");
+    const [whoFirst, setFirst] = useState(0);
+    const [ratingDescend, setRatingDescend] = useState(0);
+    const [nameDescend, setNameDescend] = useState(0);
 
     useEffect(() => {
         const query = removeEmpty(props.match.params);
@@ -127,22 +130,17 @@ export default function(props) {
         });
     }
 
-    function handleSort(event) {
-        console.log(event.target.value);
-        const data = {
-            ratingFirst: event.target.value[0]
-        }
-        if(event.target.value[1] !== "?"){
-            data["ratingDescend"] = event.target.value[1];
-        } else {
-            data["nameDescend"] = event.target.value[2];
-        }
-
+    function handleRatingSort(event) {
+        setRatingDescend(event.target.value);
         setLoading(true);
         jQuery.ajax({
             dataType: "json",
             method: "POST",
-            data: {resultsPerPage: event.target.value},
+            data: {
+                ratingFirst: whoFirst,
+                ratingDescend: ratingDescend,
+                nameDescend: nameDescend
+            },
             url: HOST + "api/sort",
             success: (resultData) => {
                 if (resultData.status === "fail")
@@ -157,6 +155,60 @@ export default function(props) {
         });
     }
 
+    function handleNameSort(event) {
+        setNameDescend(event.target.value);
+        setLoading(true);
+        jQuery.ajax({
+            dataType: "json",
+            method: "POST",
+            data: {
+                ratingFirst: whoFirst,
+                ratingDescend: ratingDescend,
+                nameDescend: nameDescend
+            },
+            url: HOST + "api/sort",
+            success: (resultData) => {
+                if (resultData.status === "fail")
+                    props.setError("Login failed (Invalid username/password");
+                else {
+                    console.log(resultData);
+                    setMessage(resultData.message);
+                    setCars(resultData.results);
+                    setLoading(false);
+                }
+            }
+        });
+    }
+
+    function handleSortPref(event) {
+        setFirst(event.target.value);
+        setLoading(true);
+        jQuery.ajax({
+            dataType: "json",
+            method: "POST",
+            data: {
+                ratingFirst: whoFirst,
+                ratingDescend: ratingDescend,
+                nameDescend: nameDescend
+            },
+            url: HOST + "api/sort",
+            success: (resultData) => {
+                if (resultData.status === "fail")
+                    props.setError("Login failed (Invalid username/password");
+                else {
+                    console.log(resultData);
+                    setMessage(resultData.message);
+                    setCars(resultData.results);
+                    setLoading(false);
+                }
+            }
+        });
+    }
+    console.log({
+        ratingFirst: whoFirst,
+        ratingDescend: ratingDescend,
+        nameDescend: nameDescend
+    })
     if(isLoading)
         return(<div>LOADING</div>)
     return (
@@ -179,12 +231,20 @@ export default function(props) {
                     </select>
                 </Col>
                 <Col>
-                    <select name="sort" id="sort" onChange={handleSort}>
-                        <option>Select sort</option>
-                        <option value="0?0">By Title Ascending</option>
-                        <option value="0?1">By Title Descending</option>
-                        <option value="10?">By Rating Ascending</option>
-                        <option value="11?">By Rating Descending</option>
+                    <select name="sort" id="sort" onChange={handleSortPref}>
+                        <option>Select sort preference</option>
+                        <option value="1">By Rating First</option>
+                        <option value="0">By Title First</option>
+                    </select>
+                    <select name="sort" id="sort" onChange={handleNameSort}>
+                        <option>Select Title Order</option>
+                        <option value="0">By Title Ascending</option>
+                        <option value="1">By Title Descending</option>
+                    </select>
+                    <select name="sort" id="sort" onChange={handleRatingSort}>
+                        <option>Select Rating Order</option>
+                        <option value="0">By Rating Ascending</option>
+                        <option value="1">By Rating Descending</option>
                     </select>
                 </Col>
             </Row>

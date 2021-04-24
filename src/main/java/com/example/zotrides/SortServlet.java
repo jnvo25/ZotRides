@@ -149,7 +149,8 @@ public class SortServlet extends HttpServlet {
         boolean ratingDesc = ratingDescend != null && ratingDescend.equals("1");
         boolean nameDesc = nameDescend != null && nameDescend.equals("1");
         boolean ratingIsFirst = ratingFirst != null && ratingFirst.equals("1");
-
+        System.out.println("VaLUES: " + ratingDescend + " " + nameDescend + " " + ratingFirst);
+        System.out.println("BOOLS: " + ratingDesc + " " + nameDesc + " " + ratingIsFirst);
         // Setup for response + get session, which should already exist (to maintain consistency when jumping back to CarsList page)
         HttpSession session = request.getSession();
         CarListSettings previousSettings = (CarListSettings) session.getAttribute("previousSettings");
