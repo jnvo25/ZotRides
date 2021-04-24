@@ -127,6 +127,36 @@ export default function(props) {
         });
     }
 
+    function handleSort(event) {
+        console.log(event.target.value);
+        const data = {
+            ratingFirst: event.target.value[0]
+        }
+        if(event.target.value[1] !== "?"){
+            data["ratingDescend"] = event.target.value[1];
+        } else {
+            data["nameDescend"] = event.target.value[2];
+        }
+
+        setLoading(true);
+        jQuery.ajax({
+            dataType: "json",
+            method: "POST",
+            data: {resultsPerPage: event.target.value},
+            url: HOST + "api/sort",
+            success: (resultData) => {
+                if (resultData.status === "fail")
+                    props.setError("Login failed (Invalid username/password");
+                else {
+                    console.log(resultData);
+                    setMessage(resultData.message);
+                    setCars(resultData.results);
+                    setLoading(false);
+                }
+            }
+        });
+    }
+
     if(isLoading)
         return(<div>LOADING</div>)
     return (
@@ -146,6 +176,15 @@ export default function(props) {
                         <option value="25">25</option>
                         <option value="50">50</option>
                         <option value="100">100</option>
+                    </select>
+                </Col>
+                <Col>
+                    <select name="sort" id="sort" onChange={handleSort}>
+                        <option>Select sort</option>
+                        <option value="0?0">By Title Ascending</option>
+                        <option value="0?1">By Title Descending</option>
+                        <option value="10?">By Rating Ascending</option>
+                        <option value="11?">By Rating Descending</option>
                     </select>
                 </Col>
             </Row>
