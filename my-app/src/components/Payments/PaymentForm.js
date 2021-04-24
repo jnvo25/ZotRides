@@ -26,8 +26,6 @@ export default function() {
                     },
                     url: HOST + "api/payment",
                     success: (resultData) => {
-                        //setCar(resultData[0]);
-                        //setLoading(false);
                         console.log(resultData);
                     }
                 });
@@ -83,38 +81,39 @@ export default function() {
                     <Form.Group>
                         <Form.Label>Expiration Date</Form.Label>
                         <Row>
-                            <select
-                                name="month"
+                            <Col>
+                            <Form.Control
+                                type={"string"}
+                                name={"year"}
+                                id={"year"}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                value={values.year}
+                                placeholder={"Enter year"}
+                            />
+                            </Col>
+                            <Col>
+                            <Form.Control
+                                type={"string"}
+                                name={"month"}
+                                id={"month"}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
                                 value={values.month}
+                                placeholder={"Enter month"}
+                            />
+                            </Col>
+                            <Col>
+                            <Form.Control
+                                type={"string"}
+                                name={"day"}
+                                id={"day"}
                                 onChange={handleChange}
                                 onBlur={handleBlur}
-                                style={{ display: 'block' }}
-                            >
-                                <option value="" label="Select a month" />
-                                {
-                                    generateNumArray(13).map((num) => (
-                                        <option value={num} key={num}>
-                                            {num}
-                                        </option>
-                                    ))
-                                }
-                            </select>
-                            <select
-                                name="day"
                                 value={values.day}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                style={{ display: 'block' }}
-                            >
-                                <option value="" label="Select a day" />
-                                {
-                                    generateNumArray(32).map((num) => (
-                                        <option value={num} key={num}>
-                                            {num}
-                                        </option>
-                                    ))
-                                }
-                            </select>
+                                placeholder={"Enter day"}
+                            />
+                            </Col>
                         </Row>
 
                     </Form.Group>
@@ -130,6 +129,15 @@ function generateNumArray(total) {
     var result = [];
     var y = 0;
     for(var i=1; i<total; i++) {
+        result[y++] = i;
+    }
+    return result;
+}
+
+function generateNumArrayWithStart(start, total) {
+    var result = [];
+    var y = 0;
+    for(var i=start; i<total; i++) {
         result[y++] = i;
     }
     return result;
