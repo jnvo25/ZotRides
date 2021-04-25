@@ -157,6 +157,16 @@ public class SortServlet extends HttpServlet {
         response.setContentType("application/json"); // Response mime type
         PrintWriter out = response.getWriter(); // Output stream to STDOUT
 
+        // If doesn't exist, should be blank.
+        if (previousSettings == null) {
+            // should be empty page
+            JsonObject result = new JsonObject();
+            result.add("results", new JsonArray());
+            result.addProperty("message", "Please perform a search or browse first");
+            out.write(result.toString());
+            return;
+        }
+
         // store ordering settings into query
 
         // prevent corrupted states through sharing under multi-threads

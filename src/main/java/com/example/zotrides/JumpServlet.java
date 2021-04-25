@@ -28,7 +28,16 @@ public class JumpServlet extends HttpServlet {
         // Get previous settings from session, which should already exist
         HttpSession session = request.getSession();
         CarListSettings previousSettings = (CarListSettings) session.getAttribute("previousSettings");
-        //TODO: SHOULD ERROR MESSAGES BE CLEARED
+
+        // If doesn't exist, should be blank
+        if (previousSettings == null) {
+            // should be empty page
+            JsonObject result = new JsonObject();
+            result.add("results", new JsonArray());
+            result.addProperty("message", "Please perform a search or browse first");
+            response.getWriter().write(result.toString());
+            return;
+        }
 
         // return results
         JsonArray subArr = new JsonArray();

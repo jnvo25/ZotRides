@@ -65,6 +65,16 @@ public class PaginateServlet extends HttpServlet {
         response.setContentType("application/json"); // Response mime type
         PrintWriter out = response.getWriter();
 
+        // If doesn't exist, should be blank
+        if (previousSettings == null) {
+            // should be empty page
+            JsonObject result = new JsonObject();
+            result.add("results", new JsonArray());
+            result.addProperty("message", "Please perform a search or browse first");
+            out.write(result.toString());
+            return;
+        }
+
         // Increment or Decrement Page Number
         if (switchPg) {
             boolean isPageForward = pageStatus.equals("1");
