@@ -4,17 +4,11 @@ import {Button, Form, Row, Col} from "react-bootstrap";
 import {Formik} from "formik";
 import React from "react";
 
-export default function() {
+export default function(props) {
     return (
         <Formik
             initialValues={{firstname:"Terry", lastname:"Mitchell", cc:"107001", month:"06", day:"12", year:"2008"}}
             onSubmit={(async (values) => {
-                console.log({
-                    firstName: values.firstname,
-                    lastName: values.lastname,
-                    ccNumber: values.cc,
-                    expDate: values.year + "/" + values.month + "/" + values.day
-                });
                 jQuery.ajax({
                     dataType: "json",
                     method: "POST",
@@ -27,6 +21,10 @@ export default function() {
                     url: HOST + "api/payment",
                     success: (resultData) => {
                         console.log(resultData);
+                        if(resultData.status === "fail")
+                            props.setFailed(true);
+                        else
+                            props.setCompleted(true);
                     }
                 });
             })}

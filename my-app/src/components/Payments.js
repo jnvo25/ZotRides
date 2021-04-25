@@ -1,13 +1,19 @@
-import {Container, Row, Col} from "react-bootstrap";
+import {Container, Row, Col, Modal} from "react-bootstrap";
 import Header from "./Template/Header";
 import PaymentForm from "./Payments/PaymentForm";
 import {useEffect, useState} from "react";
 import jQuery from "jquery";
 import HOST from "../Host";
 
+import CarCard from "./Home/CarCard";
+import CartItem from "./MyCart/CartItem";
+import ConfirmationCard from "./MyCart/ConfirmationCard";
+
 export default function() {
     const [isLoading, setLoading] = useState(true);
     const [cars, setCars] = useState([]);
+    const [completed, setCompleted] = useState(false);
+    const [isFailed, setFailed] = useState(false);
 
     useEffect(() => {
         jQuery.ajax({
@@ -21,9 +27,61 @@ export default function() {
             }
         });
     }, [])
+
+    const handleClose = () => setFailed(false);
+
     console.log(cars);
     if (isLoading) {
         return (<div>Loading...</div>)
+    }
+    if (isFailed) {
+        return (
+            <Modal show={isFailed} onHide={handleClose} animation={false}>
+                <Modal.Header closeButton>
+                    <Modal.Title>ALERT</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>Transaction failed, please check your payment info</Modal.Body>
+            </Modal>
+        )
+    }
+    console.log(completed);
+    if (completed) {
+        return (
+            <div>
+                <Header title={"Confirmation"}/>
+                <Container>
+                    <Row>
+                        <Col>
+                            <h1>Thank you for your order!</h1>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <h3>Sales ID: {12341234}</h3>
+                            <h3>Total Price: ${calculateTotal(cars)}</h3>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <h2>Your reservations</h2>
+                    </Row>
+                    <Row>
+                        {cars.map((car, index) => (
+                            <Col xs={4}>
+                                <ConfirmationCard
+                                    key={index}
+                                    id={car.id}
+                                    name={car.name}
+                                    location={car.pickupLocation}
+                                    start={car.startDate}
+                                    end={car.endDate}
+                                    price={car.unitPrice}
+                                />
+                            </Col>
+                        ))}
+                    </Row>
+                </Container>
+            </div>
+        )
     }
     return (
         <div>
@@ -34,7 +92,7 @@ export default function() {
                         <h1>Cart Price: ${calculateTotal(cars)}</h1>
                     </Col>
                     <Col>
-                        <PaymentForm />
+                        <PaymentForm setFailed={setFailed} setCompleted={setCompleted}/>
                     </Col>
                 </Row>
             </Container>
