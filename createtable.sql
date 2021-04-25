@@ -10,6 +10,23 @@ CREATE TABLE Cars(
         year integer NOT NULL
 );
 
+DROP TABLE IF EXISTS CarPrices;
+CREATE TABLE CarPrices(
+        carID  varchar(10) NOT NULL PRIMARY KEY,
+        price integer NOT NULL,
+        FOREIGN KEY(carID) REFERENCES Cars(id)
+);
+
+/*
+DROP TABLE IF EXISTS Images;
+CREATE TABLE Images(
+        make  varchar(100) NOT NULL,
+        category varchar(100) NOT NULL,
+        imageurl varchar(100) NOT NULL,
+        PRIMARY KEY(make, category)
+);
+*/
+
 DROP TABLE IF EXISTS Category;
 CREATE TABLE Category(
         id  integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -48,9 +65,10 @@ CREATE TABLE Reservations(
         id  integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
         startDate date NOT NULL,
         endDate date NOT NULL,
-		-- saleDate date NOT NULL, 
         customerID integer NOT NULL,
         carID varchar(10) NOT NULL, 
+        saleDate date NOT NULL,
+        saleID integer NOT NULL,
         FOREIGN KEY(customerID) REFERENCES Customers(id),
         FOREIGN KEY(carID) REFERENCES Cars(id)
 );
