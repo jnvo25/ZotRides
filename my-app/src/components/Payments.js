@@ -1,13 +1,14 @@
-import {Container, Row, Col, Modal} from "react-bootstrap";
+import {Container, Row, Col, Modal, Button} from "react-bootstrap";
 import Header from "./Template/Header";
 import PaymentForm from "./Payments/PaymentForm";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import jQuery from "jquery";
 import HOST from "../Host";
 
 import CarCard from "./Home/CarCard";
 import CartItem from "./MyCart/CartItem";
 import ConfirmationCard from "./MyCart/ConfirmationCard";
+import {LinkContainer} from "react-router-bootstrap";
 
 export default function() {
     const [isLoading, setLoading] = useState(true);
@@ -79,6 +80,13 @@ export default function() {
                                 />
                             </Col>
                         ))}
+                    </Row>
+                    <Row>
+                        <LinkContainer to={'/browse/na/na/na/na/na/t'}>
+                            <Button variant="link">
+                                >> Back to Car List
+                            </Button>
+                        </LinkContainer>
                     </Row>
                 </Container>
             </div>
