@@ -4,7 +4,7 @@ import {Container, Button, Row, Col, Image} from "react-bootstrap";
 import UpdateCartForm from './MyCart/UpdateCartForm';
 import SearchForm from "./Search/SearchModal/SearchForm";
 import {LinkContainer} from 'react-router-bootstrap';
-import {useState, useEffect} from "react";
+import React, {useState, useEffect} from "react";
 import jQuery from "jquery";
 import HOST from "../Host";
 import CarCard from "./Home/CarCard";
@@ -53,6 +53,13 @@ export default function() {
                     </LinkContainer>
 
                 </Col>
+            </Row>
+            <Row>
+                <LinkContainer to={'/browse/na/na/na/na/na/t'}>
+                    <Button variant="link">
+                        >> Back to Car List
+                    </Button>
+                </LinkContainer>
             </Row>
         </Container>
         </div>

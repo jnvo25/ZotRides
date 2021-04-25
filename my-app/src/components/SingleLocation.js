@@ -63,7 +63,7 @@ export default function SingleLocation(props) {
                 <Row>
                     <LinkContainer to={'/browse/na/na/na/na/na/t'}>
                         <Button variant="link">
-                            >> Back to Browse
+                            >> Back to Car List
                         </Button>
                     </LinkContainer>
                 </Row>

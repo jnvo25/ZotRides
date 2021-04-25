@@ -78,7 +78,7 @@ export default function SingleCar(props) {
 
                 <Row>
                     <Button variant="link" onClick={handleClick}>
-                        >> Back to Browse
+                        >> Back to Car List
                     </Button>
 
                 </Row>
