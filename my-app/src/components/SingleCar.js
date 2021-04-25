@@ -51,6 +51,9 @@ export default function SingleCar(props) {
                             </Col>
                             <Col>
                                 <h1>{car.car_name}</h1>
+                                <LinkContainer to={"/browse/na/na/na/na/" + car.car_category}>
+                                    <p><i>{car.car_category}</i></p>
+                                </LinkContainer>
                                 <p>{car.car_rating} &#9733; ({car.car_votes} votes)</p>
                             </Col>
                         </Row>

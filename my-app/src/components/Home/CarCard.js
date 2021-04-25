@@ -1,8 +1,14 @@
-import React from 'react';
+import {useState} from 'react';
 import {Card, ListGroup, Col, Button} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
+import {Redirect} from "react-router";
 
 export default function CarCard(props) {
+
+    function handleRedirect() {
+        console.log("yes")
+        props.handleCategorySelect(props.category);
+    }
 
     return (
         <Col xs={4} className={"pt-3"}>
@@ -20,7 +26,7 @@ export default function CarCard(props) {
                             {props.name}
                         </Card.Title>
                     </LinkContainer>
-                    <p>{props.category}</p>
+                    <p onClick={handleRedirect}>{props.category}</p>
                     <p>{props.rating} &#9733; ({props.votes} votes)</p>
                     <ListGroup variant="flush">
                         {props.locations.map((location, index) => (

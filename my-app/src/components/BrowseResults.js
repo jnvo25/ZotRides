@@ -3,6 +3,7 @@ import jQuery from "jquery";
 import HOST from "../Host";
 import CarCard from "./Home/CarCard";
 import {Container, Row, Col, Button} from "react-bootstrap";
+import {Redirect} from "react-router";
 
 export default function(props) {
     const [cars, setCars] = useState({});
@@ -11,6 +12,8 @@ export default function(props) {
     const [whoFirst, setFirst] = useState(0);
     const [ratingDescend, setRatingDescend] = useState(0);
     const [nameDescend, setNameDescend] = useState(0);
+    const [redirect, setRedirect] = useState("");
+
 
     useEffect(() => {
         const query = removeEmpty(props.match.params);
@@ -177,6 +180,20 @@ export default function(props) {
         });
     }
 
+    function handleCategorySelect(key) {
+        setLoading(true);
+        jQuery.ajax({
+            dataType: "json",
+            method: "POST",
+            data: {category: key},
+            url: HOST + "api/browse-car",
+            success: (resultData) => {
+                setMessage(resultData.message);
+                setCars(resultData.results);
+                setLoading(false);                }
+        });
+    }
+
     if(isLoading)
         return(<div>LOADING</div>)
     return (
@@ -225,6 +242,7 @@ export default function(props) {
                         locations={car.location_address.split(';')}
                         locationId={car.location_ids.split(';')}
                         phone={car.location_phone.split(';')}
+                        handleCategorySelect={handleCategorySelect}
                     />
                 ))}
             </Row>
