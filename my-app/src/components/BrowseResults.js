@@ -15,7 +15,6 @@ export default function(props) {
     useEffect(() => {
         const query = removeEmpty(props.match.params);
         if(query.retrace != null) {
-            console.log("YO");
             jQuery.ajax({
                 dataType: "json",
                 method: "GET",
@@ -28,7 +27,6 @@ export default function(props) {
                 }
             });
         } else if(query.key != null && query.key.length === 1) {
-            console.log("Letter: " + query.key);
             jQuery.ajax({
                 dataType: "json",
                 method: "POST",
@@ -41,7 +39,6 @@ export default function(props) {
                 }
             });
         } else if(query.key != null) {
-            console.log("Category: " + query.key);
             jQuery.ajax({
                 dataType: "json",
                 method: "POST",
@@ -132,40 +129,40 @@ export default function(props) {
 
     function handleRatingSort(event) {
         setRatingDescend(event.target.value);
-        setLoading(true);
-        jQuery.ajax({
-            dataType: "json",
-            method: "POST",
-            data: {
-                ratingFirst: whoFirst,
-                ratingDescend: ratingDescend,
-                nameDescend: nameDescend
-            },
-            url: HOST + "api/sort",
-            success: (resultData) => {
-                if (resultData.status === "fail")
-                    props.setError("Login failed (Invalid username/password");
-                else {
-                    console.log(resultData);
-                    setMessage(resultData.message);
-                    setCars(resultData.results);
-                    setLoading(false);
-                }
-            }
+        sendSortQuery({
+            ratingFirst: whoFirst,
+            ratingDescend: event.target.value,
+            nameDescend: nameDescend
         });
     }
 
     function handleNameSort(event) {
         setNameDescend(event.target.value);
+        sendSortQuery({
+            ratingFirst: whoFirst,
+            ratingDescend: ratingDescend,
+            nameDescend: event.target.value
+        });
+    }
+
+    function handleSortPref(event) {
+        setFirst(event.target.value);
+        console.log("ratingFirst: " + event.target.value);
+        sendSortQuery({
+            ratingFirst: event.target.value,
+            ratingDescend: ratingDescend,
+            nameDescend: nameDescend
+        });
+    }
+
+    function sendSortQuery(data) {
         setLoading(true);
+        console.log("Sending:");
+        console.log(data)
         jQuery.ajax({
             dataType: "json",
             method: "POST",
-            data: {
-                ratingFirst: whoFirst,
-                ratingDescend: ratingDescend,
-                nameDescend: nameDescend
-            },
+            data: data,
             url: HOST + "api/sort",
             success: (resultData) => {
                 if (resultData.status === "fail")
@@ -180,35 +177,6 @@ export default function(props) {
         });
     }
 
-    function handleSortPref(event) {
-        setFirst(event.target.value);
-        setLoading(true);
-        jQuery.ajax({
-            dataType: "json",
-            method: "POST",
-            data: {
-                ratingFirst: whoFirst,
-                ratingDescend: ratingDescend,
-                nameDescend: nameDescend
-            },
-            url: HOST + "api/sort",
-            success: (resultData) => {
-                if (resultData.status === "fail")
-                    props.setError("Login failed (Invalid username/password");
-                else {
-                    console.log(resultData);
-                    setMessage(resultData.message);
-                    setCars(resultData.results);
-                    setLoading(false);
-                }
-            }
-        });
-    }
-    console.log({
-        ratingFirst: whoFirst,
-        ratingDescend: ratingDescend,
-        nameDescend: nameDescend
-    })
     if(isLoading)
         return(<div>LOADING</div>)
     return (
@@ -231,18 +199,15 @@ export default function(props) {
                     </select>
                 </Col>
                 <Col>
-                    <select name="sort" id="sort" onChange={handleSortPref}>
-                        <option>Select sort preference</option>
+                    <select name="sort" id="sort" value={whoFirst} onChange={handleSortPref}>
                         <option value="1">By Rating First</option>
                         <option value="0">By Title First</option>
                     </select>
-                    <select name="sort" id="sort" onChange={handleNameSort}>
-                        <option>Select Title Order</option>
+                    <select name="sort" id="sort" value={nameDescend} onChange={handleNameSort}>
                         <option value="0">By Title Ascending</option>
                         <option value="1">By Title Descending</option>
                     </select>
-                    <select name="sort" id="sort" onChange={handleRatingSort}>
-                        <option>Select Rating Order</option>
+                    <select name="sort" id="sort" value={ratingDescend} onChange={handleRatingSort}>
                         <option value="0">By Rating Ascending</option>
                         <option value="1">By Rating Descending</option>
                     </select>
