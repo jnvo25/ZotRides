@@ -129,6 +129,17 @@ public class CarListSettings {
         return query + ordering + pagination;
     }
 
+    /* get sorting settings for persistence */
+    public int getRatingFirst() {
+        return this.ratingFirst ? 1 : 0;
+    }
+    public int getRatingDescend() {
+        return this.ratingDescend ? 1 : 0;
+    }
+    public int getNameDescend() {
+        return this.nameDescend ? 1 : 0;
+    }
+
     /* get message to display page number (and possible errors) on front-end */
     public String getPaginationMessage() {
         return errorMessage + "Page: " + pageNumber;
