@@ -40,7 +40,8 @@ export default function(props) {
                     <Card.Title style={{fontSize: '30px'}} className={'mb-1'}>
                         {props.name}
                     </Card.Title>
-                    <p>Price: ${props.price*daysInBetween(props.start, props.end)}</p>
+                    <p>Price per Day: ${props.price}</p>
+                    <p>Total Price: ${props.price*daysInBetween(props.start, props.end)}</p>
                     <p>Days: {daysInBetween(props.start, props.end)}</p>
                     <p>Pickup Location: {props.location}</p>
                     <p>Start Date: {props.start}</p>
