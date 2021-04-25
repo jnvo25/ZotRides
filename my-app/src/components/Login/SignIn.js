@@ -7,7 +7,7 @@ import HOST from '../../Host';
 export default function(props) {
     return (
         <Formik
-            initialValues={{ username: "mcosley@gmail.com", password: "peiod3"}}
+            initialValues={{}}
             onSubmit={(async (values) => {
                 // props.setLoading(true);
                 // console.log(JSON.parse(JSON.stringify(values)));

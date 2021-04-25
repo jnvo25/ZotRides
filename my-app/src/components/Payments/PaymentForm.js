@@ -7,7 +7,7 @@ import React from "react";
 export default function(props) {
     return (
         <Formik
-            initialValues={{firstname:"Terry", lastname:"Mitchell", cc:"107001", month:"06", day:"12", year:"2008"}}
+            initialValues={{}}
             onSubmit={(async (values) => {
                 jQuery.ajax({
                     dataType: "json",
