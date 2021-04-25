@@ -14,6 +14,7 @@ export default function() {
     const [cars, setCars] = useState([]);
     const [completed, setCompleted] = useState(false);
     const [isFailed, setFailed] = useState(false);
+    const [salesId, setSalesId] = useState(-1);
 
     useEffect(() => {
         jQuery.ajax({
@@ -57,7 +58,7 @@ export default function() {
                     </Row>
                     <Row>
                         <Col>
-                            <h3>Sales ID: {12341234}</h3>
+                            <h3>Sales ID: {salesId}</h3>
                             <h3>Total Price: ${calculateTotal(cars)}</h3>
                         </Col>
                     </Row>
@@ -92,7 +93,7 @@ export default function() {
                         <h1>Cart Price: ${calculateTotal(cars)}</h1>
                     </Col>
                     <Col>
-                        <PaymentForm setFailed={setFailed} setCompleted={setCompleted}/>
+                        <PaymentForm setSalesId={setSalesId} setFailed={setFailed} setCompleted={setCompleted}/>
                     </Col>
                 </Row>
             </Container>
