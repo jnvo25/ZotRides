@@ -24,6 +24,9 @@ export default function(props) {
                 url: HOST + "api/jump",
                 success: (resultData) => {
                     console.log(resultData);
+                    setFirst(resultData.sorting.ratingFirst);
+                    setRatingDescend(resultData.sorting.ratingDescend);
+                    setNameDescend(resultData.sorting.nameDescend);
                     setCars(resultData.results);
                     setMessage(resultData.message);
                     setLoading(false);
