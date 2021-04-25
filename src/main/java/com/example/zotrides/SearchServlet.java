@@ -276,6 +276,10 @@ public class SearchServlet extends HttpServlet {
         }
     }*/
 
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        doPost(request, response);
+    }
+
     /**
      * handles POST requests to store query in session
      */
@@ -339,10 +343,11 @@ public class SearchServlet extends HttpServlet {
 
             // store query in temporary table
             query = previousSettings.toQuery();
-            statement = conn.prepareStatement("CREATE TEMPORARY TABLE temp\n" + query);
-            System.out.println("query:\n" + query);
+            statement = conn.prepareStatement("CREATE TEMPORARY TABLE temp\n" + query + ";");
+//            System.out.println("query:\n" + query + "\n");
             statement.executeUpdate();
             statement.close();
+
 
             // access results
             statement = conn.prepareStatement("SELECT * FROM temp LIMIT 100;");
@@ -351,8 +356,9 @@ public class SearchServlet extends HttpServlet {
             // process results
             JsonArray jsonArray = new JsonArray();
             int count = 0;
-            Pattern firstThree = Pattern.compile("^([^;]+;[^;]+;[^;]+).*");
-            while (rs.next() && count++ < 20) { // Iterate through each row of rs
+            //Pattern firstThree = Pattern.compile("^([^;]+;[^;]+;[^;]+).*"); //TODO : VERIFY THIS WORKS
+            Pattern firstThree = Pattern.compile("^(([^;]+;{0,1}){1,3}).*");
+            while (rs.next() && count++ < 100) { // Iterate through each row of rs
                 String car_id = rs.getString("id");
                 String car_name = rs.getString("name");
                 String car_category = rs.getString("category");
@@ -376,10 +382,13 @@ public class SearchServlet extends HttpServlet {
                 addresses.find();
                 phones.find();
                 ids.find();
+                String addr = addresses.group(1);
+                String phone = phones.group(1);
+                String ID = ids.group(1);
 
-                jsonObject.addProperty("location_address", addresses.group(1));
-                jsonObject.addProperty("location_phone", phones.group(1));
-                jsonObject.addProperty("location_ids", ids.group(1));
+                jsonObject.addProperty("location_address", addr.charAt(addr.length() - 1) == ';' ? addr.substring(0, addr.length() - 1) : addr);
+                jsonObject.addProperty("location_phone", phone.charAt(phone.length() - 1) == ';' ? phone.substring(0, phone.length() - 1) : phone);
+                jsonObject.addProperty("location_ids", ID.charAt(ID.length() - 1) == ';' ? ID.substring(0, ID.length() - 1) : ID);
 
 //                System.out.println(jsonObject.toString());
                 jsonArray.add(jsonObject);
@@ -389,6 +398,8 @@ public class SearchServlet extends HttpServlet {
             synchronized (previousSettings) { // TODO: WOULDN'T BOTHER CACHING THIS IF IT'S 100
                 previousSettings.setCache(jsonArray);
             }
+
+            System.out.println(jsonArray);
 
             // return results
             JsonArray firstTen = new JsonArray();
@@ -401,7 +412,6 @@ public class SearchServlet extends HttpServlet {
             result.add("results", firstTen);
             result.addProperty("message", previousSettings.getPaginationMessage());
             out.write(result.toString());
-            System.out.println("here");
 //            out.write(firstTen.toString()); // write JSON string to output
             response.setStatus(200);         // set response status to 200 (OK)
             rs.close();
@@ -419,6 +429,7 @@ public class SearchServlet extends HttpServlet {
             }
             rs.close();
             statement.close();
+            System.out.println("no issues");
 
         } catch (Exception e) {
             // write error message JSON object to output
@@ -427,7 +438,7 @@ public class SearchServlet extends HttpServlet {
             out.write(jsonObject.toString());
 
             // display on backend (more detailed)
-            System.out.println(e.getMessage());
+            System.out.println("error: " + e.getMessage());
 
             // set response status to 500 (Internal Server Error)
             response.setStatus(500);

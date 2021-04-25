@@ -116,7 +116,8 @@ public class PaginateServlet extends HttpServlet {
             // extract query results
             JsonArray jsonArray = new JsonArray(); // Iterate through each row of rs
             int count = 0;
-            Pattern firstThree = Pattern.compile("^([^;]+;[^;]+;[^;]+).*");
+//            Pattern firstThree = Pattern.compile("^([^;]+;[^;]+;[^;]+).*");
+            Pattern firstThree = Pattern.compile("^(([^;]+;{0,1}){1,3}).*");
             while (rs.next() && count++ < 100) {
                 String car_id = rs.getString("id");
                 String car_name = rs.getString("name");
@@ -142,11 +143,13 @@ public class PaginateServlet extends HttpServlet {
                 addresses.find();
                 phones.find();
                 ids.find();
+                String addr = addresses.group(1);
+                String phone = phones.group(1);
+                String ID = ids.group(1);
 
-                // Add the rest of the properties
-                jsonObject.addProperty("location_address", addresses.group(1));
-                jsonObject.addProperty("location_phone", phones.group(1));
-                jsonObject.addProperty("location_ids", ids.group(1));
+                jsonObject.addProperty("location_address", addr.charAt(addr.length() - 1) == ';' ? addr.substring(0, addr.length() - 1) : addr);
+                jsonObject.addProperty("location_phone", phone.charAt(phone.length() - 1) == ';' ? phone.substring(0, phone.length() - 1) : phone);
+                jsonObject.addProperty("location_ids", ID.charAt(ID.length() - 1) == ';' ? ID.substring(0, ID.length() - 1) : ID);
 //                System.out.println(jsonObject.toString());
                 jsonArray.add(jsonObject);
             }
