@@ -1,5 +1,5 @@
 import react, {useEffect, useState} from 'react';
-import {Jumbotron, Container, Row, Col} from 'react-bootstrap';
+import {Jumbotron, Container, Row, Col, Button} from 'react-bootstrap';
 import './stylesheets/Template.css';
 import jQuery from 'jquery';
 import {LinkContainer} from "react-router-bootstrap";
@@ -26,22 +26,45 @@ export default function SingleLocation(props) {
     if(isLoading) {
         return (<div>Loading...</div>)
     }
+    console.log(location)
     return (
         <div>
             <Header title={"Single Location Page"} />
-            <Container>
+            <Container fluid>
                 <Row>
-                    <Col>
-                        <p>{location.cars_ids}</p>
-                        <p>{location.cars_offered}</p>
-                        <p>{location.location_address}</p>
-                        <p>{location.location_id}</p>
-                        <p>{location.location_phone}</p>
+                    <Col xs={7}>
+                        <Row>
+                            <Col xs={2}>
+                                <p style={{textAlign: 'right'}}>The location</p>
+                            </Col>
+                            <Col>
+                                <h1>{location.location_address}</h1>
+                                <p>{location.location_phone}</p>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col xs={2}>
+                                <p style={{textAlign: 'right'}}>Cars here</p>
+                            </Col>
+                            <Col>
+                                {
+                                    location.cars_offered.split(';').map((car, index) => (
+                                        <Col>
+                                            <LinkContainer to={"/cars/" + location.cars_ids.split(";")[index]}>
+                                                <Button variant="link" key={index}>{car}</Button>
+                                            </LinkContainer>
+                                        </Col>
+                                    ))
+                                }
+                            </Col>
+                        </Row>
                     </Col>
                 </Row>
                 <Row>
-                    <LinkContainer to={'/'}>
-                        <a>>>Back to homepage</a>
+                    <LinkContainer to={'/browse/na/na/na/na/na/t'}>
+                        <Button variant="link">
+                            >> Back to Browse
+                        </Button>
                     </LinkContainer>
                 </Row>
             </Container>

@@ -21,10 +21,12 @@ export default function(props) {
                     url: HOST + "api/payment",
                     success: (resultData) => {
                         console.log(resultData);
-                        if(resultData.status === "fail")
+                        if(resultData.status === "fail") {
                             props.setFailed(true);
-                        else
+                        } else {
                             props.setCompleted(true);
+                            props.setSalesId(resultData.message);
+                        }
                     }
                 });
             })}
