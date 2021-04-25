@@ -290,6 +290,7 @@ public class SearchServlet extends HttpServlet {
         String make = request.getParameter("make");
         String location = request.getParameter("location");
 
+        /*
         // Process parameters to get query restrictions
         String additional = "";
         if (model != null && !model.isEmpty())
@@ -316,7 +317,41 @@ public class SearchServlet extends HttpServlet {
                 "WHERE category_of_car.categoryID = Category.id AND category_of_car.carID = Cars.id AND Cars.id = CarPrices.carID" + additional + " \n" +
                 "\tAND Ratings.carID = Cars.id AND pickup_car_from.carID = Cars.id AND pickup_car_from.pickupLocationID = pickupCarCounts.pickupLocationID AND pickup_car_from.pickupLocationID = PickupLocation.id"+
                 additionalLoc + "\n" +
-                "GROUP BY Cars.id\n";
+                "GROUP BY Cars.id\n"; */
+
+        String additional = "";
+        if (model != null && !model.isEmpty())
+            additional += " AND model LIKE \"%" + model + "%\"";
+        if (year != null && !year.isEmpty())
+            additional += " AND year = " + year;
+        if (make != null && !make.isEmpty())
+            additional += " AND make LIKE \"%" + make + "%\"";
+        if (location != null && !location.isEmpty())
+            additional += " AND address LIKE \"%" + location + "%\"";
+        String query = "WITH pickupCarCounts AS (SELECT pickupLocationID, COUNT(DISTINCT carID) as numCars \n" +
+                "\tFROM pickup_car_from \n" +
+                "    GROUP BY pickupLocationID),\n" +
+                "    \n" +
+                "    car_info AS (SELECT Cars.id as id, model, make, year, name, price, rating, numVotes\n" +
+                "\tFROM category_of_car, Category, Cars, CarPrices, Ratings, pickup_car_from, PickupLocation\n" +
+                "\tWHERE category_of_car.categoryID = Category.id\n" +
+                "\t\t\tAND Cars.id = category_of_car.carID \n" +
+                "            AND Cars.id = CarPrices.carID\n" +
+                "            AND Ratings.carID = Cars.id\n" +
+                "            AND pickup_car_from.carID = Cars.id\n" + additional + "\n" +
+                "            AND PickupLocation.id = pickup_car_from.pickupLocationID)\n" +
+                "    \n" +
+                "SELECT car_info.id as id, group_concat(DISTINCT concat_ws(' ', make, model, year)) as name, \n" +
+                "\t\tname as category, price, rating, numVotes,\n" +
+                "        group_concat(DISTINCT address ORDER BY numCars DESC, address SEPARATOR ';') as address, \n" +
+                "        group_concat(DISTINCT phoneNumber ORDER BY numCars DESC, address SEPARATOR ';') as phoneNumber,\n" +
+                "        group_concat(DISTINCT PickupLocation.id ORDER BY numCars DESC, address SEPARATOR ';') as pickupID\n" +
+                "FROM car_info, pickup_car_from, pickupCarCounts, PickupLocation\n" +
+                "WHERE pickup_car_from.carID = car_info.id AND pickup_car_from.pickupLocationID = pickupCarCounts.pickupLocationID AND pickup_car_from.pickupLocationID = PickupLocation.id\n" +
+                "GROUP BY car_info.id\n";
+
+//        System.out.println("query: \n" + query);
+//        String query = "";
 
         // Store base query into session (to maintain consistency when jumping back to CarsList page)
         HttpSession session = request.getSession();

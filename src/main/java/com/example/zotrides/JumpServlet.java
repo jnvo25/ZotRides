@@ -35,7 +35,13 @@ public class JumpServlet extends HttpServlet {
             JsonObject result = new JsonObject();
             result.add("results", new JsonArray());
             result.addProperty("message", "Please perform a search or browse first");
+            JsonObject sorting = new JsonObject();
+            sorting.addProperty("ratingFirst", 0);
+            sorting.addProperty("ratingDescend", 0);
+            sorting.addProperty("nameDescend", 0);
+            result.add("sorting", sorting);
             response.getWriter().write(result.toString());
+            System.out.println(result.toString());
             return;
         }
 
@@ -48,6 +54,11 @@ public class JumpServlet extends HttpServlet {
         JsonObject result = new JsonObject();
         result.add("results", subArr);
         result.addProperty("message", previousSettings.getPaginationMessage()); //TODO: MAKE SURE THIS GETS PRINTED ON FRONTEND
+        JsonObject sorting = new JsonObject();
+        sorting.addProperty("ratingFirst", previousSettings.getRatingFirst());
+        sorting.addProperty("ratingDescend", previousSettings.getRatingDescend());
+        sorting.addProperty("nameDescend", previousSettings.getNameDescend());
+        result.add("sorting", sorting);
         response.getWriter().write(result.toString()); // write JSON string to output
     }
 }
