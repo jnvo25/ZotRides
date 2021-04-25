@@ -42,8 +42,8 @@ public class CartItem {
     public void setStartDate(String date) {this.startDate = date;}
     public void setEndDate(String date) {this.endDate = date;}
 
-    public String toQuery(String customerID) {
-        return "('" + startDate + "', '" + endDate + "', '" + customerID + "', '" + carID + "', '" + saleDate + "')";
+    public String toQuery(String customerID, int saleID) {
+        return "('" + startDate + "', '" + endDate + "', '" + customerID + "', '" + carID + "', '" + saleDate + "', '" + saleID + "')";
     }
 
 }

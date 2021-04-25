@@ -85,17 +85,43 @@ public class PaymentServlet extends HttpServlet {
             HttpSession session = request.getSession();
             ArrayList<CartItem> previousItems = (ArrayList<CartItem>) session.getAttribute("previousItems");
 
+            // Get current sale ID
+            SaleMetaInfo saleInfo = (SaleMetaInfo) session.getAttribute("saleMetaInfo");
+            if (saleInfo == null) {
+                // perform query
+                query = "SELECT MAX(saleID) AS base FROM Reservations;";
+                statement = conn.createStatement();
+                rs = statement.executeQuery(query);
+
+                // if valid result, set saleID to returned value + 1
+                if (rs.next()) {
+                    saleInfo = new SaleMetaInfo(rs.getInt("base") + 1);
+                }
+
+                // otherwise table is empty, set first saleID
+                else {
+                    saleInfo = new SaleMetaInfo(1);
+                }
+
+                // add attribute to session
+                session.setAttribute("saleMetaInfo", saleInfo);
+                System.out.println("saleID: " + saleInfo.getSaleID());
+
+                statement.close();
+                rs.close();
+            }
+
             // Generate data update query
             query = previousItems != null && !previousItems.isEmpty()
-                    ? "INSERT INTO Reservations(startDate, endDate, customerID, carID, saleDate) VALUES"
+                    ? "INSERT INTO Reservations(startDate, endDate, customerID, carID, saleDate, saleID) VALUES"
                     : "";
-            String customerID = request.getSession().getAttribute("customerID").toString();
+            String customerID = session.getAttribute("customerID").toString();
             int i;
             for (i = 0; i < previousItems.size() - 1; ++i) {
-                query += previousItems.get(i).toQuery(customerID) + ",\n";
+                query += previousItems.get(i).toQuery(customerID, saleInfo.getSaleID()) + ",\n";
             }
             query += (previousItems.size() - 1 >= 0
-                        ? previousItems.get(i).toQuery(customerID) + ";"
+                        ? previousItems.get(i).toQuery(customerID, saleInfo.getSaleID()) + ";"
                         : "");
 
             System.out.println("update query is: " + query);
@@ -112,10 +138,16 @@ public class PaymentServlet extends HttpServlet {
                 System.out.println("empty : " + previousItems.isEmpty());
             }
 
+            // Increment sale ID
+            synchronized (saleInfo) {
+                saleInfo.nextSaleID();
+                System.out.println("incremented saleID to: " + saleInfo.getSaleID());
+            }
+
             // Return success message
             JsonObject result = new JsonObject();
             result.addProperty("status", "success");
-            result.addProperty("message", "success");
+            result.addProperty("message", saleInfo.getSaleID()); //TODO : DISPLAY SALE ID ON FRONTEND
             out.write(result.toString());
         } catch (Exception e) {
 
