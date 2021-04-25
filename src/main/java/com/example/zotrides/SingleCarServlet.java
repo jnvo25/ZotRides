@@ -48,19 +48,27 @@ public class SingleCarServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         try (Connection conn = dataSource.getConnection()) {
-            /*
-            String query = "WITH car_info(id, model, make, year, name, rating, numVotes) AS\n" +
-                    "\t(SELECT Cars.id, model, make, year, name, rating, numVotes\n" +
-                    "\tFROM Cars, category_of_car, Category, Ratings\n" +
-                    "\tWHERE Cars.id = '"+ id + "' \n" +
-                    "\t\t\tAND category_of_car.carID = '"+ id + "' \n" +
-                    "\t\t\tAND Category.id = category_of_Car.categoryID\n" +
-                    "\t\t\tAND Ratings.carID = '"+ id + "')\n" +
+            String query = "WITH numberedPickup AS\n" +
+                    "\t(SELECT carID, pickupLocationID, numCars \n" +
+                    "\tFROM pickup_car_from NATURAL JOIN (SELECT pickupLocationID, COUNT(DISTINCT carID) as numCars FROM pickup_car_from GROUP BY pickupLocationID) as numberedPickup),\n" +
                     "\n" +
-                    "SELECT car_info.id as id, group_concat(DISTINCT concat_ws(' ', make, model, year)) as name, name as category, rating, numVotes, group_concat(DISTINCT address SEPARATOR ';') as address, group_concat(DISTINCT phoneNumber SEPARATOR ';') as phoneNumber\n" +
-                    "FROM car_info, pickup_car_from, PickupLocation\n" +
-                    "WHERE car_info.id = pickup_car_from.carID AND pickup_car_from.pickupLocationID = PickupLocation.id;";*/
+                    "car_info(id, model, make, year, name, price, rating, numVotes) AS\n" +
+                    "\t(SELECT Cars.id, model, make, year, name, price, rating, numVotes\n" +
+                    "\tFROM Cars, category_of_car, Category, CarPrices, Ratings\n" +
+                    "\tWHERE Cars.id = '" + id + "' \n" +
+                    "\t\t\tAND category_of_car.carID = '" + id + "' \n" +
+                    "\t\t\tAND Category.id = category_of_car.categoryID\n" +
+                    "\t\t\tAND CarPrices.carID = '" + id + "' \n" +
+                    "\t\t\tAND Ratings.carID = '" + id + "')\n" +
+                    "\n" +
+                    "SELECT car_info.id as id, group_concat(DISTINCT concat_ws(' ', make, model, year)) as name, name as category, price, rating, numVotes, \n" +
+                    "\t\tgroup_concat(DISTINCT address ORDER BY numCars DESC, address SEPARATOR ';') as address, \n" +
+                    "        group_concat(DISTINCT phoneNumber ORDER BY numCars DESC, address SEPARATOR ';') as phoneNumber,\n" +
+                    "        group_concat(DISTINCT PickupLocation.id ORDER BY numCars DESC, address SEPARATOR ';') as pickupID\n" +
+                    "FROM car_info, numberedPickup, PickupLocation\n" +
+                    "WHERE car_info.id = numberedPickup.carID AND numberedPickup.pickupLocationID = PickupLocation.id;";
 
+            /*
             String query = "WITH car_info(id, model, make, year, name, price, rating, numVotes) AS\n" +
                     "\t(SELECT Cars.id, model, make, year, name, price, rating, numVotes\n" +
                     "\tFROM Cars, category_of_car, Category, CarPrices, Ratings\n" +
@@ -75,7 +83,7 @@ public class SingleCarServlet extends HttpServlet {
                     "        group_concat(DISTINCT phoneNumber ORDER BY PickupLocation.id SEPARATOR ';') as phoneNumber,\n" +
                     "        group_concat(DISTINCT PickupLocation.id ORDER BY PickupLocation.id SEPARATOR ';') as pickupID\n" +
                     "FROM car_info, pickup_car_from, PickupLocation\n" +
-                    "WHERE car_info.id = pickup_car_from.carID AND pickup_car_from.pickupLocationID = PickupLocation.id;";
+                    "WHERE car_info.id = pickup_car_from.carID AND pickup_car_from.pickupLocationID = PickupLocation.id;";*/
 //            System.out.println("query is\n" + query);
             // Declare our statement
             PreparedStatement statement = conn.prepareStatement(query);

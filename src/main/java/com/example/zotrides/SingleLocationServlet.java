@@ -54,8 +54,8 @@ public class SingleLocationServlet extends HttpServlet {
                     "\tWHERE PickupLocation.id = '" + id + "')\n" +
                     "\n" +
                     "SELECT pickup_info.id as id, address, phoneNumber,\n" +
-                    "\tgroup_concat(DISTINCT concat_ws(' ', make, model, year) ORDER BY carID ASC SEPARATOR ';') as name,\n" +
-                    "    group_concat(DISTINCT carID ORDER BY carID ASC SEPARATOR ';') as carID\n" +
+                    "\tgroup_concat(DISTINCT concat_ws(' ', make, model, year) ORDER BY year DESC, make, model SEPARATOR ';') as name,\n" +
+                    "    group_concat(DISTINCT carID ORDER BY year DESC, make, model SEPARATOR ';') as carID\n" +
                     "FROM pickup_info, pickup_car_from, Cars\n" +
                     "WHERE pickup_info.id = pickup_car_from.pickupLocationID\n" +
                     "\tAND Cars.id = pickup_car_from.carID\n" +
