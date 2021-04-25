@@ -8,6 +8,7 @@ import Header from "./Template/Header";
 import ReservationForm from "./SingleCar/ReservationForm";
 import HOST from "../Host";
 import {Redirect} from "react-router";
+import {Link} from "react-router-dom";
 
 
 export default function SingleCar(props) {
@@ -37,7 +38,7 @@ export default function SingleCar(props) {
     }
     console.log(redirect);
     if(redirect) return <Redirect to={"/browse/na/na/na/na/na/t"} />
-
+    console.log();
     return (
         <div>
             <Header title={"Single Car Page"}/>
@@ -45,15 +46,6 @@ export default function SingleCar(props) {
                 <Row>
                     <Col xs={7}>
                         <Row>
-                            {/*<Col>*/}
-                            {/*    <p>{car.car_id}</p>*/}
-                            {/*    <p>{car.car_name}</p>*/}
-                            {/*    <p>{car.car_category}</p>*/}
-                            {/*    <p>{car.car_rating}</p>*/}
-                            {/*    <p>{car.car_votes}</p>*/}
-                            {/*    <p>{car.location_address}</p>*/}
-                            {/*    <p>{car.location_phone}</p>*/}
-                            {/*</Col>*/}
                             <Col xs={2}>
                                 <p style={{textAlign: 'right'}}>The car</p>
                             </Col>
@@ -69,7 +61,12 @@ export default function SingleCar(props) {
                             <Col>
                                 {
                                     car.location_address.split(';').map((location, index) => (
-                                        <h4 key={index}>{location}</h4>
+                                        <Col>
+                                        <LinkContainer to={"/locations/" + car.location_ids.split(';')[index]}>
+                                            <Button variant="link" key={index}>{location}</Button>
+                                        </LinkContainer>
+                                        </Col>
+
                                 ))}
                             </Col>
                         </Row>
