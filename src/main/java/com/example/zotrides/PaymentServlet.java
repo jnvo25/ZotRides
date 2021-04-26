@@ -32,12 +32,6 @@ public class PaymentServlet extends HttpServlet {
         }
     }
 
-    // TODO : REMOVE LATER
-    // FOR TESTING ONLY
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        doPost(request, response);
-    }
-
     /**
      * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
      */
