@@ -2,9 +2,9 @@
 ## CS 122B - Project 2
 #### Team 16 - Ethan Wong & Jonathan Vo
 
-ZotRides is a web application for a car rental service.  Users can currently view the top 20 rated cars and all associated information (model, make, year, category, pickup locations, etc.) for that car. Users can also view information about pickup locations and the cars they offer for rental.
+ZotRides is a web application for a car rental service.  Users can currently interact with all functionalities of the website as described in Project 2 write up.
 
-### Notes
+### Important Notes
 On our "cars list" page, the hyperlink functionality is implemented but the links are not highlighted blue beacause we wanted to keep the color-design consistent.  To visit single car page, click on the car's image, to visit single-location page click on the address text, to browse by that category, click on the car's category.
 
 Since this is a custom schema, we provided a very small sample data insertion sql script (as per instructed to on Piazza) called "sampledata.sql" inside our repository.  Our actual data insertion script is larger in size than the movies data insertion script and has around the same number of data entries as moviedata.sql.
@@ -13,9 +13,9 @@ Since this is a custom schema, we provided a very small sample data insertion sq
 View Our Demo Video : https://youtu.be/BJh7hayHStA
 
 ### How To Deploy
-Our project 2 is based off of provided examples, so similarly to deploy one would just have to install and configure Tomcat, use Maven to create the package, copy it to the Tomcat apps folder, and then go to the Tomcat manager portal and click to the URL of the website.  
+Our project 2 is based off of provided examples, so similarly to deploy on our AWS instance, one would just have to install and configure Tomcat, use Maven to create the package, copy it to the Tomcat apps folder, and then go to the Tomcat manager portal and click to the URL of the website.  
 
-Our app uses the React framework, but we have already included the build folder and set up everything to use it as the source directory for deployment.
+Our app uses the React front-end framework, but we have already included the build folder and set up everything to use it as the source directory for deployment as well as work with the specific IP address of our EC2 instance.  *However*, if one were to want to deploy our project on another device, they would need to first change the IP address in the URLs located in my-app/package.json and myapp/src/Host.js to match that of their own devices.  Then they would need to have npm installed with create-react-app and run "npm install" followed by "npm run build", all inside the my-app folder in order to generate the build file.  Afterwards, they can deploy the web application using mvn package.
 
 ### Substring Matching Design
 We utilized the "LIKE" operator on mySQL for case-insensitive comparisons.  mySQL did not seem to support the "ILIKE" operator so we did not explore potential usage of it.  
