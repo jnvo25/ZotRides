@@ -1,9 +1,24 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Card, ListGroup, Col, Button} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import {Redirect} from "react-router";
+import jQuery from "jquery";
+import HOST from "../../Host";
+import "../stylesheets/CarCard.css";
 
 export default function CarCard(props) {
+    const [imageurl, setImageurl] = useState('https://d1zgdcrdir5wgt.cloudfront.net/media/vehicle/images/-GWIN1aUTRO8HI2WwVEzIA.1440x700.jpg')
+    useEffect(() => {
+        jQuery.ajax({
+            dataType: "json",
+            method: "GET",
+            data: {make: jankyCarMake(props.name), category: props.category},
+            url: HOST + "/api/get-image",
+            success: (resultData) => {
+                setImageurl(resultData.imageurl);
+            }
+        });
+    }, [])
 
     function handleRedirect() {
         console.log("yes")
@@ -12,12 +27,12 @@ export default function CarCard(props) {
 
     return (
         <Col xs={4} className={"pt-3"}>
-            <Card className={'text-center'}>
+            <Card className={'text-center card'}>
                 <LinkContainer to={'/cars/' + props.id}>
                     <Card.Img
                         className={'mx-auto'}
                         variant={'top'}
-                        src={'https://d1zgdcrdir5wgt.cloudfront.net/media/vehicle/images/-GWIN1aUTRO8HI2WwVEzIA.1440x700.jpg'}
+                        src={imageurl}
                     />
                 </LinkContainer>
                 <Card.Body className={'pt-1'}>
@@ -46,4 +61,14 @@ export default function CarCard(props) {
             </Card>
         </Col>
     )
+}
+
+function jankyCarMake(name) {
+    var temp = name.split(" ")[0];
+    if(temp == "Alfa")
+        return "Alfa Romeo";
+    else if(temp == "Aston")
+        return "Aston Martin";
+    else
+        return temp;
 }
