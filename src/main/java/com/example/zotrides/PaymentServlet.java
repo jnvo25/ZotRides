@@ -32,12 +32,6 @@ public class PaymentServlet extends HttpServlet {
         }
     }
 
-    // TODO : REMOVE LATER
-    // FOR TESTING ONLY
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        doPost(request, response);
-    }
-
     /**
      * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
      */
@@ -138,17 +132,17 @@ public class PaymentServlet extends HttpServlet {
                 System.out.println("empty : " + previousItems.isEmpty());
             }
 
-            // Increment sale ID
-            synchronized (saleInfo) {
-                saleInfo.nextSaleID();
-                System.out.println("incremented saleID to: " + saleInfo.getSaleID());
-            }
-
             // Return success message
             JsonObject result = new JsonObject();
             result.addProperty("status", "success");
             result.addProperty("message", saleInfo.getSaleID()); //TODO : DISPLAY SALE ID ON FRONTEND
             out.write(result.toString());
+
+            // Increment sale ID
+            synchronized (saleInfo) {
+                saleInfo.nextSaleID();
+                System.out.println("incremented saleID to: " + saleInfo.getSaleID());
+            }
         } catch (Exception e) {
 
             // write error message JSON object to output

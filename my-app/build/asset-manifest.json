@@ -1,25 +1,25 @@
 {
   "files": {
     "main.css": "/ZotRides/static/css/main.ffe3476a.chunk.css",
-    "main.js": "/ZotRides/static/js/main.59e0348d.chunk.js",
-    "main.js.map": "/ZotRides/static/js/main.59e0348d.chunk.js.map",
+    "main.js": "/ZotRides/static/js/main.de08eab0.chunk.js",
+    "main.js.map": "/ZotRides/static/js/main.de08eab0.chunk.js.map",
     "runtime-main.js": "/ZotRides/static/js/runtime-main.9fe66d10.js",
     "runtime-main.js.map": "/ZotRides/static/js/runtime-main.9fe66d10.js.map",
     "static/css/2.372916c9.chunk.css": "/ZotRides/static/css/2.372916c9.chunk.css",
-    "static/js/2.4af40270.chunk.js": "/ZotRides/static/js/2.4af40270.chunk.js",
-    "static/js/2.4af40270.chunk.js.map": "/ZotRides/static/js/2.4af40270.chunk.js.map",
+    "static/js/2.763e59cf.chunk.js": "/ZotRides/static/js/2.763e59cf.chunk.js",
+    "static/js/2.763e59cf.chunk.js.map": "/ZotRides/static/js/2.763e59cf.chunk.js.map",
     "static/js/3.473824b0.chunk.js": "/ZotRides/static/js/3.473824b0.chunk.js",
     "static/js/3.473824b0.chunk.js.map": "/ZotRides/static/js/3.473824b0.chunk.js.map",
     "index.html": "/ZotRides/index.html",
     "static/css/2.372916c9.chunk.css.map": "/ZotRides/static/css/2.372916c9.chunk.css.map",
     "static/css/main.ffe3476a.chunk.css.map": "/ZotRides/static/css/main.ffe3476a.chunk.css.map",
-    "static/js/2.4af40270.chunk.js.LICENSE.txt": "/ZotRides/static/js/2.4af40270.chunk.js.LICENSE.txt"
+    "static/js/2.763e59cf.chunk.js.LICENSE.txt": "/ZotRides/static/js/2.763e59cf.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.9fe66d10.js",
     "static/css/2.372916c9.chunk.css",
-    "static/js/2.4af40270.chunk.js",
+    "static/js/2.763e59cf.chunk.js",
     "static/css/main.ffe3476a.chunk.css",
-    "static/js/main.59e0348d.chunk.js"
+    "static/js/main.de08eab0.chunk.js"
   ]
 }
