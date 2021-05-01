@@ -85,17 +85,26 @@ public class LoginServlet extends HttpServlet {
         JsonObject responseJsonObject = new JsonObject();
         // TODO : change this condition to be valid
         if (isValid) {
-            // Login success:
+            try {
+                String gRecaptchaResponse = request.getParameter("recaptcha");
+                RecaptchaVerifyUtils.verify(gRecaptchaResponse);
+                System.out.println("success on both");
 
-            // set this user into the session
-            request.getSession().setAttribute("user", new User(username));
-            request.getSession().setAttribute("customerID", customerID);
+                // set this user into the session
+                request.getSession().setAttribute("user", new User(username));
+                request.getSession().setAttribute("customerID", customerID);
 
-            responseJsonObject.addProperty("status", "success");
-            responseJsonObject.addProperty("message", "success");
+                responseJsonObject.addProperty("status", "success");
+                responseJsonObject.addProperty("message", "success");
+            } catch (Exception e) {
+                System.out.println("Problem at recaptcha");
+                responseJsonObject.addProperty("status", "fail");
+                responseJsonObject.addProperty("message", "error processing reCaptcha");
+            }
 
         } else {
             // Login fail
+            System.out.println("Problem at login matching");
             responseJsonObject.addProperty("status", "fail");
 
             // sample error messages. in practice, it is not a good idea to tell user which one is incorrect/not exist.
@@ -109,7 +118,7 @@ public class LoginServlet extends HttpServlet {
             responseJsonObject.addProperty("message", "incorrect username / password");
         }
         // response.getWriter().write(responseJsonObject.toString());
-        out.write(responseJsonObject.toString());
+//        out.write(responseJsonObject.toString());
         out.close();
     }
 }

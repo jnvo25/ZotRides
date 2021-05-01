@@ -3,14 +3,17 @@ import * as yup from 'yup';
 import { Form, Button } from 'react-bootstrap';
 import jQuery from 'jquery';
 import HOST from '../../Host';
+import ReCaptcha from 'react-google-recaptcha';
 
 export default function(props) {
     return (
         <Formik
-            initialValues={{}}
+            initialValues={{username:"c@email.com", password:"c2"}}
             onSubmit={(async (values) => {
                 // props.setLoading(true);
                 // console.log(JSON.parse(JSON.stringify(values)));
+                console.log("Sending");
+                console.log(values);
                 jQuery.ajax({
                     dataType: "json",
                     method: "POST",
@@ -68,6 +71,12 @@ export default function(props) {
                         <Form.Control.Feedback type={"invalid"}>
                             {errors.password}
                         </Form.Control.Feedback>
+                    </Form.Group>
+                    <Form.Group>
+                        <ReCaptcha
+                            sitekey={"6LdFer8aAAAAACdsGnif7x0qN-yvVYsYPlyMCIAW"}
+                            onChange={(value) => values.recaptcha = value}
+                        />
                     </Form.Group>
                     <Button variant={"primary"} type={"submit"}>Login</Button>
                     <Button variant={"link"} value={"register"} onClick={props.switchForm}>Create an Account</Button>
