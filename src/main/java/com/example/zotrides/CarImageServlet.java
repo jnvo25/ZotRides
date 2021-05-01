@@ -17,7 +17,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-// Declaring a WebServlet called SingleStarServlet, which maps to url "/api/single-star"
+// Declaring a WebServlet called CarImageServlet, which maps to url "/api/get-image"
 @WebServlet(name = "CarImageServlet", urlPatterns = "/api/get-image")
 public class CarImageServlet extends HttpServlet {
     private static final long serialVersionUID = 2L;
@@ -48,34 +48,31 @@ public class CarImageServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         try (Connection conn = dataSource.getConnection()) {
+            // TODO : MODIFY PREPARED STATEMENT
             String query = "SELECT * FROM Images WHERE make=\"" + make + "\" AND category=\"" + category + "\";";
             // Declare our statement
             PreparedStatement statement = conn.prepareStatement(query);
 
             // Set the parameter represented by "?" in the query to the id we get from url,
             // num 1 indicates the first "?" in the query
-            // DOESN'T WORK
             // statement.setString(1, id);
 
             // Perform the query
             ResultSet rs = statement.executeQuery();
-            JsonArray jsonArray = new JsonArray();
-
-            // Iterate through each row of rs
             int count = 0;
             JsonObject jsonObject = new JsonObject();
-            while (rs.next() && count++ < 20) {
+            while (rs.next() && count++ < 20) { // Iterate through each row of rs
                 String imageurl = rs.getString("imageurl");
                 jsonObject.addProperty("imageurl", imageurl);
                 jsonObject.addProperty("status", "success");
             }
-
 
             // write JSON string to output
             out.write(jsonObject.toString());
             // set response status to 200 (OK)
             response.setStatus(200);
 
+            // clean up
             rs.close();
             statement.close();
 
@@ -84,7 +81,9 @@ public class CarImageServlet extends HttpServlet {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("errorMessage", e.getMessage());
             jsonObject.addProperty("status", "failed");
+
             out.write(jsonObject.toString());
+            System.out.println("Error: " + e.getMessage());
 
             // set response status to 500 (Internal Server Error)
             response.setStatus(500);

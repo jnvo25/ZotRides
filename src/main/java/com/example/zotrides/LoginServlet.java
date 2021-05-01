@@ -1,6 +1,5 @@
 package com.example.zotrides;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import javax.naming.InitialContext;
@@ -47,6 +46,7 @@ public class LoginServlet extends HttpServlet {
         try (Connection conn = dataSource.getConnection()) {
             Statement statement = conn.createStatement();
 
+            // TODO : UPDATE TO USE PREPARED STATEMENT
             String query = "SELECT id\n" +
                     "FROM Customers\n" +
                     "WHERE email = \"" + username + "\" AND password = \"" + password + "\";";
@@ -79,16 +79,13 @@ public class LoginServlet extends HttpServlet {
             return;
         }
 
-        /* This example only allows username/password to be test/test
-        /  in the real project, you should talk to the database to verify username/password
-        */
+        /* verify Recaptcha credentials & return response */
         JsonObject responseJsonObject = new JsonObject();
-        // TODO : change this condition to be valid
         if (isValid) {
             try {
                 String gRecaptchaResponse = request.getParameter("recaptcha");
                 RecaptchaVerifyUtils.verify(gRecaptchaResponse);
-                System.out.println("success on both");
+
 
                 // set this user into the session
                 request.getSession().setAttribute("user", new User(username));
@@ -96,6 +93,8 @@ public class LoginServlet extends HttpServlet {
 
                 responseJsonObject.addProperty("status", "success");
                 responseJsonObject.addProperty("message", "success");
+
+                System.out.println("success on both");
             } catch (Exception e) {
                 System.out.println("Problem at recaptcha");
                 responseJsonObject.addProperty("status", "fail");
@@ -106,19 +105,10 @@ public class LoginServlet extends HttpServlet {
             // Login fail
             System.out.println("Problem at login matching");
             responseJsonObject.addProperty("status", "fail");
-
-            // sample error messages. in practice, it is not a good idea to tell user which one is incorrect/not exist.
-            // TODO : change this part too
-            /*
-            if (!username.equals("anteater")) {
-                responseJsonObject.addProperty("message", "user " + username + " doesn't exist");
-            } else {
-                responseJsonObject.addProperty("message", "incorrect password");
-            }*/
             responseJsonObject.addProperty("message", "incorrect username / password");
         }
         // response.getWriter().write(responseJsonObject.toString());
-//        out.write(responseJsonObject.toString());
+        out.write(responseJsonObject.toString());
         out.close();
     }
 }

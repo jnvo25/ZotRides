@@ -2,8 +2,8 @@ package com.example.zotrides;
 
 import java.time.LocalDate;
 /**
- * This User class only has the username field in this example.
- * You can add more attributes such as the user's shopping cart items.
+ * This CartItem class stores all information about a particular
+ * car reservation.
  */
 public class CartItem {
     private static int currentID = 0;
@@ -21,14 +21,12 @@ public class CartItem {
         this.carName = carName;
         this.carID = carID;
         this.pickupLocation = pickupLocation;
-        this.saleDate = LocalDate.now().toString(); // TODO: verify that this works
+        this.saleDate = LocalDate.now().toString();
         this.startDate = startDate;
         this.endDate = endDate;
         this.unitPrice = unitPrice;
-        this.itemID = currentID++; // TODO: verify that ID is changing for each item
+        this.itemID = currentID++;
     }
-
-    //TODO: IMPLEMENT DATE QUANTITY + PRICE CALCULATION?
 
     /* accessor methods */
     public String getCarName() {return carName;}

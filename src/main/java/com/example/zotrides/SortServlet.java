@@ -37,93 +37,14 @@ public class SortServlet extends HttpServlet {
         }
     }
 
-    /* Return the updated query results after sorting is done */
+    //TODO : remove during deployment
+
+    /* FOR TESTING ONLY, TO ENABLE CALLING FROM SAFARI */
+
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
      *      response)
      */
-    /*
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("application/json"); // Response mime type
-
-        // Output stream to STDOUT
-        PrintWriter out = response.getWriter();
-
-        try (Connection conn = dataSource.getConnection()) {
-            // retrieve query
-            HttpSession session = request.getSession();
-            CarListSettings previousSettings = (CarListSettings) session.getAttribute("previousSettings");
-            String query = previousSettings.toQuery();
-
-            System.out.println("query:\n" + query);
-
-            // Declare our statement
-            PreparedStatement statement = conn.prepareStatement(query);
-
-            // Perform the query
-            ResultSet rs = statement.executeQuery();
-
-            JsonArray jsonArray = new JsonArray();
-
-            // Iterate through each row of rs
-            int count = 0;
-            Pattern firstThree = Pattern.compile("^([^;]+;[^;]+;[^;]+).*");
-            while (rs.next() && count++ < 20) {
-                String car_id = rs.getString("id");
-                String car_name = rs.getString("name");
-                String car_category = rs.getString("category");
-                double car_rating = rs.getDouble("rating");
-                int car_votes = rs.getInt("numVotes");
-                String location_address = rs.getString("address");
-                String location_phone = rs.getString("phoneNumber");
-                String location_ids = rs.getString("pickupID");
-
-                // Create a JsonObject based on the data we retrieve from rs
-                JsonObject jsonObject = new JsonObject();
-                jsonObject.addProperty("car_id", car_id);
-                jsonObject.addProperty("car_name", car_name);
-                jsonObject.addProperty("car_category", car_category);
-                jsonObject.addProperty("car_rating", car_rating);
-                jsonObject.addProperty("car_votes", car_votes);
-
-                Matcher addresses = firstThree.matcher(location_address);
-                Matcher phones = firstThree.matcher(location_phone);
-                Matcher ids = firstThree.matcher(location_ids);
-                addresses.find();
-                phones.find();
-                ids.find();
-
-                jsonObject.addProperty("location_address", addresses.group(1));
-                jsonObject.addProperty("location_phone", phones.group(1));
-                jsonObject.addProperty("location_ids", ids.group(1));
-//                System.out.println(jsonObject.toString());
-                jsonArray.add(jsonObject);
-            }
-
-            // write JSON string to output
-            out.write(jsonArray.toString());
-            // set response status to 200 (OK)
-            response.setStatus(200);
-
-            rs.close();
-            statement.close();
-
-        } catch (Exception e) {
-            // write error message JSON object to output
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("errorMessage", e.getMessage());
-            out.write(jsonObject.toString());
-
-            // set response status to 500 (Internal Server Error)
-            response.setStatus(500);
-        } finally {
-            out.close();
-        }
-    }*/
-
-    //TODO : remove during deployment
-
-    /* FOR TESTING ONLY, TO ENABLE CALLING FROM SAFARI */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         doPost(request, response);
     }
@@ -149,7 +70,7 @@ public class SortServlet extends HttpServlet {
         boolean ratingDesc = ratingDescend != null && ratingDescend.equals("1");
         boolean nameDesc = nameDescend != null && nameDescend.equals("1");
         boolean ratingIsFirst = ratingFirst != null && ratingFirst.equals("1");
-        System.out.println("VaLUES: " + ratingDescend + " " + nameDescend + " " + ratingFirst);
+        System.out.println("VALUES: " + ratingDescend + " " + nameDescend + " " + ratingFirst);
         System.out.println("BOOLS: " + ratingDesc + " " + nameDesc + " " + ratingIsFirst);
         // Setup for response + get session, which should already exist (to maintain consistency when jumping back to CarsList page)
         HttpSession session = request.getSession();
@@ -181,6 +102,7 @@ public class SortServlet extends HttpServlet {
             // prepare & execute query
             String query = previousSettings.toQuery();
 //            System.out.println("query:\n" + query);
+            // TODO : UPDATE BASE FORM OF PREPARED STATEMENT
             PreparedStatement statement = conn.prepareStatement(query);
             ResultSet rs = statement.executeQuery();
 

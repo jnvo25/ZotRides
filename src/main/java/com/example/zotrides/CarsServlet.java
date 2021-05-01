@@ -20,6 +20,7 @@ import java.sql.Statement;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
+// THIS FILE ISN'T USED ANYMORE
 
 // Declaring a WebServlet called StarsServlet, which maps to url "/api/cars"
 @WebServlet(name = "CarsServlet", urlPatterns = "/api/cars")

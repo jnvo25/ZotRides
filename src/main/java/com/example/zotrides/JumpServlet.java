@@ -3,15 +3,11 @@ package com.example.zotrides;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.servlet.ServletConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.sql.DataSource;
 import java.io.IOException;
 
 
@@ -41,7 +37,7 @@ public class JumpServlet extends HttpServlet {
             sorting.addProperty("nameDescend", 0);
             result.add("sorting", sorting);
             response.getWriter().write(result.toString());
-            System.out.println(result.toString());
+//            System.out.println(result.toString());
             return;
         }
 
@@ -53,7 +49,7 @@ public class JumpServlet extends HttpServlet {
         }
         JsonObject result = new JsonObject();
         result.add("results", subArr);
-        result.addProperty("message", previousSettings.getPaginationMessage()); //TODO: MAKE SURE THIS GETS PRINTED ON FRONTEND
+        result.addProperty("message", previousSettings.getPaginationMessage());
         JsonObject sorting = new JsonObject();
         sorting.addProperty("ratingFirst", previousSettings.getRatingFirst());
         sorting.addProperty("ratingDescend", previousSettings.getRatingDescend());

@@ -97,7 +97,7 @@ public class PaginateServlet extends HttpServlet {
                 }
                 JsonObject result = new JsonObject();
                 result.add("results", subArr);
-                result.addProperty("message", previousSettings.getPaginationMessage()); //TODO: MAKE SURE THIS GETS PRINTED ON FRONTEND
+                result.addProperty("message", previousSettings.getPaginationMessage());
                 out.write(result.toString()); // write JSON string to output
                 return;
             }
@@ -120,6 +120,7 @@ public class PaginateServlet extends HttpServlet {
             // prepare query
             String query = previousSettings.toQuery();
             System.out.println("query:\n" + query);
+            // TODO : UPDATE BASE PREPARED QUERY
             PreparedStatement statement = conn.prepareStatement(query);
             ResultSet rs = statement.executeQuery();
 

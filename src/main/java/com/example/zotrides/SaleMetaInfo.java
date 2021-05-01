@@ -11,8 +11,6 @@ public class SaleMetaInfo {
         this.saleID = saleID;
     }
 
-    //TODO: IMPLEMENT DATE QUANTITY + PRICE CALCULATION?
-
     /* accessor methods */
     public int getSaleID() {return this.saleID;}
 

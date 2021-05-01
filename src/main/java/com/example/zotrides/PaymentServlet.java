@@ -53,7 +53,7 @@ public class PaymentServlet extends HttpServlet {
                     "\" AND id = \"" + ccNumber + "\" AND expiration = \"" + expDate + "\";";
 
             // System.out.println("query is:\n" + query);
-
+            // TODO: UPDATE TO USE PREPARED STATEMENT
             // Perform the query & check result
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery(query);
@@ -122,6 +122,7 @@ public class PaymentServlet extends HttpServlet {
 
             // Execute data update query
             statement = conn.createStatement();
+            // TODO: UPDATE TO USE PREPARED STATEMENT
             int rowsUpdated = statement.executeUpdate(query);
             statement.close();
             System.out.println("updated " + rowsUpdated + " rows!");
@@ -135,7 +136,7 @@ public class PaymentServlet extends HttpServlet {
             // Return success message
             JsonObject result = new JsonObject();
             result.addProperty("status", "success");
-            result.addProperty("message", saleInfo.getSaleID()); //TODO : DISPLAY SALE ID ON FRONTEND
+            result.addProperty("message", saleInfo.getSaleID());
             out.write(result.toString());
 
             // Increment sale ID

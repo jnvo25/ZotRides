@@ -45,11 +45,8 @@ public class CategoryServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         try (Connection conn = dataSource.getConnection()) {
-
-            String query = "SELECT name FROM Category";
-
             // Declare our statement
-            PreparedStatement statement = conn.prepareStatement(query);
+            PreparedStatement statement = conn.prepareStatement("SELECT name FROM Category");
 
             // Perform the query
             ResultSet rs = statement.executeQuery();
@@ -63,7 +60,7 @@ public class CategoryServlet extends HttpServlet {
                 // Create a JsonObject based on the data we retrieve from rs
                 JsonObject jsonObject = new JsonObject();
                 jsonObject.addProperty("category", category);
-                System.out.println(jsonObject.toString());
+//                System.out.println(jsonObject.toString());
                 jsonArray.add(jsonObject);
             }
 
@@ -79,7 +76,10 @@ public class CategoryServlet extends HttpServlet {
             // write error message JSON object to output
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("errorMessage", e.getMessage());
+
+            // show error messages
             out.write(jsonObject.toString());
+            System.out.println("Error: " + e.getMessage());
 
             // set response status to 500 (Internal Server Error)
             response.setStatus(500);

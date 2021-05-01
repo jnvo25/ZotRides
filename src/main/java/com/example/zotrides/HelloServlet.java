@@ -4,6 +4,8 @@ import java.io.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 
+// NOT USED ANYMORE
+
 @WebServlet(name = "helloServlet", value = "/hello-servlet")
 public class HelloServlet extends HttpServlet {
     private String message;

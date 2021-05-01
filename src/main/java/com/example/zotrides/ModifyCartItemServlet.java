@@ -3,23 +3,17 @@ package com.example.zotrides;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.servlet.ServletConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.sql.DataSource;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.Statement;
 import java.util.ArrayList;
 
 /**
  * This ModifyCartItemServlet is declared in the web annotation below,
- * which is mapped to the URL pattern /api/index.
+ * which is mapped to the URL pattern /api/modify-cart-item.
  */
 @WebServlet(name = "ModifyCartItemServlet", urlPatterns = "/api/modify-cart-item")
 public class ModifyCartItemServlet extends HttpServlet {
@@ -63,7 +57,7 @@ public class ModifyCartItemServlet extends HttpServlet {
         String startDate = request.getParameter("startDate");
         String endDate = request.getParameter("endDate");
         int id = Integer.parseInt(request.getParameter("itemID"));
-        System.out.println("id: " + id + " dates: " + startDate + " " + endDate);
+//        System.out.println("id: " + id + " dates: " + startDate + " " + endDate);
 
         HttpSession session = request.getSession();
 

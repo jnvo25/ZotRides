@@ -62,11 +62,11 @@ public class SingleLocationServlet extends HttpServlet {
                     "GROUP BY pickup_info.id;";
 
             // Declare our statement
+            // TODO : UPDATE BASE FORM OF PREPARED STATEMENT
             PreparedStatement statement = conn.prepareStatement(query);
 
             // Set the parameter represented by "?" in the query to the id we get from url,
             // num 1 indicates the first "?" in the query
-            // THIS DOESN'T WORK !?
             // statement.setString(1, id);
 
             // Perform the query
@@ -108,9 +108,11 @@ public class SingleLocationServlet extends HttpServlet {
             // write error message JSON object to output
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("errorMessage", e.getMessage());
-            out.write(jsonObject.toString());
 
-            // set reponse status to 500 (Internal Server Error)
+            out.write(jsonObject.toString());
+            System.out.println("Error: " + e.getMessage());
+
+            // set response status to 500 (Internal Server Error)
             response.setStatus(500);
         } finally {
             out.close();

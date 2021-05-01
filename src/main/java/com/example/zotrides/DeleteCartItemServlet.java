@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 /**
  * This DeleteCartItemServlet is declared in the web annotation below,
- * which is mapped to the URL pattern /api/index.
+ * which is mapped to the URL pattern /api/delete-cart-item.
  */
 @WebServlet(name = "DeleteCartItemServlet", urlPatterns = "/api/delete-cart-item")
 public class DeleteCartItemServlet extends HttpServlet {
