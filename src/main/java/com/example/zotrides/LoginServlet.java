@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.PreparedStatement;
 
 @WebServlet(name = "LoginServlet", urlPatterns = "/api/login")
 public class LoginServlet extends HttpServlet {
@@ -44,17 +44,19 @@ public class LoginServlet extends HttpServlet {
         boolean isValid = false;
         int customerID = -1;
         try (Connection conn = dataSource.getConnection()) {
-            Statement statement = conn.createStatement();
-
-            // TODO : UPDATE TO USE PREPARED STATEMENT
+            /* new version */
             String query = "SELECT id\n" +
                     "FROM Customers\n" +
-                    "WHERE email = \"" + username + "\" AND password = \"" + password + "\";";
+                    "WHERE email = ? AND password = ?;";
 
-//            System.out.println("query is:\n" + query);
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setString(1, username);
+            statement.setString(2, password);
+
+//            System.out.println("query is:\n" + statement.toString());
 
             // Perform the query
-            ResultSet rs = statement.executeQuery(query);
+            ResultSet rs = statement.executeQuery();
 
             isValid = rs.next();
             if (isValid) {
@@ -72,6 +74,8 @@ public class LoginServlet extends HttpServlet {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("errorMessage", e.getMessage());
             out.write(jsonObject.toString());
+
+            System.out.println("Error: " + e.getMessage());
 
             // set response status to 500 (Internal Server Error)
             response.setStatus(500);
@@ -101,7 +105,7 @@ public class LoginServlet extends HttpServlet {
                 responseJsonObject.addProperty("message", "error processing reCaptcha");
             }
 
-        } else {
+        } else { //TODO: RESET RECAPTCHA WHEN FAIL?
             // Login fail
             System.out.println("Problem at login matching");
             responseJsonObject.addProperty("status", "fail");

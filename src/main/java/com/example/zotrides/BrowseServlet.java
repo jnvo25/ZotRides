@@ -49,32 +49,7 @@ public class BrowseServlet extends HttpServlet {
         // Process parameters to get query restrictions
         String additional = "";
         if (category != null && !category.isEmpty()) {
-            int catID = 8;
-            switch (category) {
-                case "pickup":
-                    catID = 1;
-                    break;
-                case "wagon":
-                    catID = 2;
-                    break;
-                case "van":
-                    catID = 3;
-                    break;
-                case "coupe":
-                    catID = 4;
-                    break;
-                case "sedan":
-                    catID = 5;
-                    break;
-                case "hatchback":
-                    catID = 6;
-                    break;
-                case "convertible":
-                    catID = 7;
-                default: // SUV
-                    break;
-            }
-            additional += " AND categoryID = " + catID;
+            additional += " AND Category.name = \"" + category.toLowerCase() + "\"";
         }
         if (modelLetter != null && !modelLetter.isEmpty())
             if (modelLetter.equals("*")) {
@@ -102,7 +77,7 @@ public class BrowseServlet extends HttpServlet {
                 "WHERE category_of_car.categoryID = Category.id AND category_of_car.carID = Cars.id AND Cars.id = CarPrices.carID" + additional + " \n" +
                 "\tAND Ratings.carID = Cars.id AND pickup_car_from.carID = Cars.id AND pickup_car_from.pickupLocationID = pickupCarCounts.pickupLocationID AND pickup_car_from.pickupLocationID = PickupLocation.id\n" +
                 "GROUP BY Cars.id\n";
-
+        System.out.println("query is: \n" + query);
         // Store base query into session (to maintain consistency when jumping back to CarsList page)
         HttpSession session = request.getSession();
         CarListSettings previousSettings = (CarListSettings) session.getAttribute("previousSettings");

@@ -51,6 +51,7 @@ public class LoginFilter implements Filter {
         return allowedURIs.stream().anyMatch(requestURI.toLowerCase()::endsWith);
     }
 
+    //TODO: depending on how _dashboard page is implemented may need to update this function
     public void init(FilterConfig fConfig) {
         allowedURIs.add("login");
         allowedURIs.add("api/login");

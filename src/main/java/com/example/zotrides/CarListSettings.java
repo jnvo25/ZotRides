@@ -102,12 +102,6 @@ public class CarListSettings {
         this.errorMessage = "";
     }
 
-    //TODO : DETERMINE HOW TO DO CACHING
-
-    //TODO : RETURN THE PAGINATION MESSAGE IN A JSONOBJCECT
-
-    //TODO : CHANGE HOW WE DO THE OFFSET
-
     /* get the query based off of current settings */
     public String toQuery() {
         // determine ordering
