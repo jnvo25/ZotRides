@@ -120,7 +120,6 @@ public class PaginateServlet extends HttpServlet {
             // prepare query
             String query = previousSettings.toQuery();
             System.out.println("query:\n" + query);
-            // TODO : UPDATE BASE PREPARED QUERY
             PreparedStatement statement = conn.prepareStatement(query);
             ResultSet rs = statement.executeQuery();
 

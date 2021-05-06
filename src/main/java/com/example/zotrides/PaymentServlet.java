@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 
 @WebServlet(name = "PaymentServlet", urlPatterns = "/api/payment")
@@ -49,14 +49,20 @@ public class PaymentServlet extends HttpServlet {
         try (Connection conn = dataSource.getConnection()) {
             String query = "SELECT id\n" +
                     "FROM CreditCards\n" +
-                    "WHERE firstName = \"" + firstName + "\" AND lastName = \"" + lastName +
-                    "\" AND id = \"" + ccNumber + "\" AND expiration = \"" + expDate + "\";";
+                    "WHERE firstName = ? AND lastName = ?" +
+                    "AND id = ? AND expiration = ?;";
 
-            // System.out.println("query is:\n" + query);
-            // TODO: UPDATE TO USE PREPARED STATEMENT
+            // Prepare statement with parameters
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setString(1, firstName);
+            statement.setString(2, lastName);
+            statement.setString(3, ccNumber);
+            statement.setString(4, expDate);
+
+//             System.out.println("query is:\n" + statement.toString());
+
             // Perform the query & check result
-            Statement statement = conn.createStatement();
-            ResultSet rs = statement.executeQuery(query);
+            ResultSet rs = statement.executeQuery();
             isValid = rs.next();
             rs.close();
             statement.close();
@@ -84,8 +90,8 @@ public class PaymentServlet extends HttpServlet {
             if (saleInfo == null) {
                 // perform query
                 query = "SELECT MAX(saleID) AS base FROM Reservations;";
-                statement = conn.createStatement();
-                rs = statement.executeQuery(query);
+                statement = conn.prepareStatement(query);
+                rs = statement.executeQuery();
 
                 // if valid result, set saleID to returned value + 1
                 if (rs.next()) {
@@ -105,6 +111,8 @@ public class PaymentServlet extends HttpServlet {
                 rs.close();
             }
 
+            /* old */
+            /*
             // Generate data update query
             query = previousItems != null && !previousItems.isEmpty()
                     ? "INSERT INTO Reservations(startDate, endDate, customerID, carID, saleDate, saleID) VALUES"
@@ -121,11 +129,37 @@ public class PaymentServlet extends HttpServlet {
             System.out.println("update query is: " + query);
 
             // Execute data update query
-            statement = conn.createStatement();
-            // TODO: UPDATE TO USE PREPARED STATEMENT
-            int rowsUpdated = statement.executeUpdate(query);
+            statement = conn.prepareStatement(query);
+            int rowsUpdated = statement.executeUpdate();
             statement.close();
-            System.out.println("updated " + rowsUpdated + " rows!");
+            System.out.println("updated " + rowsUpdated + " rows!"); */
+
+
+            // Generate data update query
+            if (previousItems != null && !previousItems.isEmpty()) {
+                query = "INSERT INTO Reservations(startDate, endDate, customerID, carID, saleDate, saleID) VALUES";
+                String customerID = session.getAttribute("customerID").toString();
+
+                /* NOTE : for our convenience encapsulated manually using '?' inside the CartItem.java class's toQuery method
+                which we defined.  What it outputs is described below
+                    Format:
+                        CartItem.toQuery() function outputs -->
+                        "('" + startDate + "', '" + endDate + "', '" + customerID + "', '" + carID + "', '" + saleDate + "', '" + saleID + "')"
+                */
+                int i;
+                for (i = 0; i < previousItems.size() - 1; ++i) {
+                    query += previousItems.get(i).toQuery(customerID, saleInfo.getSaleID()) + ",\n";
+                }
+                query += previousItems.get(i).toQuery(customerID, saleInfo.getSaleID()) + ";";
+
+                System.out.println("update query is: " + query);
+
+                // Execute data update query
+                statement = conn.prepareStatement(query);
+                int rowsUpdated = statement.executeUpdate();
+                statement.close();
+                System.out.println("updated " + rowsUpdated + " rows!");
+            }
 
             // Clear the shopping cart
             synchronized (previousItems) {

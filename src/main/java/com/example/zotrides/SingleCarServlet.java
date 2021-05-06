@@ -55,7 +55,7 @@ public class SingleCarServlet extends HttpServlet {
                     "car_info(id, model, make, year, name, price, rating, numVotes) AS\n" +
                     "\t(SELECT Cars.id, model, make, year, name, price, rating, numVotes\n" +
                     "\tFROM Cars, category_of_car, Category, CarPrices, Ratings\n" +
-                    "\tWHERE Cars.id = '" + id + "' \n" +
+                    "\tWHERE Cars.id = ? \n" +
                     "\t\t\tAND category_of_car.carID = '" + id + "' \n" +
                     "\t\t\tAND Category.id = category_of_car.categoryID\n" +
                     "\t\t\tAND CarPrices.carID = '" + id + "' \n" +
@@ -70,12 +70,9 @@ public class SingleCarServlet extends HttpServlet {
 
 //            System.out.println("query is\n" + query);
             // Declare our statement
-            // TODO: UPDATE FORM OF PREPARED STATEMENT
             PreparedStatement statement = conn.prepareStatement(query);
 
-            // Set the parameter represented by "?" in the query to the id we get from url,
-            // num 1 indicates the first "?" in the query
-            // statement.setString(1, id);
+             statement.setString(1, id);
 
             // Perform the query
             ResultSet rs = statement.executeQuery();

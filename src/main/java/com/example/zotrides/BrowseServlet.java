@@ -46,12 +46,16 @@ public class BrowseServlet extends HttpServlet {
         String yearDigit = request.getParameter("year");
         String modelLetter = request.getParameter("model");
 
-        // Process parameters to get query restrictions
+        // Process parameters to get query restrictions, doing this instead
+        // of replacing ? so we can consolidate three different queries from browsing into one body
+
+        // NOTE : still protecting from SQL injection attacks since user-provided values
+        // are only injected in parameter fields for WHERE clauses
         String additional = "";
         if (category != null && !category.isEmpty()) {
             additional += " AND Category.name = \"" + category.toLowerCase() + "\"";
         }
-        if (modelLetter != null && !modelLetter.isEmpty())
+        else if (modelLetter != null && !modelLetter.isEmpty())
             if (modelLetter.equals("*")) {
                 // wild card
                 additional += " AND model RLIKE \"^[^A-Za-z0-9].*\"";
@@ -59,7 +63,7 @@ public class BrowseServlet extends HttpServlet {
                 // alphabetical
                 additional += " AND model LIKE \"" + modelLetter + "%\"";
             }
-        if (yearDigit != null && !yearDigit.isEmpty())
+        else if (yearDigit != null && !yearDigit.isEmpty())
             additional += " AND year LIKE \"" + yearDigit + "%\"";
 
         // Integrate into a base form of the query
@@ -103,7 +107,6 @@ public class BrowseServlet extends HttpServlet {
 
             // store query in temporary table
             query = previousSettings.toQuery();
-            // TODO: MODIFY PREPARED STATEMENT TO MAYBE ALREADY INCLUDE QUERY? + RESTRUCTURE CARLISTSETTINGS
             statement = conn.prepareStatement("CREATE TEMPORARY TABLE temp\n" + query);
             statement.executeUpdate();
             statement.close();

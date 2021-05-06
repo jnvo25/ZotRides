@@ -51,7 +51,7 @@ public class SingleLocationServlet extends HttpServlet {
             String query = "WITH pickup_info(id, address, phoneNumber) AS \n" +
                     "\t(SELECT *\n" +
                     "\tFROM PickupLocation\n" +
-                    "\tWHERE PickupLocation.id = '" + id + "')\n" +
+                    "\tWHERE PickupLocation.id = ?)\n" +
                     "\n" +
                     "SELECT pickup_info.id as id, address, phoneNumber,\n" +
                     "\tgroup_concat(DISTINCT concat_ws(' ', make, model, year) ORDER BY year DESC, make, model SEPARATOR ';') as name,\n" +
@@ -62,12 +62,9 @@ public class SingleLocationServlet extends HttpServlet {
                     "GROUP BY pickup_info.id;";
 
             // Declare our statement
-            // TODO : UPDATE BASE FORM OF PREPARED STATEMENT
             PreparedStatement statement = conn.prepareStatement(query);
 
-            // Set the parameter represented by "?" in the query to the id we get from url,
-            // num 1 indicates the first "?" in the query
-            // statement.setString(1, id);
+            statement.setString(1, id);
 
             // Perform the query
             ResultSet rs = statement.executeQuery();

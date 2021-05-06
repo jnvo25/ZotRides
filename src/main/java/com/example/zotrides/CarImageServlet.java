@@ -1,6 +1,5 @@
 package com.example.zotrides;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import javax.naming.InitialContext;
@@ -48,14 +47,11 @@ public class CarImageServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         try (Connection conn = dataSource.getConnection()) {
-            // TODO : MODIFY PREPARED STATEMENT
-            String query = "SELECT * FROM Images WHERE make=\"" + make + "\" AND category=\"" + category + "\";";
+            String query = "SELECT * FROM Images WHERE make= ? AND category= ?;";
             // Declare our statement
             PreparedStatement statement = conn.prepareStatement(query);
-
-            // Set the parameter represented by "?" in the query to the id we get from url,
-            // num 1 indicates the first "?" in the query
-            // statement.setString(1, id);
+            statement.setString(1, make);
+            statement.setString(2, category);
 
             // Perform the query
             ResultSet rs = statement.executeQuery();

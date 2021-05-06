@@ -65,7 +65,6 @@ public class SearchServlet extends HttpServlet {
             additional += " AND make LIKE \"%" + make + "%\"";
         if (location != null && !location.isEmpty())
             additional += " AND address LIKE \"%" + location + "%\"";
-        // TODO: UPDATE BASE PREPARED STATEMENT QUERY
         String query = "WITH pickupCarCounts AS (SELECT pickupLocationID, COUNT(DISTINCT carID) as numCars \n" +
                 "\tFROM pickup_car_from \n" +
                 "    GROUP BY pickupLocationID),\n" +
@@ -115,7 +114,6 @@ public class SearchServlet extends HttpServlet {
 
             // store query in temporary table
             query = previousSettings.toQuery();
-            // TODO: UPDATE TO USE PREPARED STATEMENT
             statement = conn.prepareStatement("CREATE TEMPORARY TABLE temp\n" + query + ";");
 //            System.out.println("query:\n" + query + "\n");
             statement.executeUpdate();

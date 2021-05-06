@@ -102,7 +102,6 @@ public class SortServlet extends HttpServlet {
             // prepare & execute query
             String query = previousSettings.toQuery();
 //            System.out.println("query:\n" + query);
-            // TODO : UPDATE BASE FORM OF PREPARED STATEMENT
             PreparedStatement statement = conn.prepareStatement(query);
             ResultSet rs = statement.executeQuery();
 
