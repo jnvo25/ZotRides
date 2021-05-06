@@ -13,12 +13,14 @@ import MyCart from "./components/MyCart";
 import Payments from "./components/Payments";
 import BrowseResults from "./components/BrowseResults";
 import BrowseBy from "./components/BrowseBy";
+import EmployeeLogin from "./components/EmployeeLogin";
 
 function App() {
     return (
         <Router basename={"/ZotRides"}>
             <Switch>
                 <Route exact path={"/(login)"} component={LoginContainer} />
+                <Route exact path={"/(_dashboard)"} component={EmployeeLoginContainer} />
                 <Route component={DefaultContainer} />
             </Switch>
         </Router>
@@ -28,6 +30,12 @@ function App() {
 const LoginContainer = () => (
     <div>
         <Route path="/login" render={() => <Login />} />
+    </div>
+)
+
+const EmployeeLoginContainer = () => (
+    <div>
+        <Route path="/_dashboard" render={() => <EmployeeLogin />} />
     </div>
 )
 
