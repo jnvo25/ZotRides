@@ -15,6 +15,8 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
+import org.jasypt.util.password.StrongPasswordEncryptor;
+
 
 @WebServlet(name = "LoginServlet", urlPatterns = "/api/login")
 public class LoginServlet extends HttpServlet {
@@ -45,14 +47,12 @@ public class LoginServlet extends HttpServlet {
         int customerID = -1;
         try (Connection conn = dataSource.getConnection()) {
             /* new version */
-            String query = "SELECT id\n" +
+            String query = "SELECT id, password\n" +
                     "FROM Customers\n" +
-                    "WHERE email = ? AND password = ?;";
+                    "WHERE email = ?;";
 
             PreparedStatement statement = conn.prepareStatement(query);
             statement.setString(1, username);
-            statement.setString(2, password);
-
 //            System.out.println("query is:\n" + statement.toString());
 
             // Perform the query
@@ -61,6 +61,10 @@ public class LoginServlet extends HttpServlet {
             isValid = rs.next();
             if (isValid) {
                 customerID = rs.getInt("id");
+                boolean success = new StrongPasswordEncryptor().checkPassword(password, rs.getString("password"));
+                System.out.println(success);
+                if(!success)
+                    throw new Exception("Incorrect password");
                 System.out.println("success");
             }
 
