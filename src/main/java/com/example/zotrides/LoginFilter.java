@@ -55,6 +55,8 @@ public class LoginFilter implements Filter {
     public void init(FilterConfig fConfig) {
         allowedURIs.add("login");
         allowedURIs.add("api/login");
+        allowedURIs.add("api/employee-login");
+        allowedURIs.add("_dashboard");
         allowedURIs.add("css");
         allowedURIs.add("js");
         allowedURIs.add("map");

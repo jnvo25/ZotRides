@@ -8,28 +8,26 @@ import ReCaptcha from 'react-google-recaptcha';
 export default function(props) {
     return (
         <Formik
-            initialValues={{username:"c@email.com", password:"c2"}}
+            initialValues={{username:"classta@email.edu", password:"classta"}}
             onSubmit={(async (values) => {
                 console.log(values);
 
                 props.setLoading(true);
-                props.setSuccess(true);
                 // TODO: Connect to correct employee login
-                // jQuery.ajax({
-                //     dataType: "json",
-                //     method: "POST",
-                //     data: values,
-                //     url: HOST + "api/login",
-                //     success: (resultData) => {
-                //         //setCar(resultData[0]);
-                //         //setLoading(false);
-                //         console.log(JSON.stringify(resultData));
-                //         if(resultData.status === "fail")
-                //             props.setError("Login failed (Invalid username/password");
-                //         else
-                //             props.setSuccess(true);
-                //     }
-                // });
+                jQuery.ajax({
+                    dataType: "json",
+                    method: "POST",
+                    data: values,
+                    url: HOST + "api/employee-login",
+                    success: (resultData) => {
+                        props.setLoading(false);
+                        console.log(JSON.stringify(resultData));
+                        if(resultData.status === "fail")
+                            props.setError("Login failed (Invalid username/password");
+                        else
+                            props.setSuccess(true);
+                    }
+                });
             })}
         >
             {({

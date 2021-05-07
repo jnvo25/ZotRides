@@ -9,6 +9,7 @@ import LoadingOverlay from "react-loading-overlay";
 export default function () {
     const [success, setSuccess] = useState(false);
     const [isLoading, setLoading] = useState(false);
+    const [error, setError] = useState();
 
     if(!success) {
         return (
@@ -19,8 +20,9 @@ export default function () {
                     <Card xs={4}>
                         <LoadingOverlay active={isLoading} spinner text={'Logging in...'}>
                             <Card.Body>
-                                <SignIn setLoading={setLoading} setSuccess={setSuccess} />
+                                <SignIn setLoading={setLoading} setError={setError} setSuccess={setSuccess} />
                             </Card.Body>
+                            <div>{error}</div>
                         </LoadingOverlay>
                     </Card>
                     </Col>
