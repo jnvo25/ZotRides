@@ -1,5 +1,7 @@
 import {Button, Form} from "react-bootstrap";
 import {Formik} from "formik";
+import jQuery from "jquery";
+import HOST from "../../../Host";
 
 export default function() {
     return (
@@ -7,7 +9,20 @@ export default function() {
             // TODO: When all are empty return movie list
             initialValues={{}}
             onSubmit={(async (values) => {
-
+                jQuery.ajax({
+                    dataType: "json",
+                    method: "POST",
+                    data: values,
+                    url: HOST + "api/add-car",
+                    success: (resultData) => {
+                        // props.setLoading(false);
+                        console.log(JSON.stringify(resultData));
+                        // if(resultData.status === "fail")
+                            // props.setError("Add car failed");
+                        // else
+                        //     props.setSuccess(true);
+                    }
+                });
             })}
         >
             {({
@@ -68,15 +83,15 @@ export default function() {
                         />
                     </Form.Group>
                     <Form.Group>
-                        <Form.Label>Car Location</Form.Label>
+                        <Form.Label>Car address</Form.Label>
                         <Form.Control
                             type={"string"}
-                            name={"location"}
-                            id={"location"}
+                            name={"address"}
+                            id={"address"}
                             onChange={handleChange}
                             onBlur={handleBlur}
-                            value={values.location}
-                            placeholder={"Enter location"}
+                            value={values.address}
+                            placeholder={"Enter address"}
                         />
                     </Form.Group>
                     <Button variant={"primary"} type={"submit"}>Add</Button>

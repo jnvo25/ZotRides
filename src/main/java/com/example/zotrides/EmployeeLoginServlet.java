@@ -95,8 +95,8 @@ public class EmployeeLoginServlet extends HttpServlet {
 
 
                 // set this user into the session
-//                request.getSession().setAttribute("user", new User(username));
-//                request.getSession().setAttribute("customerID", customerID);
+                request.getSession().setAttribute("user", new User(username));
+                request.getSession().setAttribute("customerID", customerID);
 
                 responseJsonObject.addProperty("status", "success");
                 responseJsonObject.addProperty("message", "success");

@@ -8,7 +8,7 @@ import ReCaptcha from 'react-google-recaptcha';
 export default function(props) {
     return (
         <Formik
-            initialValues={{username:"c@email.com", password:"c2"}}
+            initialValues={{username:"classta@email.edu", password:"classta"}}
             onSubmit={(async (values) => {
                 console.log(values);
 
