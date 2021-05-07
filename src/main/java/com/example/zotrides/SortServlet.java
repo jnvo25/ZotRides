@@ -109,7 +109,7 @@ public class SortServlet extends HttpServlet {
             JsonArray jsonArray = new JsonArray();
             int count = 0;
 //            Pattern firstThree = Pattern.compile("^([^;]+;[^;]+;[^;]+).*");
-            Pattern firstThree = Pattern.compile("^(([^;]+;{0,1}){1,3}).*");
+            Pattern firstThree = Pattern.compile("^(([^;]+;{0,1}){0,3}).*");
             while (rs.next() && count++ < 100) {     // Iterate through each row of rs
                 String car_id = rs.getString("id");
                 String car_name = rs.getString("name");
@@ -139,9 +139,20 @@ public class SortServlet extends HttpServlet {
                 String phone = phones.group(1);
                 String ID = ids.group(1);
 
-                jsonObject.addProperty("location_address", addr.charAt(addr.length() - 1) == ';' ? addr.substring(0, addr.length() - 1) : addr);
-                jsonObject.addProperty("location_phone", phone.charAt(phone.length() - 1) == ';' ? phone.substring(0, phone.length() - 1) : phone);
-                jsonObject.addProperty("location_ids", ID.charAt(ID.length() - 1) == ';' ? ID.substring(0, ID.length() - 1) : ID);
+                if (addr != null && addr.length() != 0)
+                    jsonObject.addProperty("location_address", addr.charAt(addr.length() - 1) == ';' ? addr.substring(0, addr.length() - 1) : addr);
+                else
+                    jsonObject.addProperty("location_address", "");
+
+                if (phone != null && phone.length() != 0)
+                    jsonObject.addProperty("location_phone", phone.charAt(phone.length() - 1) == ';' ? phone.substring(0, phone.length() - 1) : phone);
+                else
+                    jsonObject.addProperty("location_phone", "");
+
+                if (ID != null && ID.length() != 0)
+                    jsonObject.addProperty("location_ids", ID.charAt(ID.length() - 1) == ';' ? ID.substring(0, ID.length() - 1) : ID);
+                else
+                    jsonObject.addProperty("location_ids", "");
 //                System.out.println(jsonObject.toString());
                 jsonArray.add(jsonObject);
             }

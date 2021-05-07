@@ -67,7 +67,7 @@ public class BrowseServlet extends HttpServlet {
             additional += " AND year LIKE \"" + yearDigit + "%\"";
 
         // Integrate into a base form of the query
-        String query =
+        /*String query =
                 "WITH pickupCarCounts AS (SELECT pickupLocationID, COUNT(DISTINCT carID) as numCars \n" +
                 "\tFROM pickup_car_from \n" +
                 "    GROUP BY pickupLocationID)\n" +
@@ -80,8 +80,25 @@ public class BrowseServlet extends HttpServlet {
                 "FROM category_of_car, Category, Cars, CarPrices, Ratings, pickupCarCounts, pickup_car_from, PickupLocation\n" +
                 "WHERE category_of_car.categoryID = Category.id AND category_of_car.carID = Cars.id AND Cars.id = CarPrices.carID" + additional + " \n" +
                 "\tAND Ratings.carID = Cars.id AND pickup_car_from.carID = Cars.id AND pickup_car_from.pickupLocationID = pickupCarCounts.pickupLocationID AND pickup_car_from.pickupLocationID = PickupLocation.id\n" +
-                "GROUP BY Cars.id\n";
-        System.out.println("query is: \n" + query);
+                "GROUP BY Cars.id\n"; */
+        String query =
+                "WITH pickupCarCounts AS (SELECT pickupLocationID, COUNT(DISTINCT carID) as numCars \n" +
+                        "\tFROM pickup_car_from \n" +
+                        "    GROUP BY pickupLocationID)\n" +
+                        "    \n" +
+                        "SELECT Cars.id as id, group_concat(DISTINCT concat_ws(' ', make, model, year)) as name, \n" +
+                        "\t\tname as category, price, rating, numVotes,\n" +
+                        "        group_concat(DISTINCT address ORDER BY numCars DESC, address SEPARATOR ';') as address, \n" +
+                        "        group_concat(DISTINCT phoneNumber ORDER BY numCars DESC, address SEPARATOR ';') as phoneNumber,\n" +
+                        "        group_concat(DISTINCT PickupLocation.id ORDER BY numCars DESC, address SEPARATOR ';') as pickupID\n" +
+                        "FROM (((((category_of_car, Category, Cars) LEFT OUTER JOIN CarPrices ON Cars.id = CarPrices.carID)\n" +
+                        "\t\tLEFT OUTER JOIN Ratings ON Ratings.carID = Cars.id)\n" +
+                        "        LEFT OUTER JOIN pickup_car_from ON pickup_car_from.carID = Cars.id)\n" +
+                        "        LEFT OUTER JOIN pickupCarCounts ON pickup_car_from.pickupLocationID = pickupCarCounts.pickupLocationID)\n" +
+                        "        LEFT OUTER JOIN PickupLocation ON pickup_car_from.pickupLocationID = PickupLocation.id\n" +
+                        "WHERE category_of_car.categoryID = Category.id AND category_of_car.carID = Cars.id" + additional + "\n" +
+                        "GROUP BY Cars.id\n";
+//        System.out.println("query is: \n" + query);
         // Store base query into session (to maintain consistency when jumping back to CarsList page)
         HttpSession session = request.getSession();
         CarListSettings previousSettings = (CarListSettings) session.getAttribute("previousSettings");
@@ -108,6 +125,7 @@ public class BrowseServlet extends HttpServlet {
             // store query in temporary table
             query = previousSettings.toQuery();
             statement = conn.prepareStatement("CREATE TEMPORARY TABLE temp\n" + query);
+//            System.out.println("query:\n" + statement.toString());
             statement.executeUpdate();
             statement.close();
 
@@ -119,7 +137,7 @@ public class BrowseServlet extends HttpServlet {
             JsonArray jsonArray = new JsonArray(); // Iterate through each row of rs
             int count = 0;
 //            Pattern firstThree = Pattern.compile("^([^;]+;[^;]+;[^;]+).*");
-            Pattern firstThree = Pattern.compile("^(([^;]+;{0,1}){1,3}).*");
+            Pattern firstThree = Pattern.compile("^(([^;]+;{0,1}){0,3}).*");
             while (rs.next() && count++ < 100) {
                 String car_id = rs.getString("id");
                 String car_name = rs.getString("name");
@@ -150,10 +168,24 @@ public class BrowseServlet extends HttpServlet {
                 String phone = phones.group(1);
                 String ID = ids.group(1);
 
-                jsonObject.addProperty("location_address", addr.charAt(addr.length() - 1) == ';' ? addr.substring(0, addr.length() - 1) : addr);
-                jsonObject.addProperty("location_phone", phone.charAt(phone.length() - 1) == ';' ? phone.substring(0, phone.length() - 1) : phone);
-                jsonObject.addProperty("location_ids", ID.charAt(ID.length() - 1) == ';' ? ID.substring(0, ID.length() - 1) : ID);
+//                System.out.println("addr: " + addr);
+//                System.out.println("phone: " + phone);
+//                System.out.println("ID: " + ID);
 
+                if (addr != null && addr.length() != 0)
+                    jsonObject.addProperty("location_address", addr.charAt(addr.length() - 1) == ';' ? addr.substring(0, addr.length() - 1) : addr);
+                else
+                    jsonObject.addProperty("location_address", "");
+
+                if (phone != null && phone.length() != 0)
+                    jsonObject.addProperty("location_phone", phone.charAt(phone.length() - 1) == ';' ? phone.substring(0, phone.length() - 1) : phone);
+                else
+                    jsonObject.addProperty("location_phone", "");
+
+                if (ID != null && ID.length() != 0)
+                    jsonObject.addProperty("location_ids", ID.charAt(ID.length() - 1) == ';' ? ID.substring(0, ID.length() - 1) : ID);
+                else
+                    jsonObject.addProperty("location_ids", "");
 //                System.out.println(jsonObject.toString());
                 jsonArray.add(jsonObject);
             }
@@ -199,7 +231,7 @@ public class BrowseServlet extends HttpServlet {
             out.write(jsonObject.toString());
 
             // display on backend (more detailed)
-            System.out.println(e.getMessage());
+            System.out.println("Error: " + e.getMessage());
 
             // set response status to 500 (Internal Server Error)
             response.setStatus(500);

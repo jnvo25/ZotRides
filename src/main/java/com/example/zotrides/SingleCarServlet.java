@@ -48,6 +48,7 @@ public class SingleCarServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         try (Connection conn = dataSource.getConnection()) {
+            /*
             String query = "WITH numberedPickup AS\n" +
                     "\t(SELECT carID, pickupLocationID, numCars \n" +
                     "\tFROM pickup_car_from NATURAL JOIN (SELECT pickupLocationID, COUNT(DISTINCT carID) as numCars FROM pickup_car_from GROUP BY pickupLocationID) as numberedPickup),\n" +
@@ -66,13 +67,34 @@ public class SingleCarServlet extends HttpServlet {
                     "        group_concat(DISTINCT phoneNumber ORDER BY numCars DESC, address SEPARATOR ';') as phoneNumber,\n" +
                     "        group_concat(DISTINCT PickupLocation.id ORDER BY numCars DESC, address SEPARATOR ';') as pickupID\n" +
                     "FROM car_info, numberedPickup, PickupLocation\n" +
-                    "WHERE car_info.id = numberedPickup.carID AND numberedPickup.pickupLocationID = PickupLocation.id;";
+                    "WHERE car_info.id = numberedPickup.carID AND numberedPickup.pickupLocationID = PickupLocation.id;";*/
+
+            String query = "WITH numberedPickup AS\n" +
+                    "\t(SELECT carID, pickupLocationID, numCars \n" +
+                    "\tFROM pickup_car_from NATURAL JOIN (SELECT pickupLocationID, COUNT(DISTINCT carID) as numCars FROM pickup_car_from GROUP BY pickupLocationID) as numberedPickup),\n" +
+                    "\n" +
+                    "car_info(id, model, make, year, name, price, rating, numVotes) AS\n" +
+                    "\t(SELECT Cars.id, model, make, year, name, price, rating, numVotes\n" +
+                    "\tFROM ((Cars, category_of_car, Category) LEFT OUTER JOIN CarPrices ON CarPrices.carID = ?)\n" +
+                    "\t\tLEFT OUTER JOIN Ratings ON Ratings.carID = ?\n" +
+                    "\tWHERE Cars.id = ? \n" +
+                    "\t\t\tAND category_of_car.carID = ? \n" +
+                    "\t\t\tAND Category.id = category_of_car.categoryID)\n" +
+                    "\n" +
+                    "SELECT car_info.id as id, group_concat(DISTINCT concat_ws(' ', make, model, year)) as name, name as category, price, rating, numVotes, \n" +
+                    "\t\tgroup_concat(DISTINCT address ORDER BY numCars DESC, address SEPARATOR ';') as address, \n" +
+                    "        group_concat(DISTINCT phoneNumber ORDER BY numCars DESC, address SEPARATOR ';') as phoneNumber,\n" +
+                    "        group_concat(DISTINCT PickupLocation.id ORDER BY numCars DESC, address SEPARATOR ';') as pickupID\n" +
+                    "FROM (car_info LEFT OUTER JOIN numberedPickup ON car_info.id = numberedPickup.carID) LEFT OUTER JOIN PickupLocation ON numberedPickup.pickupLocationID = PickupLocation.id;";
 
 //            System.out.println("query is\n" + query);
             // Declare our statement
             PreparedStatement statement = conn.prepareStatement(query);
 
-             statement.setString(1, id);
+            statement.setString(1, id);
+            statement.setString(2, id);
+            statement.setString(3, id);
+            statement.setString(4, id);
 
             // Perform the query
             ResultSet rs = statement.executeQuery();

@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 /**
  * This ShoppingCartServlet is declared in the web annotation below,
- * which is mapped to the URL pattern /api/index.
+ * which is mapped to the URL pattern /api/shopping-cart.
  */
 @WebServlet(name = "ShoppingCartServlet", urlPatterns = "/api/shopping-cart")
 public class ShoppingCartServlet extends HttpServlet {
