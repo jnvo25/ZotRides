@@ -13,23 +13,21 @@ export default function(props) {
                 console.log(values);
 
                 props.setLoading(true);
-                props.setSuccess(true);
                 // TODO: Connect to correct employee login
-                // jQuery.ajax({
-                //     dataType: "json",
-                //     method: "POST",
-                //     data: values,
-                //     url: HOST + "api/login",
-                //     success: (resultData) => {
-                //         //setCar(resultData[0]);
-                //         //setLoading(false);
-                //         console.log(JSON.stringify(resultData));
-                //         if(resultData.status === "fail")
-                //             props.setError("Login failed (Invalid username/password");
-                //         else
-                //             props.setSuccess(true);
-                //     }
-                // });
+                jQuery.ajax({
+                    dataType: "json",
+                    method: "POST",
+                    data: values,
+                    url: HOST + "api/employee-login",
+                    success: (resultData) => {
+                        props.setLoading(false);
+                        console.log(JSON.stringify(resultData));
+                        if(resultData.status === "fail")
+                            props.setError("Login failed (Invalid username/password");
+                        else
+                            props.setSuccess(true);
+                    }
+                });
             })}
         >
             {({
