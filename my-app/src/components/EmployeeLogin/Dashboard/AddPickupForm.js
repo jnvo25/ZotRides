@@ -1,9 +1,30 @@
-import {Button, Form} from "react-bootstrap";
+import {Button, Form, Modal} from "react-bootstrap";
 import {Formik} from "formik";
 import jQuery from "jquery";
 import HOST from "../../../Host";
+import {useState} from "react";
 
 export default function() {
+    const [success, setSuccess] = useState(false);
+
+    const handleClose = () => setSuccess(false);
+
+    if(success) {
+        return (
+            <Modal show={success} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Confirmation</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>Successfully updated!</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+        )
+    }
+
     return (
         <Formik
             // TODO: When all are empty return movie list
@@ -15,12 +36,7 @@ export default function() {
                     data: values,
                     url: HOST + "api/add-loc",
                     success: (resultData) => {
-                        // props.setLoading(false);
-                        console.log(JSON.stringify(resultData));
-                        // if(resultData.status === "fail")
-                        // props.setError("Add car failed");
-                        // else
-                        //     props.setSuccess(true);
+                        setSuccess(true);
                     }
                 });
             })}
