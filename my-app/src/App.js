@@ -7,7 +7,6 @@ import Home from './components/Home';
 import SingleCar from './components/SingleCar';
 import SingleLocation from './components/SingleLocation';
 import Navbar from './components/NavBar';
-import Browse from "./components/Browse";
 import SearchResults from "./components/SearchResults";
 import MyCart from "./components/MyCart";
 import Payments from "./components/Payments";
