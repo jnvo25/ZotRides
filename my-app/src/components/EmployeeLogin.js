@@ -13,12 +13,12 @@ export default function () {
     const [isLoading, setLoading] = useState(false);
     const [error, setError] = useState();
 
-    if(success) {
+    if(!success) {
         return (
             <Container>
                 <Row>
                     <Col>
-                    <h1 className={"text-center pt-5"}>Login</h1>
+                    <h1 className={"text-center pt-5"}>Dashboard Login</h1>
                     <Card xs={4}>
                         <LoadingOverlay active={isLoading} spinner text={'Logging in...'}>
                             <Card.Body>
