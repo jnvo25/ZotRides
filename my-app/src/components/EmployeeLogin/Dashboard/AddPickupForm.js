@@ -1,5 +1,7 @@
 import {Button, Form} from "react-bootstrap";
 import {Formik} from "formik";
+import jQuery from "jquery";
+import HOST from "../../../Host";
 
 export default function() {
     return (
@@ -7,7 +9,20 @@ export default function() {
             // TODO: When all are empty return movie list
             initialValues={{}}
             onSubmit={(async (values) => {
-
+                jQuery.ajax({
+                    dataType: "json",
+                    method: "POST",
+                    data: values,
+                    url: HOST + "api/add-loc",
+                    success: (resultData) => {
+                        // props.setLoading(false);
+                        console.log(JSON.stringify(resultData));
+                        // if(resultData.status === "fail")
+                        // props.setError("Add car failed");
+                        // else
+                        //     props.setSuccess(true);
+                    }
+                });
             })}
         >
             {({
@@ -20,27 +35,27 @@ export default function() {
               }) => (
                 <Form noValidate onSubmit={handleSubmit}>
                     <Form.Group>
-                        <Form.Label>Location*</Form.Label>
+                        <Form.Label>Address*</Form.Label>
                         <Form.Control
                             type={"string"}
-                            name={"model"}
-                            id={"model"}
+                            name={"address"}
+                            id={"address"}
                             onChange={handleChange}
                             onBlur={handleBlur}
-                            value={values.model}
-                            placeholder={"Enter model name"}
+                            value={values.address}
+                            placeholder={"Enter address name"}
                         />
                     </Form.Group>
                     <Form.Group>
                         <Form.Label>Phone number</Form.Label>
                         <Form.Control
                             type={"string"}
-                            name={"year"}
-                            id={"year"}
+                            name={"phoneNumber"}
+                            id={"phoneNumber"}
                             onChange={handleChange}
                             onBlur={handleBlur}
-                            value={values.year}
-                            placeholder={"Enter year"}
+                            value={values.phoneNumber}
+                            placeholder={"Enter Phone Number"}
                         />
                     </Form.Group>
                     <Button variant={"primary"} type={"submit"}>Add</Button>

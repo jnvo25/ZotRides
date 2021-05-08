@@ -1,6 +1,9 @@
 import {Table} from "react-bootstrap";
 
 export default function(props) {
+    console.log(props);
+    if(props.dbtitle === undefined)
+        return <div></div>
     return (
         <div>
             <h5>{props.dbtitle}</h5>
@@ -13,10 +16,10 @@ export default function(props) {
                 </thead>
                 <tbody>
                 {
-                    Object.keys(props.attributes).map((element) => (
+                    props.fields.map((element, index)=> (
                         <tr>
                             <th>{element}</th>
-                            <th>{props.attributes[element]}</th>
+                            <th>{props.types[index]}</th>
                         </tr>
                     ))
                 }
