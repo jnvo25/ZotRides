@@ -4,6 +4,7 @@ import { Form, Button } from 'react-bootstrap';
 import jQuery from 'jquery';
 import HOST from '../../../Host';
 import ReCaptcha from 'react-google-recaptcha';
+import {LinkContainer} from "react-router-bootstrap";
 
 export default function(props) {
     return (
@@ -22,10 +23,15 @@ export default function(props) {
                     success: (resultData) => {
                         props.setLoading(false);
                         console.log(JSON.stringify(resultData));
+
                         if(resultData.status === "fail")
-                            props.setError("Login failed (Invalid username/password");
+                            props.setError(resultData.message);
                         else
                             props.setSuccess(true);
+                    },
+                    error: (resultData) => {
+                        props.setLoading(false);
+                        props.setError("Invalid email/password");
                     }
                 });
             })}
@@ -78,7 +84,9 @@ export default function(props) {
                         />
                     </Form.Group>
                     <Button variant={"primary"} type={"submit"}>Login</Button>
-                    <Button variant={"link"} value={"register"} onClick={props.switchForm}>Create an Account</Button>
+                    <LinkContainer to={"/login"}>
+                        <Button variant={"link"} value={"register"}>Customer Login</Button>
+                    </LinkContainer>
                 </Form>
             )}
         </Formik>

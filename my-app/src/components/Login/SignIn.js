@@ -1,5 +1,6 @@
 import { Formik } from 'formik';
 import { Form, Button } from 'react-bootstrap';
+import {LinkContainer} from 'react-router-bootstrap';
 import jQuery from 'jquery';
 import HOST from '../../Host';
 import ReCaptcha from 'react-google-recaptcha';
@@ -23,9 +24,12 @@ export default function(props) {
                         //setLoading(false);
                         console.log(JSON.stringify(resultData));
                         if(resultData.status === "fail")
-                            props.setError("Login failed (Invalid username/password");
+                            props.setError(resultData.message);
                         else
                             props.setSuccess(true);
+                    },
+                    error: (resultData) => {
+                        props.setError("Invalid email/password");
                     }
                 });
             })}
@@ -78,7 +82,9 @@ export default function(props) {
                         />
                     </Form.Group>
                     <Button variant={"primary"} type={"submit"}>Login</Button>
-                    <Button variant={"link"} value={"register"} onClick={props.switchForm}>Create an Account</Button>
+                    <LinkContainer to={"/_dashboard"}>
+                        <Button variant={"link"} value={"register"}>Employee Login</Button>
+                    </LinkContainer>
                 </Form>
             )}
         </Formik>

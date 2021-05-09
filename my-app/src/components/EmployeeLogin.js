@@ -1,10 +1,11 @@
-import {Card, Col, Container, Nav, Row} from "react-bootstrap";
+import {Button, Card, Col, Container, Nav, Row} from "react-bootstrap";
 import "./stylesheets/EmployeeLogin.css";
 import Dashboard from "./EmployeeLogin/Dashboard";
 import AnchorLink from 'react-anchor-link-smooth-scroll';
 import {useState} from "react";
 import SignIn from "./EmployeeLogin/Dashboard/SignIn";
 import LoadingOverlay from "react-loading-overlay";
+import {LinkContainer} from "react-router-bootstrap";
 
 export default function () {
     const [success, setSuccess] = useState(false);
@@ -38,6 +39,9 @@ export default function () {
                         <AnchorLink href='#tables'><Nav.Link className={"nav-link"} eventKey={"tables"}>Tables</Nav.Link></AnchorLink>
                         <AnchorLink href='#addcar'><Nav.Link className={"nav-link"} eventKey={"addcar"}>Add Car</Nav.Link></AnchorLink>
                         <AnchorLink href='#addpickup'><Nav.Link className={"nav-link"} eventKey={"addpickup"}>Add Pickup Location</Nav.Link></AnchorLink>
+                        <LinkContainer to={"/"}>
+                            <Nav.Link className={"nav-link"}>Go to site</Nav.Link>
+                        </LinkContainer>
                     </Nav>
                 </Col>
                 <Col xs={10}>
