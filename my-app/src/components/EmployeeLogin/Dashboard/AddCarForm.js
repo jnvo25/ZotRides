@@ -1,9 +1,30 @@
-import {Button, Form} from "react-bootstrap";
+import {Button, Form, Modal} from "react-bootstrap";
+import {useState} from "react";
 import {Formik} from "formik";
 import jQuery from "jquery";
 import HOST from "../../../Host";
 
 export default function() {
+    const [success, setSuccess] = useState(false);
+
+    const handleClose = () => setSuccess(false);
+
+    if(success) {
+        return (
+            <Modal show={success} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Confirmation</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>Successfully updated!</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+        )
+    }
+
     return (
         <Formik
             // TODO: When all are empty return movie list
@@ -17,6 +38,7 @@ export default function() {
                     success: (resultData) => {
                         // props.setLoading(false);
                         console.log(JSON.stringify(resultData));
+                        setSuccess(true);
                         // if(resultData.status === "fail")
                             // props.setError("Add car failed");
                         // else
