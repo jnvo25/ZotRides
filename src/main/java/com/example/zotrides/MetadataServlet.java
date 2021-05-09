@@ -66,6 +66,14 @@ public class MetadataServlet extends HttpServlet {
                 JsonObject result = new JsonObject();
                 JsonArray fields = new JsonArray();
                 JsonArray types = new JsonArray();
+
+                // filter out backup table
+                if (table.equals("Customers_backup")) {
+                    statement2.close();
+                    rs2.close();
+                    continue;
+                }
+
                 while(rs2.next()) {
                     fields.add(rs2.getString("Field"));
                     types.add(rs2.getString("Type"));
