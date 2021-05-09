@@ -1,9 +1,8 @@
 import DatePicker from "react-date-picker";
-import {Form, Button, Col, Dropdown, ListGroup} from "react-bootstrap";
-import React, {useState} from "react";
+import {Form, Button} from "react-bootstrap";
+import React from "react";
 import jQuery from "jquery";
 import {Formik} from "formik";
-import {LinkContainer} from "react-router-bootstrap";
 import HOST from "../../Host";
 
 export default function(props) {

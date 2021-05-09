@@ -1,4 +1,4 @@
-import {Button, ButtonGroup, Col, Container, Dropdown, Row} from "react-bootstrap";
+import {Button, ButtonGroup, Col, Container, Row} from "react-bootstrap";
 import CarCard from "../Home/CarCard";
 
 export default function(props) {

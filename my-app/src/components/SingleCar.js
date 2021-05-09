@@ -1,5 +1,5 @@
-import react, {useEffect, useState} from 'react';
-import {Jumbotron, Container, Row, Col, Button, Dropdown} from 'react-bootstrap';
+import {useEffect, useState} from 'react';
+import {Container, Row, Col, Button} from 'react-bootstrap';
 import './stylesheets/Template.css';
 import jQuery from 'jquery';
 import {LinkContainer} from "react-router-bootstrap";
@@ -8,7 +8,6 @@ import Header from "./Template/Header";
 import ReservationForm from "./SingleCar/ReservationForm";
 import HOST from "../Host";
 import {Redirect} from "react-router";
-import {Link} from "react-router-dom";
 
 
 export default function SingleCar(props) {

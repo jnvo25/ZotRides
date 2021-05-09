@@ -2,7 +2,6 @@ import {useState} from 'react';
 import {Nav, Navbar} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import SearchModal from "./Search/SearchModal";
-import {Link} from "react-router-dom";
 import VehicleTypeModal from "./NavBarModals/VehicleTypeModal";
 
 export default function MyNav(props) {

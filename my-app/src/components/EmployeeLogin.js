@@ -1,12 +1,10 @@
-import {Card, Col, Container, Fade, Nav, Row} from "react-bootstrap";
+import {Card, Col, Container, Nav, Row} from "react-bootstrap";
 import "./stylesheets/EmployeeLogin.css";
 import Dashboard from "./EmployeeLogin/Dashboard";
 import AnchorLink from 'react-anchor-link-smooth-scroll';
-import {useState, useEffect} from "react";
+import {useState} from "react";
 import SignIn from "./EmployeeLogin/Dashboard/SignIn";
 import LoadingOverlay from "react-loading-overlay";
-import jQuery from "jquery";
-import HOST from "../Host";
 
 export default function () {
     const [success, setSuccess] = useState(false);

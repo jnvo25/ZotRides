@@ -2,7 +2,6 @@ import {Button, Form} from "react-bootstrap";
 import {Formik} from "formik";
 import {Redirect} from "react-router";
 import {useState} from "react";
-import jQuery from "jquery";
 
 export default function() {
     const [complete, setComplete] = useState(false);

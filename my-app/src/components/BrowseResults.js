@@ -3,7 +3,6 @@ import jQuery from "jquery";
 import HOST from "../Host";
 import CarCard from "./Home/CarCard";
 import {Container, Row, Col, Button} from "react-bootstrap";
-import {Redirect} from "react-router";
 
 export default function(props) {
     const [cars, setCars] = useState({});

@@ -1,5 +1,5 @@
-import react, {useEffect, useState} from 'react';
-import {Jumbotron, Container, Row, Col, Button} from 'react-bootstrap';
+import {useEffect, useState} from 'react';
+import {Container, Row, Col, Button} from 'react-bootstrap';
 import './stylesheets/Template.css';
 import jQuery from 'jquery';
 import {LinkContainer} from "react-router-bootstrap";

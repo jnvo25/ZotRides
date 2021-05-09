@@ -4,8 +4,9 @@ import jQuery from "jquery";
 import HOST from "../../../Host";
 import {useState} from "react";
 
-export default function() {
+export default function(props) {
     const [success, setSuccess] = useState(false);
+    const [message, setMessage] = useState("");
 
     const handleClose = () => setSuccess(false);
 
@@ -13,9 +14,9 @@ export default function() {
         return (
             <Modal show={success} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Confirmation</Modal.Title>
+                    <Modal.Title>Successfully updated!</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>Successfully updated!</Modal.Body>
+                <Modal.Body>{message}</Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleClose}>
                         Close
@@ -36,7 +37,16 @@ export default function() {
                     data: values,
                     url: HOST + "api/add-loc",
                     success: (resultData) => {
-                        setSuccess(true);
+                        if(resultData.errorMessage != null) {
+                            props.setError(["", resultData.errorMessage]);
+                        } else {
+                            setMessage(resultData.message);
+                            setSuccess(true);
+                        }
+                    },
+                    error: (resultData) => {
+                        console.log("ERROR")
+                        console.log(resultData)
                     }
                 });
             })}

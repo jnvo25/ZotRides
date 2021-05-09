@@ -5,7 +5,6 @@ import {Card, Col, Container, Row, Fade} from "react-bootstrap";
 import LoadingOverlay from 'react-loading-overlay';
 
 import SignIn from "./Login/SignIn";
-import SignUp from "./Login/SignUp";
 import {Redirect} from "react-router";
 
 export default function() {

@@ -5,8 +5,6 @@ import React, {useEffect, useState} from "react";
 import jQuery from "jquery";
 import HOST from "../Host";
 
-import CarCard from "./Home/CarCard";
-import CartItem from "./MyCart/CartItem";
 import ConfirmationCard from "./MyCart/ConfirmationCard";
 import {LinkContainer} from "react-router-bootstrap";
 

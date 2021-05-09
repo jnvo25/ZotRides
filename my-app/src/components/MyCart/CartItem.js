@@ -1,4 +1,4 @@
-import {Button, Card, Col} from "react-bootstrap";
+import {Button, Card} from "react-bootstrap";
 import {useState} from "react";
 import UpdateModal from "./CartItem/UpdateModal";
 import jQuery from "jquery";

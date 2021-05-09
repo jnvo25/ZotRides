@@ -48,7 +48,7 @@ public class AddCarServlet extends HttpServlet {
 
         String make = request.getParameter("make");
         String model = request.getParameter("model");
-        int year = Integer.parseInt(request.getParameter("year"));
+        String year = request.getParameter("year");
         String address = request.getParameter("address");
         String category = request.getParameter("category");
 
@@ -59,13 +59,31 @@ public class AddCarServlet extends HttpServlet {
 
         /* run stored procedure */
         try (Connection conn = dataSource.getConnection()) {
+            // Check for nulls
+            if(make == null)
+                throw new NullPointerException("ERROR: make cannot be null");
+            else if(model == null)
+                throw new NullPointerException("ERROR: model cannot be null");
+            else if(year == null)
+                throw new NullPointerException("ERROR: year cannot be null");
+            else if(address == null)
+                throw new NullPointerException("ERROR: address cannot be null");
+            else if(category == null)
+                throw new NullPointerException("ERROR: category cannot be null");
+
+            try {
+                Integer.parseInt(year);
+            } catch (Exception e) {
+                throw new Exception("ERROR: Year must be an integer");
+            }
+
             String query = "CALL add_car(?, ?, ?, ?, ?, @message);";
 
             // Prepare statement with parameters
             PreparedStatement statement = conn.prepareStatement(query);
             statement.setString(1, make);
             statement.setString(2, model);
-            statement.setInt(3, year);
+            statement.setInt(3, Integer.parseInt(year));
             statement.setString(4, address);
             statement.setString(5, category);
 
@@ -99,7 +117,7 @@ public class AddCarServlet extends HttpServlet {
             System.out.println(e.getMessage());
 
             // set response status to 500 (Internal Server Error)
-            response.setStatus(500);
+//            response.setStatus(500);
         }
         out.close();
     }

@@ -1,5 +1,4 @@
 import { Formik } from 'formik';
-import * as yup from 'yup';
 import { Form, Button } from 'react-bootstrap';
 import jQuery from 'jquery';
 import HOST from '../../Host';

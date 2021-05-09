@@ -1,5 +1,3 @@
-import {Container, Row, Col, Dropdown} from "react-bootstrap";
-import CarCard from "./Home/CarCard";
 import {useEffect, useState} from "react";
 import jQuery from "jquery";
 import Header from "./Template/Header";

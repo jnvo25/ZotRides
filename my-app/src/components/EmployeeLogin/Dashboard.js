@@ -9,6 +9,8 @@ import HOST from "../../Host";
 export default function() {
     const [tables, setTables] = useState([]);
     const [isLoading, setLoading] = useState(true);
+    const [error, setError] = useState(["",""]);
+
     useEffect(() => {
         jQuery.ajax({
             dataType: "json",
@@ -46,14 +48,16 @@ export default function() {
             <h3 id={"addcar"}>Add car</h3>
             <Row>
                 <Col>
-                    <AddCarForm />
+                    <AddCarForm setError={setError} />
+                    <p>{error[0]}</p>
                 </Col>
             </Row>
             <hr />
             <h3 id={"addpickup"}>Add Pickup Location</h3>
             <Row>
                 <Col>
-                    <AddPickupForm />
+                    <AddPickupForm setError={setError}/>
+                    <p>{error[1]}</p>
                 </Col>
             </Row>
             <div className={"end"}/>

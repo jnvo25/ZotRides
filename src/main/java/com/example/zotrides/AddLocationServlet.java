@@ -90,9 +90,9 @@ public class AddLocationServlet extends HttpServlet {
 
             // for more detail
             System.out.println(e.getMessage());
-
+//            response.sendError(500, e.getMessage());
             // set response status to 500 (Internal Server Error)
-            response.setStatus(500);
+//            response.setStatus(500);
         }
         out.close();
     }

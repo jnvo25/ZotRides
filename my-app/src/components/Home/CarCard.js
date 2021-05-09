@@ -1,7 +1,6 @@
 import {useEffect, useState} from 'react';
 import {Card, ListGroup, Col, Button} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
-import {Redirect} from "react-router";
 import jQuery from "jquery";
 import HOST from "../../Host";
 import "../stylesheets/CarCard.css";
