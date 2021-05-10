@@ -38,10 +38,10 @@ public class UpdateSecurePassword {
             //  it internally use SHA-256 algorithm and 10,000 iterations to calculate the encrypted password
             PasswordEncryptor passwordEncryptor = new StrongPasswordEncryptor();
 
-            // execute the update queries to update the passwords
+            // execute the update queries to update the passwords in Customers table
             String encryptQuery = "UPDATE Customers SET password=? WHERE id=?;";
             PreparedStatement statement2 = connection.prepareStatement(encryptQuery);
-            System.out.println("encrypting password (this might take a while)");
+            System.out.println("encrypting Customer passwords (this might take a while)");
             int count = 0;
             while (rs.next()) {
                 // get the ID and plain text password from current table
@@ -57,16 +57,43 @@ public class UpdateSecurePassword {
                 count += statement2.executeUpdate();
             }
 
-            System.out.println("updating password completed, " + count + " rows affected");
+            System.out.println("updating customer passwords completed, " + count + " rows affected");
 
             // clean up
             rs.close();
             statement.close();
             statement2.close();
-            connection.close();
 
-            System.out.println("finished");
+            System.out.println("finished with Customers");
 
+            // ----- Encrypt for Employees
+            statement = connection.prepareStatement("SELECT email, password from Employees");
+            rs = statement.executeQuery();
+            encryptQuery = "UPDATE Employees SET password=? WHERE email=?;";
+            statement2 = connection.prepareStatement(encryptQuery);
+            System.out.println("encrypting Employee passwords (this might take a while)");
+
+            count = 0;
+            while (rs.next()) {
+                // get the ID and plain text password from current table
+                String email = rs.getString("email");
+                String password = rs.getString("password");
+
+                // encrypt the password using StrongPasswordEncryptor
+                String encryptedPassword = passwordEncryptor.encryptPassword(password);
+
+                // generate the update query
+                statement2.setString(1, encryptedPassword);
+                statement2.setString(2, email);
+                count += statement2.executeUpdate();
+            }
+
+            System.out.println("updating employee passwords completed, " + count + " rows affected");
+
+            // clean up
+            rs.close();
+            statement.close();
+            statement2.close();
         } catch (Exception e) {
             // display error message
             System.out.println("Error: " + e.getMessage());
