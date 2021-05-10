@@ -1,4 +1,3 @@
 .idea
 zotrides.iml
-my-app/build/
-
+src/main/java/com/example/zotrides/RecaptchaConstants.java
