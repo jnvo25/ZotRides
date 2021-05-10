@@ -14,7 +14,7 @@ export default function(props) {
         return (
             <Modal show={success} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Successfully updated!</Modal.Title>
+                    <Modal.Title>Response Received!</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>{message}</Modal.Body>
                 <Modal.Footer>
