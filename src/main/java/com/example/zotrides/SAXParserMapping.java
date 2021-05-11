@@ -47,7 +47,7 @@ public class SAXParserMapping extends DefaultHandler{
 
     public void runExample() {
         try {
-            out = new PrintWriter("/home/ubuntu/loaddata.txt");
+            out = new PrintWriter("data.txt");
             parseDocument();
             out.close();
         } catch (FileNotFoundException f) {
