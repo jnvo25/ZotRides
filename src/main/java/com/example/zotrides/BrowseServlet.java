@@ -38,6 +38,14 @@ public class BrowseServlet extends HttpServlet {
     }
 
     /**
+     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+     *      response)
+     */
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        doPost(request, response);
+    }
+
+    /**
      * handles POST requests to store query in session & return results
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -67,25 +75,13 @@ public class BrowseServlet extends HttpServlet {
             additional += " AND year LIKE \"" + yearDigit + "%\"";
 
         // Integrate into a base form of the query
-        /*String query =
-                "WITH pickupCarCounts AS (SELECT pickupLocationID, COUNT(DISTINCT carID) as numCars \n" +
-                "\tFROM pickup_car_from \n" +
-                "    GROUP BY pickupLocationID)\n" +
-                "    \n" +
-                "SELECT Cars.id as id, group_concat(DISTINCT concat_ws(' ', make, model, year)) as name, \n" +
-                "\t\tname as category, price, rating, numVotes,\n" +
-                "        group_concat(DISTINCT address ORDER BY numCars DESC, address SEPARATOR ';') as address, \n" +
-                "        group_concat(DISTINCT phoneNumber ORDER BY numCars DESC, address SEPARATOR ';') as phoneNumber,\n" +
-                "        group_concat(DISTINCT PickupLocation.id ORDER BY numCars DESC, address SEPARATOR ';') as pickupID\n" +
-                "FROM category_of_car, Category, Cars, CarPrices, Ratings, pickupCarCounts, pickup_car_from, PickupLocation\n" +
-                "WHERE category_of_car.categoryID = Category.id AND category_of_car.carID = Cars.id AND Cars.id = CarPrices.carID" + additional + " \n" +
-                "\tAND Ratings.carID = Cars.id AND pickup_car_from.carID = Cars.id AND pickup_car_from.pickupLocationID = pickupCarCounts.pickupLocationID AND pickup_car_from.pickupLocationID = PickupLocation.id\n" +
-                "GROUP BY Cars.id\n"; */
-        String query =
+        String query1 =
                 "WITH pickupCarCounts AS (SELECT pickupLocationID, COUNT(DISTINCT carID) as numCars \n" +
                         "\tFROM pickup_car_from \n" +
                         "    GROUP BY pickupLocationID)\n" +
-                        "    \n" +
+                        "    \n";
+
+        String query2 =
                         "SELECT Cars.id as id, group_concat(DISTINCT concat_ws(' ', make, model, year)) as name, \n" +
                         "\t\tname as category, price, rating, numVotes,\n" +
                         "        group_concat(DISTINCT address ORDER BY numCars DESC, address SEPARATOR ';') as address, \n" +
@@ -98,18 +94,18 @@ public class BrowseServlet extends HttpServlet {
                         "        LEFT OUTER JOIN PickupLocation ON pickup_car_from.pickupLocationID = PickupLocation.id\n" +
                         "WHERE category_of_car.categoryID = Category.id AND category_of_car.carID = Cars.id" + additional + "\n" +
                         "GROUP BY Cars.id\n";
-//        System.out.println("query is: \n" + query);
+
         // Store base query into session (to maintain consistency when jumping back to CarsList page)
         HttpSession session = request.getSession();
         CarListSettings previousSettings = (CarListSettings) session.getAttribute("previousSettings");
         if (previousSettings == null) {
-            previousSettings = new CarListSettings(query, 1, 10);
+            previousSettings = new CarListSettings(query1 + query2, 1, 10);
             session.setAttribute("previousSettings", previousSettings);
         } else {
             // prevent corrupted states through sharing under multi-threads
             // will only be executed by one thread at a time
             synchronized (previousSettings) {
-                previousSettings.reset(query, 1, 10);
+                previousSettings.reset(query1 + query2, 1, 10);
             }
         }
 
@@ -117,20 +113,15 @@ public class BrowseServlet extends HttpServlet {
         response.setContentType("application/json"); // Response mime type
         PrintWriter out = response.getWriter();      // Output stream to STDOUT
         try (Connection conn = dataSource.getConnection()) {
-            // drop temporary table
+            // drop temporary table // TODO : ELIMINATE LATER
             PreparedStatement statement = conn.prepareStatement("DROP TABLE IF EXISTS temp");
             statement.executeUpdate();
             statement.close();
 
             // store query in temporary table
-            query = previousSettings.toQuery();
-            statement = conn.prepareStatement("CREATE TEMPORARY TABLE temp\n" + query);
+            String query = previousSettings.toQuery();
+            statement = conn.prepareStatement(query);
 //            System.out.println("query:\n" + statement.toString());
-            statement.executeUpdate();
-            statement.close();
-
-            // access results
-            statement = conn.prepareStatement("SELECT * FROM temp LIMIT 100;");
             ResultSet rs = statement.executeQuery();
 
             // process returned results
@@ -157,35 +148,42 @@ public class BrowseServlet extends HttpServlet {
                 jsonObject.addProperty("car_votes", car_votes);
 
                 // Filter out only the top 3 based on sorted order
-                Matcher addresses = firstThree.matcher(location_address);
-                Matcher phones = firstThree.matcher(location_phone);
-                Matcher ids = firstThree.matcher(location_ids);
-                addresses.find();
-                phones.find();
-                ids.find();
+                if (location_address == null || location_phone == null || location_ids == null) {
+                    jsonObject.addProperty("location_address", "");
+                    jsonObject.addProperty("location_phone", "");
+                    jsonObject.addProperty("location_ids", "");
+                } else {
+                    Matcher addresses = firstThree.matcher(location_address);
+                    Matcher phones = firstThree.matcher(location_phone);
+                    Matcher ids = firstThree.matcher(location_ids);
+                    addresses.find();
+                    phones.find();
+                    ids.find();
 
-                String addr = addresses.group(1);
-                String phone = phones.group(1);
-                String ID = ids.group(1);
+                    String addr = addresses.group(1);
+                    String phone = phones.group(1);
+                    String ID = ids.group(1);
 
 //                System.out.println("addr: " + addr);
 //                System.out.println("phone: " + phone);
 //                System.out.println("ID: " + ID);
 
-                if (addr != null && addr.length() != 0)
-                    jsonObject.addProperty("location_address", addr.charAt(addr.length() - 1) == ';' ? addr.substring(0, addr.length() - 1) : addr);
-                else
-                    jsonObject.addProperty("location_address", "");
+                    if (addr != null && addr.length() != 0)
+                        jsonObject.addProperty("location_address", addr.charAt(addr.length() - 1) == ';' ? addr.substring(0, addr.length() - 1) : addr);
+                    else
+                        jsonObject.addProperty("location_address", "");
 
-                if (phone != null && phone.length() != 0)
-                    jsonObject.addProperty("location_phone", phone.charAt(phone.length() - 1) == ';' ? phone.substring(0, phone.length() - 1) : phone);
-                else
-                    jsonObject.addProperty("location_phone", "");
+                    if (phone != null && phone.length() != 0)
+                        jsonObject.addProperty("location_phone", phone.charAt(phone.length() - 1) == ';' ? phone.substring(0, phone.length() - 1) : phone);
+                    else
+                        jsonObject.addProperty("location_phone", "");
 
-                if (ID != null && ID.length() != 0)
-                    jsonObject.addProperty("location_ids", ID.charAt(ID.length() - 1) == ';' ? ID.substring(0, ID.length() - 1) : ID);
-                else
-                    jsonObject.addProperty("location_ids", "");
+                    if (ID != null && ID.length() != 0)
+                        jsonObject.addProperty("location_ids", ID.charAt(ID.length() - 1) == ';' ? ID.substring(0, ID.length() - 1) : ID);
+                    else
+                        jsonObject.addProperty("location_ids", "");
+                }
+
 //                System.out.println(jsonObject.toString());
                 jsonArray.add(jsonObject);
             }
@@ -210,7 +208,15 @@ public class BrowseServlet extends HttpServlet {
             statement.close();
 
             // get the max number of results
-            statement = conn.prepareStatement("SELECT COUNT(id) as numResults FROM temp;");
+            String getCount = "SELECT COUNT(DISTINCT Cars.id) AS numResults\n" +
+                    "FROM (((((category_of_car, Category, Cars) LEFT OUTER JOIN CarPrices ON Cars.id = CarPrices.carID)\n" +
+                    "\t\tLEFT OUTER JOIN Ratings ON Ratings.carID = Cars.id)\n" +
+                    "        LEFT OUTER JOIN pickup_car_from ON pickup_car_from.carID = Cars.id)\n" +
+                    "        LEFT OUTER JOIN pickupCarCounts ON pickup_car_from.pickupLocationID = pickupCarCounts.pickupLocationID)\n" +
+                    "        LEFT OUTER JOIN PickupLocation ON pickup_car_from.pickupLocationID = PickupLocation.id\n" +
+                    "WHERE category_of_car.categoryID = Category.id AND category_of_car.carID = Cars.id" + additional + "\n";
+            statement = conn.prepareStatement(query1 + getCount);
+            System.out.println("------------------\n" + statement.toString());
             rs = statement.executeQuery(); // Perform the query
             if (rs.next()) {
                 int maxResults = rs.getInt("numResults");
