@@ -21,22 +21,39 @@ Below are a list of all files and a link to them that used some form of Prepared
 All of these files can be found under src/main/java/com/example/zotrides directory, but for convenience sake they are linked here.
 
 [AddCarServlet.java](https://github.com/UCI-Chenli-teaching/cs122b-spring21-team-16/blob/d6390a868d1e4103a324be671a1bdb8d18ac3bbf/src/main/java/com/example/zotrides/AddCarServlet.java)
+
 [AddLocationServlet.java](https://github.com/UCI-Chenli-teaching/cs122b-spring21-team-16/blob/d6390a868d1e4103a324be671a1bdb8d18ac3bbf/src/main/java/com/example/zotrides/AddLocationServlet.java)
+
 [BrowseServlet.java](https://github.com/UCI-Chenli-teaching/cs122b-spring21-team-16/blob/d6390a868d1e4103a324be671a1bdb8d18ac3bbf/src/main/java/com/example/zotrides/BrowseServlet.java)
+
 [CarImageServlet.java](https://github.com/UCI-Chenli-teaching/cs122b-spring21-team-16/blob/d6390a868d1e4103a324be671a1bdb8d18ac3bbf/src/main/java/com/example/zotrides/CarImageServlet.java)
+
 [CategoryServlet.java](https://github.com/UCI-Chenli-teaching/cs122b-spring21-team-16/blob/d6390a868d1e4103a324be671a1bdb8d18ac3bbf/src/main/java/com/example/zotrides/CategoryServlet.java)
+
 [EmployeeLoginServlet.java](https://github.com/UCI-Chenli-teaching/cs122b-spring21-team-16/blob/d6390a868d1e4103a324be671a1bdb8d18ac3bbf/src/main/java/com/example/zotrides/EmployeeLoginServlet.java)
+
 [LoginServlet.java](https://github.com/UCI-Chenli-teaching/cs122b-spring21-team-16/blob/d6390a868d1e4103a324be671a1bdb8d18ac3bbf/src/main/java/com/example/zotrides/LoginServlet.java)
+
 [MetadataServlet.java](https://github.com/UCI-Chenli-teaching/cs122b-spring21-team-16/blob/d6390a868d1e4103a324be671a1bdb8d18ac3bbf/src/main/java/com/example/zotrides/MetadataServlet.java)
+
 [PaginateServlet.java](https://github.com/UCI-Chenli-teaching/cs122b-spring21-team-16/blob/d6390a868d1e4103a324be671a1bdb8d18ac3bbf/src/main/java/com/example/zotrides/PaginateServlet.java)
+
 [PaymentServlet.java](https://github.com/UCI-Chenli-teaching/cs122b-spring21-team-16/blob/d6390a868d1e4103a324be671a1bdb8d18ac3bbf/src/main/java/com/example/zotrides/PaymentServlet.java)
+
 [SAXParserCar.java](https://github.com/UCI-Chenli-teaching/cs122b-spring21-team-16/blob/d6390a868d1e4103a324be671a1bdb8d18ac3bbf/src/main/java/com/example/zotrides/SAXParserCar.java)
+
 [SAXParserMapping.java](https://github.com/UCI-Chenli-teaching/cs122b-spring21-team-16/blob/d6390a868d1e4103a324be671a1bdb8d18ac3bbf/src/main/java/com/example/zotrides/SAXParserMapping.java)
+
 [SAXParserPickup.java](https://github.com/UCI-Chenli-teaching/cs122b-spring21-team-16/blob/d6390a868d1e4103a324be671a1bdb8d18ac3bbf/src/main/java/com/example/zotrides/SAXParserPickup.java)
+
 [SearchServlet.java](https://github.com/UCI-Chenli-teaching/cs122b-spring21-team-16/blob/d6390a868d1e4103a324be671a1bdb8d18ac3bbf/src/main/java/com/example/zotrides/SearchServlet.java)
+
 [SingleCarServlet.java](https://github.com/UCI-Chenli-teaching/cs122b-spring21-team-16/blob/d6390a868d1e4103a324be671a1bdb8d18ac3bbf/src/main/java/com/example/zotrides/SingleCarServlet.java)
+
 [SingleLocationServlet.java](https://github.com/UCI-Chenli-teaching/cs122b-spring21-team-16/blob/d6390a868d1e4103a324be671a1bdb8d18ac3bbf/src/main/java/com/example/zotrides/SingleLocationServlet.java)
+
 [SortServlet.java](https://github.com/UCI-Chenli-teaching/cs122b-spring21-team-16/blob/d6390a868d1e4103a324be671a1bdb8d18ac3bbf/src/main/java/com/example/zotrides/SortServlet.java)
+
 [UpdateSecurePassword.java](https://github.com/UCI-Chenli-teaching/cs122b-spring21-team-16/blob/d6390a868d1e4103a324be671a1bdb8d18ac3bbf/src/main/java/com/example/zotrides/UpdateSecurePassword.java)
 
 ### Parsing Optimization Strategies
