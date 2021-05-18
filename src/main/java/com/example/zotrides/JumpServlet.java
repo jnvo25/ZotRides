@@ -30,7 +30,23 @@ public class JumpServlet extends HttpServlet {
             // should be empty page
             JsonObject result = new JsonObject();
             result.add("results", new JsonArray());
-            result.addProperty("message", "Please perform a search or browse first");
+            result.addProperty("message", "Please perform a valid search or browse first");
+            JsonObject sorting = new JsonObject();
+            sorting.addProperty("ratingFirst", 0);
+            sorting.addProperty("ratingDescend", 0);
+            sorting.addProperty("nameDescend", 0);
+            result.add("sorting", sorting);
+            response.getWriter().write(result.toString());
+//            System.out.println(result.toString());
+            return;
+        }
+
+        // Exists but yielded no results (from full-text search on empty tokens)
+        else if (previousSettings.getCache() == null) {
+            // should be empty page
+            JsonObject result = new JsonObject();
+            result.add("results", new JsonArray());
+            result.addProperty("message", "No results. Page 1");
             JsonObject sorting = new JsonObject();
             sorting.addProperty("ratingFirst", 0);
             sorting.addProperty("ratingDescend", 0);
