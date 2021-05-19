@@ -16,6 +16,7 @@ export default function(props) {
 
     useEffect(() => {
         const query = removeEmpty(props.match.params);
+        console.log(query);
         if(query.retrace != null) {
             jQuery.ajax({
                 dataType: "json",
@@ -50,6 +51,18 @@ export default function(props) {
                 data: {category: query.key},
                 url: HOST + "api/browse-car",
                 success: (resultData) => {
+                    setMessage(resultData.message);
+                    setCars(resultData.results);
+                    setLoading(false);                }
+            });
+        } else if(query.fulltext != null) {
+            jQuery.ajax({
+                dataType: "json",
+                method: "POST",
+                data: {token: query.fulltext.replace("%20", " ")},
+                url: HOST + "api/full-text-search",
+                success: (resultData) => {
+
                     setMessage(resultData.message);
                     setCars(resultData.results);
                     setLoading(false);                }
@@ -263,5 +276,9 @@ function removeEmpty(object) {
         delete object.location;
     if(object.key === "na" || object.key == null)
         delete object.key;
+    if(object.retrace === "na" || object.retrace == null)
+        delete object.retrace;
+    if(object.fulltext === "na" || object.fulltext == null)
+        delete object.fulltext;
     return object;
 }
