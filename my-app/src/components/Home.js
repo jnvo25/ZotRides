@@ -13,10 +13,18 @@ export default function Home() {
     const [success, setSuccess] = useState(false);
     const [redirectId, setRedirectId] = useState();
     const [redirect, setRedirect] = useState(false);
+    const [cache, setCache] = useState({});
 
     function onChange(input) {
         setText(input);
-        if(input.length >= 3) {
+        var match = "";
+        if(input.length >= 3 && Object.keys(cache).some((element) => {
+            match = element;
+            return ~element.indexOf(input)
+        })) {
+            console.log("From cache");
+            setOptions(cache[match]);
+        } else if(input.length >= 3) {
             console.log("Autocomplete initiated");
             jQuery.ajax({
                 dataType: "json",
@@ -25,13 +33,15 @@ export default function Home() {
                 url: HOST + "api/autocomplete",
                 success: (resultData) => {
                     setOptions(resultData.results);
+                    const temp = cache;
+                    temp[input] = resultData.results;
+                    setCache(temp);
                 }
             });
         } else {
             setOptions([]);
         }
     }
-
     function onSelect(input) {
         console.log(input);
         setSingleSelections(input);
