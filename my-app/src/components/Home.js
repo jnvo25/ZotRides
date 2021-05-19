@@ -14,6 +14,7 @@ export default function Home() {
     const [redirectId, setRedirectId] = useState();
     const [redirect, setRedirect] = useState(false);
     const [cache, setCache] = useState({});
+    const [index, setIndex] = useState([]);
 
     function onChange(input) {
         setText(input);
@@ -33,9 +34,14 @@ export default function Home() {
                 url: HOST + "api/autocomplete",
                 success: (resultData) => {
                     setOptions(resultData.results);
+                    // Add to cache
                     const temp = cache;
                     temp[input] = resultData.results;
                     setCache(temp);
+                    // Keep track of order cache is populated
+                    const indexTemp = index;
+                    indexTemp.push(input);
+                    setIndex(indexTemp);
                 }
             });
         } else {
@@ -57,6 +63,22 @@ export default function Home() {
             setRedirect(true);
         }
     }
+
+    if (index.length > 99) {
+        console.log("deleting")
+        const rElement = index[0];
+        var match = "";
+
+        Object.keys(cache).some((element) => {
+            match = element;
+            return ~element.indexOf(rElement)
+        })
+        if (match !== "") {
+            index.shift();
+            delete cache[match];
+        }
+    }
+
     if(redirect)
         return (<Redirect to={"/browse/na/na/na/na/na/na/" + text}/>);
     if(success)
