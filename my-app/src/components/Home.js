@@ -8,7 +8,7 @@ import {Redirect} from "react-router";
 
 export default function Home() {
     const [singleSelections, setSingleSelections] = useState([]);
-    const [text, setText] = useState();
+    const [text, setText] = useState("");
     const [options, setOptions] = useState([]);
     const [success, setSuccess] = useState(false);
     const [redirectId, setRedirectId] = useState();
@@ -43,7 +43,7 @@ export default function Home() {
     }
 
     function onKeyDown(e) {
-        if(e.key === "Enter") {
+        if(e.key === "Enter" && text.length !== 0) {
             setRedirect(true);
         }
     }
@@ -73,7 +73,7 @@ export default function Home() {
                             />
                         </Col>
                         <Col xs={1}>
-                            <Button onClick={()=>{setRedirect(true)}}>Search</Button>
+                            <Button onClick={()=>{if(text.length !== 0) setRedirect(true)}}>Search</Button>
                         </Col>
                     </Row>
                 </Container>
