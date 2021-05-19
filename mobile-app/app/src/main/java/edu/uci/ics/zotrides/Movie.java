@@ -1,4 +1,4 @@
-package edu.uci.ics.fabflixmobile;
+package edu.uci.ics.zotrides;
 
 public class Movie {
     private final String name;

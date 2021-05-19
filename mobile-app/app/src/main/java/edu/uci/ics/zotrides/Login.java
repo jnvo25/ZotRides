@@ -1,4 +1,4 @@
-package edu.uci.ics.fabflixmobile;
+package edu.uci.ics.zotrides;
 
 import android.content.Intent;
 import android.os.Bundle;
