@@ -15,12 +15,11 @@ import com.android.volley.toolbox.StringRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Login extends ActionBarActivity {
+public class Main extends ActionBarActivity {
 
-    private EditText username;
-    private EditText password;
+    private EditText searchField;
     private TextView message;
-    private Button loginButton;
+    private Button searchButton;
 
     /*
       In Android, localhost is the address of the device or the emulator.
@@ -39,52 +38,52 @@ public class Login extends ActionBarActivity {
 
         /* display the login page */
         // upon creation, inflate and initialize the layout
-        setContentView(R.layout.login);
-        username = findViewById(R.id.username);
-        password = findViewById(R.id.password);
+        setContentView(R.layout.main);
+        searchField = findViewById(R.id.search_field);
         message = findViewById(R.id.message);
-        loginButton = findViewById(R.id.login);
+        searchButton = findViewById(R.id.search);
 
         //assign a listener to call a function to handle the user request when clicking a button
-        loginButton.setOnClickListener(view -> login());
+        searchButton.setOnClickListener(view -> search());
     }
 
     /* send request to server */
-    public void login() {
+    public void search() {
 
-        message.setText("Trying to login");
+        message.setText("Trying to perform full-text search");
         // use the same network queue across our application
         final RequestQueue queue = NetworkManager.sharedManager(this).queue;
         // request type is POST
-        final StringRequest loginRequest = new StringRequest(
+        final StringRequest searchRequest = new StringRequest(
                 Request.Method.POST,
-                baseURL + "/api/app-login",
+                baseURL + "/api/full-text-search",
                 response -> {
                     // TODO: should parse the json response to redirect to appropriate functions
                     //  upon different response value.
-                    Log.d("login.success", response);
-                    // initialize the activity(page)/destination //TODO: UNDO MAKING THIS MAIN
-                    Intent listPage = new Intent(Login.this, Main.class);
+                    Log.d("main.success", response);
+                    //TODO : CONNECT TO MOVIE LIST PAGE
+                    /*
+                    // initialize the activity(page)/destination
+                    Intent listPage = new Intent(Main.this, ListViewActivity.class);
                     // activate the list page.
-                    startActivity(listPage);
+                    startActivity(listPage); */
                 },
                 error -> {
                     // error
-                    Log.d("login.error", error.toString());
+                    Log.d("main.error", error.toString());
                 }) {
             @Override
             protected Map<String, String> getParams() {
                 // POST request form data
                 final Map<String, String> params = new HashMap<>();
-                params.put("username", username.getText().toString());
-                params.put("password", password.getText().toString());
+                params.put("token", searchField.getText().toString());
 
                 return params;
             }
         };
 
         // important: queue.add is where the login request is actually sent
-        queue.add(loginRequest);
+        queue.add(searchRequest);
 
     }
 }
