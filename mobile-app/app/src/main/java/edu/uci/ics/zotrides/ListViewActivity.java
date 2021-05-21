@@ -32,10 +32,7 @@ public class ListViewActivity extends Activity {
       To connect to your machine, you need to use the below IP address
      */
     //https://localhost:8443/ZotRides/
-    private final String host = "10.0.2.2"; // IP address for localhost
-    private final String port = "8443";
-    private final String domain = "ZotRides";
-    private final String baseURL = "https://" + host + ":" + port + "/" + domain;
+    private final String baseURL = BackendServerConn.getURL();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +105,6 @@ public class ListViewActivity extends Activity {
                     listView.setAdapter(adapter);
 
                     listView.setOnItemClickListener((parent, view, position, id) -> {
-                        // TODO : CONNECT TO SINGLE CAR PAGE
                         Car car = cars.get(position);
                         String message = String.format("Clicked on position: %d, title: %s", position, car.getTitle());
                         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();

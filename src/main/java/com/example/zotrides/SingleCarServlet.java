@@ -103,7 +103,7 @@ public class SingleCarServlet extends HttpServlet {
 
             // Iterate through each row of rs
             int count = 0;
-            while (rs.next() && count++ < 20) { //TODO : DON'T THINK WE NEED TO ITERATE?
+            while (rs.next() && count++ < 1) { //TODO : DON'T THINK WE NEED TO ITERATE?
                 String car_id = rs.getString("id");
                 String car_name = rs.getString("name");
                 String car_category = rs.getString("category");

@@ -30,10 +30,7 @@ public class Login extends ActionBarActivity {
       To connect to your machine, you need to use the below IP address
      */
     //https://localhost:8443/ZotRides/
-    private final String host = "10.0.2.2"; // IP address for localhost
-    private final String port = "8443";
-    private final String domain = "ZotRides";
-    private final String baseURL = "https://" + host + ":" + port + "/" + domain;
+    private final String baseURL = BackendServerConn.getURL();
 
 
     @Override
@@ -63,8 +60,6 @@ public class Login extends ActionBarActivity {
                 Request.Method.POST,
                 baseURL + "/api/app-login",
                 response -> {
-                    // TODO: should parse the json response to redirect to appropriate functions
-                    //  upon different response value.
 
                     // verify credentials
                     try {

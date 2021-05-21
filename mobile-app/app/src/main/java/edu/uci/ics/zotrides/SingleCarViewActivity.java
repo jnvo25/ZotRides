@@ -18,8 +18,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class SingleCarViewActivity extends Activity {
     private TextView title;
@@ -32,7 +30,7 @@ public class SingleCarViewActivity extends Activity {
       To connect to your machine, you need to use the below IP address
      */
     //https://localhost:8443/ZotRides/
-    private final String baseURL = BackendServerConn.getURL(); //TODO : CHANGE THIS FOR ALL OTHER ONES
+    private final String baseURL = BackendServerConn.getURL();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
