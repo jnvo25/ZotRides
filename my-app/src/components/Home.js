@@ -16,20 +16,20 @@ export default function Home() {
     const [cache, setCache] = useState({});
 
     function onChange(input) {
-        setText(input);
+        setText(input.toLowerCase());
         var match = "";
         if(input.length >= 3 && Object.keys(cache).some((element) => {
             match = element;
-            return ~element.indexOf(input)
+            return ~element.indexOf(input.toLowerCase());
         })) {
-            console.log("From cache");
+            console.log("Autocomplete options populated from cache");
             setOptions(cache[match]);
         } else if(input.length >= 3) {
-            console.log("Autocomplete initiated");
+            console.log("Autocomplete options populated from database");
             jQuery.ajax({
                 dataType: "json",
                 method: "POST",
-                data: {token: input},
+                data: {token: input.toLowerCase()},
                 url: HOST + "api/autocomplete",
                 success: (resultData) => {
                     setOptions(resultData.results);
@@ -43,7 +43,6 @@ export default function Home() {
         }
     }
     function onSelect(input) {
-        console.log(input);
         setSingleSelections(input);
         options.map(element => {
             if(input[0] === element["car_name"])
@@ -52,11 +51,6 @@ export default function Home() {
         setSuccess(true);
     }
 
-    function onKeyDown(e) {
-        if(e.key === "Enter" && text.length !== 0) {
-            setRedirect(true);
-        }
-    }
     if(redirect)
         return (<Redirect to={"/browse/na/na/na/na/na/na/" + text}/>);
     if(success)
@@ -72,14 +66,12 @@ export default function Home() {
                             <Typeahead
                                 onInputChange={onChange}
                                 delay={300}
-                                onKeyDown={onKeyDown}
                                 id="basic-typeahead-single"
                                 labelKey="name"
                                 onChange={onSelect}
                                 options={options.map((element => {return element["car_name"]}))}
                                 placeholder="Enter model name..."
                                 selected={singleSelections}
-
                             />
                         </Col>
                         <Col xs={1}>
