@@ -79,7 +79,6 @@ public class AutocompleteServlet extends HttpServlet {
                 "WHERE MATCH(model) AGAINST (? IN BOOLEAN MODE)\n" +
                 "LIMIT 10;";
 
-//        System.out.println("query: \n" + query);
 
         // Run query & return response
         response.setContentType("application/json"); // Response mime type
@@ -88,7 +87,7 @@ public class AutocompleteServlet extends HttpServlet {
             PreparedStatement statement = conn.prepareStatement(query);
             statement.setString(1, additional);
 
-//            System.out.println("query:\n" + statement.toString() + "\n");
+            System.out.println("query:\n" + statement.toString() + "\n");
             ResultSet rs = statement.executeQuery();
 
             // process results

@@ -21,15 +21,15 @@ public class Main extends ActionBarActivity {
     private TextView message;
     private Button searchButton;
 
-    /*
-      In Android, localhost is the address of the device or the emulator.
-      To connect to your machine, you need to use the below IP address
-     */
-    //https://localhost:8443/ZotRides/
-    private final String host = "10.0.2.2"; // IP address for localhost
-    private final String port = "8443";
-    private final String domain = "ZotRides";
-    private final String baseURL = "https://" + host + ":" + port + "/" + domain;
+//    /*
+//      In Android, localhost is the address of the device or the emulator.
+//      To connect to your machine, you need to use the below IP address
+//     */
+//    //https://localhost:8443/ZotRides/
+//    private final String host = "10.0.2.2"; // IP address for localhost
+//    private final String port = "8443";
+//    private final String domain = "ZotRides";
+//    private final String baseURL = "https://" + host + ":" + port + "/" + domain;
 
 
     @Override
@@ -44,46 +44,54 @@ public class Main extends ActionBarActivity {
         searchButton = findViewById(R.id.search);
 
         //assign a listener to call a function to handle the user request when clicking a button
-        searchButton.setOnClickListener(view -> search());
+        searchButton.setOnClickListener(view -> viewResults());
     }
 
-    /* send request to server */
-    public void search() {
-
-        message.setText("Trying to perform full-text search");
-        // use the same network queue across our application
-        final RequestQueue queue = NetworkManager.sharedManager(this).queue;
-        // request type is POST
-        final StringRequest searchRequest = new StringRequest(
-                Request.Method.POST,
-                baseURL + "/api/full-text-search",
-                response -> {
-                    // TODO: should parse the json response to redirect to appropriate functions
-                    //  upon different response value.
-                    Log.d("main.success", response);
-                    //TODO : CONNECT TO MOVIE LIST PAGE
-                    /*
-                    // initialize the activity(page)/destination
-                    Intent listPage = new Intent(Main.this, ListViewActivity.class);
-                    // activate the list page.
-                    startActivity(listPage); */
-                },
-                error -> {
-                    // error
-                    Log.d("main.error", error.toString());
-                }) {
-            @Override
-            protected Map<String, String> getParams() {
-                // POST request form data
-                final Map<String, String> params = new HashMap<>();
-                params.put("token", searchField.getText().toString());
-
-                return params;
-            }
-        };
-
-        // important: queue.add is where the login request is actually sent
-        queue.add(searchRequest);
-
+    public void viewResults() {
+        Intent listPage = new Intent(Main.this, ListViewActivity.class);
+        // activate the list page.
+        System.out.println("passing: " + searchField.getText());
+        listPage.putExtra("token", searchField.getText().toString());
+        startActivity(listPage);
     }
+
+//    /* send request to server */
+//    public void search() {
+//
+//        message.setText("Trying to perform full-text search");
+//        // use the same network queue across our application
+//        final RequestQueue queue = NetworkManager.sharedManager(this).queue;
+//        // request type is POST
+//        final StringRequest searchRequest = new StringRequest(
+//                Request.Method.POST,
+//                baseURL + "/api/full-text-search",
+//                response -> {
+//                    // TODO: should parse the json response to redirect to appropriate functions
+//                    //  upon different response value.
+//                    Log.d("main.success", response);
+//                    //TODO : CONNECT TO MOVIE LIST PAGE
+//
+//                    // initialize the activity(page)/destination
+//                    Intent listPage = new Intent(Main.this, ListViewActivity.class);
+//                    // activate the list page.
+//                    startActivity(listPage);
+//                },
+//                error -> {
+//                    // error
+//                    Log.d("main.error", error.toString());
+//                }) {
+//            @Override
+//            protected Map<String, String> getParams() {
+//                // POST request form data
+//                final Map<String, String> params = new HashMap<>();
+//                params.put("token", searchField.getText().toString());
+//
+//                return params;
+//            }
+//        };
+//
+//        // important: queue.add is where the login request is actually sent
+//        queue.add(searchRequest);
+//
+//    }
 }

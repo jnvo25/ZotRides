@@ -15,6 +15,9 @@ import com.android.volley.toolbox.StringRequest;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class Login extends ActionBarActivity {
 
     private EditText username;
@@ -62,11 +65,31 @@ public class Login extends ActionBarActivity {
                 response -> {
                     // TODO: should parse the json response to redirect to appropriate functions
                     //  upon different response value.
-                    Log.d("login.success", response);
-                    // initialize the activity(page)/destination //TODO: UNDO MAKING THIS MAIN
-                    Intent listPage = new Intent(Login.this, Main.class);
-                    // activate the list page.
-                    startActivity(listPage);
+
+                    // verify credentials
+                    try {
+                        JSONObject result = new JSONObject(response);
+                        String status = result.getString("status");
+                        String loginMessage = result.getString("message");
+
+                        message.setText(loginMessage);
+
+                        // valid
+                        if (status.equals("success")) {
+                            Log.d("login.success", response);
+
+                            // initialize the activity(page)/destination
+                            Intent listPage = new Intent(Login.this, Main.class);
+                            // activate the list page.
+                            startActivity(listPage);
+                        }
+
+                        // invalid - don't do anything
+                    }
+                    catch (JSONException e) {
+                        Log.d("login.error", "error parsing JSON results");
+                        message.setText("JSON parsing error");
+                    }
                 },
                 error -> {
                     // error
