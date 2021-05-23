@@ -93,6 +93,7 @@ export default function Home() {
                                 placeholder="Enter model name..."
                                 selected={singleSelections}
                                 onKeyDown={handleKey}
+                                filterBy={() => true}
                             >
                                 {(state) => {
                                     // Passing a child render function to the component exposes partial
