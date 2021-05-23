@@ -14,6 +14,7 @@ export default function Home() {
     const [redirectId, setRedirectId] = useState();
     const [redirect, setRedirect] = useState(false);
     const [cache, setCache] = useState({});
+    const [activeIndex, setActiveIndex] = useState(-1);
 
     function onChange(input) {
         setText(input.toLowerCase());
@@ -56,6 +57,12 @@ export default function Home() {
         setSuccess(true);
     }
 
+    function handleKey(e) {
+        if (e.key === "Enter" && activeIndex === -1) {
+            setRedirect(true);
+        }
+    }
+
     if(redirect)
         return (<Redirect to={"/browse/na/na/na/na/na/na/" + text}/>);
     if(success)
@@ -77,7 +84,14 @@ export default function Home() {
                                 options={options.map((element => {return element["car_name"]}))}
                                 placeholder="Enter model name..."
                                 selected={singleSelections}
-                            />
+                                onKeyDown={handleKey}
+                            >
+                                {(state) => {
+                                    // Passing a child render function to the component exposes partial
+                                    // internal state, including the index of the highlighted menu item.
+                                    setActiveIndex(state.activeIndex);
+                                }}
+                            </Typeahead>
                         </Col>
                         <Col xs={1}>
                             <Button onClick={()=>{if(text.length !== 0) setRedirect(true)}}>Search</Button>
