@@ -3,3 +3,10 @@ zotrides.iml
 src/main/java/com/example/zotrides/RecaptchaConstants.java
 src/main/java/com/example/zotrides/CarsServlet.java
 src/main/java/com/example/zotrides/HelloServlet.java
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+/captures
