@@ -14,28 +14,34 @@ export default function Home() {
     const [redirectId, setRedirectId] = useState();
     const [redirect, setRedirect] = useState(false);
     const [cache, setCache] = useState({});
+    const [activeIndex, setActiveIndex] = useState(-1);
 
     function onChange(input) {
-        setText(input);
+        setText(input.toLowerCase());
         var match = "";
         if(input.length >= 3 && Object.keys(cache).some((element) => {
             match = element;
-            return ~element.indexOf(input)
+            return ~element.indexOf(input.toLowerCase());
         })) {
-            console.log("From cache");
+            console.log("Autocomplete options populated from cache");
             setOptions(cache[match]);
+            console.log("CACHE CONTENTS:");
+            console.log(cache);
         } else if(input.length >= 3) {
-            console.log("Autocomplete initiated");
+            console.log("Autocomplete options populated from database");
             jQuery.ajax({
                 dataType: "json",
                 method: "POST",
-                data: {token: input},
+                data: {token: input.toLowerCase()},
                 url: HOST + "api/autocomplete",
                 success: (resultData) => {
                     setOptions(resultData.results);
                     const temp = cache;
                     temp[input] = resultData.results;
+                    console.log("Added to cache")
                     setCache(temp);
+                    console.log("CACHE CONTENTS:");
+                    console.log(cache);
                 }
             });
         } else {
@@ -43,7 +49,6 @@ export default function Home() {
         }
     }
     function onSelect(input) {
-        console.log(input);
         setSingleSelections(input);
         options.map(element => {
             if(input[0] === element["car_name"])
@@ -52,11 +57,12 @@ export default function Home() {
         setSuccess(true);
     }
 
-    function onKeyDown(e) {
-        if(e.key === "Enter" && text.length !== 0) {
+    function handleKey(e) {
+        if (e.key === "Enter" && activeIndex === -1) {
             setRedirect(true);
         }
     }
+
     if(redirect)
         return (<Redirect to={"/browse/na/na/na/na/na/na/" + text}/>);
     if(success)
@@ -72,15 +78,20 @@ export default function Home() {
                             <Typeahead
                                 onInputChange={onChange}
                                 delay={300}
-                                onKeyDown={onKeyDown}
                                 id="basic-typeahead-single"
                                 labelKey="name"
                                 onChange={onSelect}
                                 options={options.map((element => {return element["car_name"]}))}
                                 placeholder="Enter model name..."
                                 selected={singleSelections}
-
-                            />
+                                onKeyDown={handleKey}
+                            >
+                                {(state) => {
+                                    // Passing a child render function to the component exposes partial
+                                    // internal state, including the index of the highlighted menu item.
+                                    setActiveIndex(state.activeIndex);
+                                }}
+                            </Typeahead>
                         </Col>
                         <Col xs={1}>
                             <Button onClick={()=>{if(text.length !== 0) setRedirect(true)}}>Search</Button>
