@@ -75,11 +75,17 @@ public class AutocompleteServlet extends HttpServlet {
 
         System.out.println("tokens: " + additional);
 
+        int fuzzyThreshold = token.trim().length() / 3;
         String query = "SELECT id, CONCAT_WS(' ', make, model, year) as name FROM Cars\n" +
-                "WHERE MATCH(model) AGAINST (? IN BOOLEAN MODE)\n" +
+                "WHERE (MATCH(model) AGAINST (? IN BOOLEAN MODE) OR edth(model, ?, "+ fuzzyThreshold + "))\n" + //TODO: added edth for fuzzy
                 "LIMIT 10;";
 
-//        System.out.println("query: \n" + query);
+        // without fuzzy
+        /*
+        String query = "SELECT id, CONCAT_WS(' ', make, model, year) as name FROM Cars\n" +
+                "WHERE MATCH(model) AGAINST (? IN BOOLEAN MODE)\n" +
+                "LIMIT 10;";*/
+
 
         // Run query & return response
         response.setContentType("application/json"); // Response mime type
@@ -87,8 +93,9 @@ public class AutocompleteServlet extends HttpServlet {
             // run query
             PreparedStatement statement = conn.prepareStatement(query);
             statement.setString(1, additional);
+            statement.setString(2, token.trim()); // TODO : ADDED THIS LINE
 
-//            System.out.println("query:\n" + statement.toString() + "\n");
+            System.out.println("query:\n" + statement.toString() + "\n");
             ResultSet rs = statement.executeQuery();
 
             // process results
