@@ -24,6 +24,8 @@ export default function Home() {
         })) {
             console.log("Autocomplete options populated from cache");
             setOptions(cache[match]);
+            console.log("CACHE CONTENTS:");
+            console.log(cache);
         } else if(input.length >= 3) {
             console.log("Autocomplete options populated from database");
             jQuery.ajax({
@@ -35,7 +37,10 @@ export default function Home() {
                     setOptions(resultData.results);
                     const temp = cache;
                     temp[input] = resultData.results;
+                    console.log("Added to cache")
                     setCache(temp);
+                    console.log("CACHE CONTENTS:");
+                    console.log(cache);
                 }
             });
         } else {
