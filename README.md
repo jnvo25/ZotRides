@@ -22,7 +22,7 @@ Our app uses the React front-end framework, but we have already included the bui
 Import the mobile-app/app folder into Android Studio as a Gradle project, set up configurations, and run on Pixel 4A/3A with API 30.  To change which server the mobile-app connects to, the IP address needs to be changed in the mobile-app/app/java/edu/uci/ics/zotrides/BackendServerConn.java file
 
 ### Fuzzy Search 
-We conducted fuzzy search on a car's model, and allowed for a threshold of an edit distance of 33% the provided token's length (rounded down to the nearest integer).  This would reduce the allowed edit distance for shorter models and increase the allowed edit distance for larger models.  We implemented the fuzzy-search by unioning the edth(model, <query>, <threshold>) result with the fuzzy-text-search result MATCH ... AGAINST ... in the WHERE clause while filtering out Cars to return.  We implemented the threshold by doing integer division of the trimmed query's length by 3.  
+We conducted fuzzy search on a car's model, and allowed for a threshold of an edit distance of 33% the provided token's length (rounded down to the nearest integer).  This would reduce the allowed edit distance for shorter models and increase the allowed edit distance for larger models.  We implemented the fuzzy-search by unioning the edth(model, query, threshold) result with the fuzzy-text-search result MATCH ... AGAINST ... in the WHERE clause while filtering out Cars to return.  We implemented the threshold by doing integer division of the trimmed query's length by 3.  
 
 ### Member Contributions
 
