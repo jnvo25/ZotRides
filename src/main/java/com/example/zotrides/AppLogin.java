@@ -61,11 +61,8 @@ public class AppLogin extends HttpServlet {
             isValid = rs.next();
             if (isValid) {
                 customerID = rs.getInt("id");
-                boolean success = new StrongPasswordEncryptor().checkPassword(password, rs.getString("password"));
-                System.out.println(success);
-                if(!success)
-                    throw new Exception("Incorrect password");
-                System.out.println("success");
+                isValid = new StrongPasswordEncryptor().checkPassword(password, rs.getString("password"));
+//                System.out.println("pw is: " + isValid);
             }
 
 //            System.out.println("the user/pass combo is: " + isValid);
