@@ -101,8 +101,16 @@ public class SortServlet extends HttpServlet {
 
             // prepare & execute query
             String query = previousSettings.toQuery();
-//            System.out.println("query:\n" + query);
             PreparedStatement statement = conn.prepareStatement(query);
+
+            // update parameters
+            int counter = 1;
+            for (String token : previousSettings.getTokens()) {
+                statement.setString(counter++, token);
+            }
+
+            // execute query
+            System.out.println("query:\n" + statement.toString());
             ResultSet rs = statement.executeQuery();
 
             // extract query results

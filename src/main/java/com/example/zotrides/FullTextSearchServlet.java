@@ -19,6 +19,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.ArrayList;
 
 // Declaring a WebServlet called SearchServlet, which maps to url "/api/full-text-search"
 @WebServlet(name = "FullTextSearchServlet", urlPatterns = "/api/full-text-search")
@@ -58,6 +59,7 @@ public class FullTextSearchServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         HttpSession session = request.getSession();
         CarListSettings previousSettings = (CarListSettings) session.getAttribute("previousSettings");
+        ArrayList<String> params = new ArrayList<>();
 
         String additional = "";
         if (token == null || token.trim().isEmpty()) {
@@ -87,6 +89,10 @@ public class FullTextSearchServlet extends HttpServlet {
         }
 
         System.out.println("tokens: " + additional);
+
+        // add parameters to ArrayList to store into session
+        params.add(additional);
+        params.add(token.trim());
 
         int fuzzyThreshold = token.trim().length() / 3;
 
@@ -138,13 +144,13 @@ public class FullTextSearchServlet extends HttpServlet {
 
         // Store base query into session (to maintain consistency when jumping back to CarsList page)
         if (previousSettings == null) {
-            previousSettings = new CarListSettings(query, 1, 20);
+            previousSettings = new CarListSettings(query, 1, 20, true, false, false, params);
             session.setAttribute("previousSettings", previousSettings);
         } else {
             // prevent corrupted states through sharing under multi-threads
             // will only be executed by one thread at a time
             synchronized (previousSettings) {
-                previousSettings.reset(query, 1, 20);
+                previousSettings.reset(query, 1, 20, true, false, false, params);
             }
         }
 
@@ -249,10 +255,11 @@ public class FullTextSearchServlet extends HttpServlet {
                     "\tFROM category_of_car, Category, Cars\n" +
                     "\tWHERE category_of_car.categoryID = Category.id\n" +
                     "\t\t\tAND Cars.id = category_of_car.carID \n" +
-                    "\t\t\tAND MATCH(model) AGAINST (? IN BOOLEAN MODE);";
+                    "\t\t\tAND (MATCH(model) AGAINST (? IN BOOLEAN MODE) OR edth(model, ?, \"+ fuzzyThreshold + \"));"; //TODO : EDITED THIS FOR FUZZY
 
             statement = conn.prepareStatement(len);
             statement.setString(1, additional);
+            statement.setString(2, token.trim()); //TODO: ADDED THIS
 //            System.out.println("-----------------\n" + statement.toString());
             rs = statement.executeQuery(); // Perform the query
             if (rs.next()) {

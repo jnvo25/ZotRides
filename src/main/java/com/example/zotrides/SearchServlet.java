@@ -21,6 +21,7 @@ import java.sql.ResultSet;
 
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.ArrayList;
 
 // Declaring a WebServlet called SearchServlet, which maps to url "/api/search-car"
 @WebServlet(name = "SearchServlet", urlPatterns = "/api/search-car")
@@ -56,15 +57,28 @@ public class SearchServlet extends HttpServlet {
         String make = request.getParameter("make");
         String location = request.getParameter("location");
 
+        ArrayList<String> tokens = new ArrayList<>(); // for storing tokens into session
+
         String additional = "";
-        if (model != null && !model.isEmpty())
-            additional += " AND model LIKE \"%" + model + "%\"";
-        if (year != null && !year.isEmpty())
-            additional += " AND year = " + year;
-        if (make != null && !make.isEmpty())
-            additional += " AND make LIKE \"%" + make + "%\"";
-        if (location != null && !location.isEmpty())
-            additional += " AND address LIKE \"%" + location + "%\"";
+        if (model != null && !model.isEmpty()) {
+            model = "%" + model + "%";
+            tokens.add(model);
+            additional += " AND model LIKE ?";
+        }
+        if (year != null && !year.isEmpty()) {
+            tokens.add(year);
+            additional += " AND year = ?";
+        }
+        if (make != null && !make.isEmpty()) {
+            make = "%" + make + "%";
+            tokens.add(make);
+            additional += " AND make LIKE ?";
+        }
+        if (location != null && !location.isEmpty()) {
+            location = "%" + location + "%";
+            tokens.add(location);
+            additional += " AND address LIKE ?";
+        }
 
         String query1 = "WITH pickupCarCounts AS (SELECT pickupLocationID, COUNT(DISTINCT carID) as numCars \n" +
                 "\tFROM pickup_car_from \n" +
@@ -97,13 +111,13 @@ public class SearchServlet extends HttpServlet {
         HttpSession session = request.getSession();
         CarListSettings previousSettings = (CarListSettings) session.getAttribute("previousSettings");
         if (previousSettings == null) {
-            previousSettings = new CarListSettings(query1 + query2, 1, 10);
+            previousSettings = new CarListSettings(query1 + query2, 1, 10, false, true, false, tokens);
             session.setAttribute("previousSettings", previousSettings);
         } else {
             // prevent corrupted states through sharing under multi-threads
             // will only be executed by one thread at a time
             synchronized (previousSettings) {
-                previousSettings.reset(query1 + query2, 1, 10);
+                previousSettings.reset(query1 + query2, 1, 10, false, true, false, tokens);
             }
         }
 
@@ -111,14 +125,24 @@ public class SearchServlet extends HttpServlet {
         response.setContentType("application/json"); // Response mime type
         PrintWriter out = response.getWriter();
         try (Connection conn = dataSource.getConnection()) {
-            // drop temporary table //TODO : REMOVE LATER
-            PreparedStatement statement = conn.prepareStatement("DROP TABLE IF EXISTS temp");
-            statement.executeUpdate();
-            statement.close();
-
             // store query in temporary table
             String query = previousSettings.toQuery();
-            statement = conn.prepareStatement(query);
+            PreparedStatement statement = conn.prepareStatement(query);
+
+            // update token parameters
+            int counter = 1;
+            if (model != null && !model.isEmpty()) {
+                statement.setString(counter++, model);
+            }
+            if (year != null && !year.isEmpty()) {
+                statement.setString(counter++, year);
+            }
+            if (make != null && !make.isEmpty()) {
+                statement.setString(counter++, make);
+            }
+            if (location != null && !location.isEmpty()) {
+                statement.setString(counter++, location);
+            }
             System.out.println("query:\n" + statement.toString() + "\n");
             ResultSet rs = statement.executeQuery();
 
@@ -212,6 +236,20 @@ public class SearchServlet extends HttpServlet {
                     "\tLEFT OUTER JOIN pickupCarCounts ON pickup_car_from.pickupLocationID = pickupCarCounts.pickupLocationID)\n" +
                     "\tLEFT OUTER JOIN PickupLocation ON pickup_car_from.pickupLocationID = PickupLocation.id\n;";
             statement = conn.prepareStatement(query1 + countLength);
+            counter = 1;
+            if (model != null && !model.isEmpty()) {
+                statement.setString(counter++, model);
+            }
+            if (year != null && !year.isEmpty()) {
+                statement.setString(counter++, year);
+            }
+            if (make != null && !make.isEmpty()) {
+                statement.setString(counter++, make);
+            }
+            if (location != null && !location.isEmpty()) {
+                statement.setString(counter++, location);
+            }
+
             System.out.println("-----------------\n" + statement.toString());
             rs = statement.executeQuery(); // Perform the query
             if (rs.next()) {

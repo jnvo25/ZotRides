@@ -19,6 +19,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.ArrayList;
 
 
 // Declaring a WebServlet called BrowseServlet, which maps to url "/api/browse-car"
@@ -53,6 +54,7 @@ public class BrowseServlet extends HttpServlet {
         String category = request.getParameter("category");
         String yearDigit = request.getParameter("year");
         String modelLetter = request.getParameter("model");
+        ArrayList<String> tokens = new ArrayList<>();
 
         // Process parameters to get query restrictions, doing this instead
         // of replacing ? so we can consolidate three different queries from browsing into one body
@@ -61,18 +63,26 @@ public class BrowseServlet extends HttpServlet {
         // are only injected in parameter fields for WHERE clauses
         String additional = "";
         if (category != null && !category.isEmpty()) {
-            additional += " AND Category.name = \"" + category.toLowerCase() + "\"";
+            additional += " AND Category.name = ?";
+            category = category.toLowerCase();
+            tokens.add(category);
         }
-        else if (modelLetter != null && !modelLetter.isEmpty())
+        else if (modelLetter != null && !modelLetter.isEmpty()) {
             if (modelLetter.equals("*")) {
                 // wild card
                 additional += " AND model RLIKE \"^[^A-Za-z0-9].*\"";
             } else {
                 // alphabetical
-                additional += " AND model LIKE \"" + modelLetter + "%\"";
+                modelLetter += "%";
+                additional += " AND model LIKE ?";
+                tokens.add(modelLetter);
             }
-        else if (yearDigit != null && !yearDigit.isEmpty())
-            additional += " AND year LIKE \"" + yearDigit + "%\"";
+        }
+        else if (yearDigit != null && !yearDigit.isEmpty()) {
+            yearDigit += "%";
+            additional += " AND year LIKE ?";
+            tokens.add(yearDigit);
+        }
 
         // Integrate into a base form of the query
         String query1 =
@@ -99,13 +109,13 @@ public class BrowseServlet extends HttpServlet {
         HttpSession session = request.getSession();
         CarListSettings previousSettings = (CarListSettings) session.getAttribute("previousSettings");
         if (previousSettings == null) {
-            previousSettings = new CarListSettings(query1 + query2, 1, 10);
+            previousSettings = new CarListSettings(query1 + query2, 1, 10, false, false, true, tokens);
             session.setAttribute("previousSettings", previousSettings);
         } else {
             // prevent corrupted states through sharing under multi-threads
             // will only be executed by one thread at a time
             synchronized (previousSettings) {
-                previousSettings.reset(query1 + query2, 1, 10);
+                previousSettings.reset(query1 + query2, 1, 10, false, false, true, tokens);
             }
         }
 
@@ -113,15 +123,24 @@ public class BrowseServlet extends HttpServlet {
         response.setContentType("application/json"); // Response mime type
         PrintWriter out = response.getWriter();      // Output stream to STDOUT
         try (Connection conn = dataSource.getConnection()) {
-            // drop temporary table // TODO : ELIMINATE LATER
-            PreparedStatement statement = conn.prepareStatement("DROP TABLE IF EXISTS temp");
-            statement.executeUpdate();
-            statement.close();
-
             // store query in temporary table
             String query = previousSettings.toQuery();
-            statement = conn.prepareStatement(query);
+            PreparedStatement statement = conn.prepareStatement(query);
+
+            // update query parameters
+            int counter = 1;
+            if (category != null && !category.isEmpty()) {
+                statement.setString(counter++, category);
+            }
+            else if (modelLetter != null && !modelLetter.isEmpty() && !modelLetter.equals("*")) {
+                statement.setString(counter++, modelLetter);
+            }
+            else if (yearDigit != null && !yearDigit.isEmpty()) {
+                statement.setString(counter++, yearDigit);
+            }
 //            System.out.println("query:\n" + statement.toString());
+
+            // execute query
             ResultSet rs = statement.executeQuery();
 
             // process returned results
@@ -216,8 +235,22 @@ public class BrowseServlet extends HttpServlet {
                     "        LEFT OUTER JOIN PickupLocation ON pickup_car_from.pickupLocationID = PickupLocation.id\n" +
                     "WHERE category_of_car.categoryID = Category.id AND category_of_car.carID = Cars.id" + additional + "\n";
             statement = conn.prepareStatement(query1 + getCount);
-            System.out.println("------------------\n" + statement.toString());
-            rs = statement.executeQuery(); // Perform the query
+
+            // update query parameters
+            counter = 1;
+            if (category != null && !category.isEmpty()) {
+                statement.setString(counter++, category);
+            }
+            else if (modelLetter != null && !modelLetter.isEmpty() && !modelLetter.equals("*")) {
+                statement.setString(counter++, modelLetter);
+            }
+            else if (yearDigit != null && !yearDigit.isEmpty()) {
+                statement.setString(counter++, yearDigit);
+            }
+//            System.out.println("------------------\n" + statement.toString());
+
+            // perform query & get results
+            rs = statement.executeQuery();
             if (rs.next()) {
                 int maxResults = rs.getInt("numResults");
                 synchronized (previousSettings) {

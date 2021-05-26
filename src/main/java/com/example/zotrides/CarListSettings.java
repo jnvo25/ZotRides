@@ -1,6 +1,7 @@
 package com.example.zotrides;
 
 import com.google.gson.JsonArray;
+import java.util.ArrayList;
 
 /**
  * This CarListSettings class stores information about the current
@@ -18,8 +19,12 @@ public class CarListSettings {
     private int maxNumResults;
     private JsonArray cache;
 
+    private ArrayList<String> fullTextSearchTokens;
+    private ArrayList<String> searchTokens;
+    private ArrayList<String> browseTokens;
+
     /* constructor */
-    public CarListSettings(String query, int pageNumber, int numResultsPerPage) {
+    public CarListSettings(String query, int pageNumber, int numResultsPerPage, boolean isFullText, boolean isSearch, boolean isBrowse, ArrayList<String> arr) {
         this.query = query;
         this.pageNumber = pageNumber;
         this.numResultsPerPage = numResultsPerPage;
@@ -31,6 +36,9 @@ public class CarListSettings {
         this.errorMessage = "";
         this.maxNumResults = 0;
         this.cache = null;
+        this.fullTextSearchTokens = isFullText ? arr : null;
+        this.searchTokens = isSearch ? arr : null;
+        this.browseTokens = isBrowse ? arr : null;
     }
 
     /* helper method
@@ -92,7 +100,7 @@ public class CarListSettings {
 
     /* resets everything for a new search / browse result without having to create
     * a completely new object */
-    public void reset(String query, int pageNumber, int numResultsPerPage) {
+    public void reset(String query, int pageNumber, int numResultsPerPage, boolean isFullText, boolean isSearch, boolean isBrowse, ArrayList<String> arr) {
         this.query = query;
         this.pageNumber = pageNumber;
         this.numResultsPerPage = numResultsPerPage;
@@ -100,6 +108,9 @@ public class CarListSettings {
         this.nameDescend = false;
         this.ratingFirst = false;
         this.errorMessage = "";
+        this.fullTextSearchTokens = isFullText ? arr : null;
+        this.searchTokens = isSearch ? arr : null;
+        this.browseTokens = isBrowse ? arr : null;
     }
 
     /* get the query based off of current settings */
@@ -175,6 +186,17 @@ public class CarListSettings {
             return 100;
         } else {
             return base * numResultsPerPage;
+        }
+    }
+
+    /* get tokens for specific search */
+    public ArrayList<String> getTokens() {
+        if (fullTextSearchTokens != null) {
+            return fullTextSearchTokens;
+        } else if (searchTokens != null) {
+            return searchTokens;
+        } else {
+            return browseTokens;
         }
     }
 }
