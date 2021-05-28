@@ -154,32 +154,38 @@ public class PaginateServlet extends HttpServlet {
                 jsonObject.addProperty("car_rating", car_rating);
                 jsonObject.addProperty("car_votes", car_votes);
 
-                // Filter out only the top 3 based on sorted order (done in backend)
-                Matcher addresses = firstThree.matcher(location_address);
-                Matcher phones = firstThree.matcher(location_phone);
-                Matcher ids = firstThree.matcher(location_ids);
-                addresses.find();
-                phones.find();
-                ids.find();
-                String addr = addresses.group(1);
-                String phone = phones.group(1);
-                String ID = ids.group(1);
-
-                if (addr != null && addr.length() != 0)
-                    jsonObject.addProperty("location_address", addr.charAt(addr.length() - 1) == ';' ? addr.substring(0, addr.length() - 1) : addr);
-                else
+                if (location_address == null || location_phone == null || location_ids == null) {
                     jsonObject.addProperty("location_address", "");
-
-                if (phone != null && phone.length() != 0)
-                    jsonObject.addProperty("location_phone", phone.charAt(phone.length() - 1) == ';' ? phone.substring(0, phone.length() - 1) : phone);
-                else
                     jsonObject.addProperty("location_phone", "");
-
-                if (ID != null && ID.length() != 0)
-                    jsonObject.addProperty("location_ids", ID.charAt(ID.length() - 1) == ';' ? ID.substring(0, ID.length() - 1) : ID);
-                else
                     jsonObject.addProperty("location_ids", "");
+                } else {
+                    Matcher addresses = firstThree.matcher(location_address);
+                    Matcher phones = firstThree.matcher(location_phone);
+                    Matcher ids = firstThree.matcher(location_ids);
+                    addresses.find();
+                    phones.find();
+                    ids.find();
+
+                    String addr = addresses.group(1);
+                    String phone = phones.group(1);
+                    String ID = ids.group(1);
+
+                    if (addr != null && addr.length() != 0)
+                        jsonObject.addProperty("location_address", addr.charAt(addr.length() - 1) == ';' ? addr.substring(0, addr.length() - 1) : addr);
+                    else
+                        jsonObject.addProperty("location_address", "");
+
+                    if (phone != null && phone.length() != 0)
+                        jsonObject.addProperty("location_phone", phone.charAt(phone.length() - 1) == ';' ? phone.substring(0, phone.length() - 1) : phone);
+                    else
+                        jsonObject.addProperty("location_phone", "");
+
+                    if (ID != null && ID.length() != 0)
+                        jsonObject.addProperty("location_ids", ID.charAt(ID.length() - 1) == ';' ? ID.substring(0, ID.length() - 1) : ID);
+                    else
+                        jsonObject.addProperty("location_ids", "");
 //                System.out.println(jsonObject.toString());
+                }
                 jsonArray.add(jsonObject);
             }
 
