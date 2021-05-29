@@ -26,7 +26,7 @@ public class LoginServlet extends HttpServlet {
 
     public void init(ServletConfig config) {
         try {
-            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides-slave");
+            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides");
         } catch (NamingException e) {
             e.printStackTrace();
         }
