@@ -45,13 +45,11 @@ public class LoginServlet extends HttpServlet {
 
         // Output stream to STDOUT
         PrintWriter out = response.getWriter();
-        out.write("attempting data source connection");
 
         /* verify username / password from database */
         boolean isValid = false;
         int customerID = -1;
         try (Connection conn = dataSource.getConnection()) {
-            out.write("successfully formed connection");
             /* new version */
             String query = "SELECT id, password\n" +
                     "FROM Customers\n" +
@@ -67,11 +65,8 @@ public class LoginServlet extends HttpServlet {
             isValid = rs.next();
             if (isValid) {
                 customerID = rs.getInt("id");
-                boolean success = new StrongPasswordEncryptor().checkPassword(password, rs.getString("password"));
-                System.out.println(success);
-                if(!success)
-                    throw new Exception("Incorrect password");
-                System.out.println("success");
+                isValid = new StrongPasswordEncryptor().checkPassword(password, rs.getString("password"));
+                System.out.println(isValid);
             }
 
 //            System.out.println("the user/pass combo is: " + isValid);
@@ -98,11 +93,14 @@ public class LoginServlet extends HttpServlet {
         JsonObject responseJsonObject = new JsonObject();
         if (isValid) {
             try {
+
+                out.write("try to verify recaptcha");
                 String gRecaptchaResponse = request.getParameter("recaptcha");
                 RecaptchaVerifyUtils.verify(gRecaptchaResponse);
-
+                out.write("verified recaptcha successfully");
 
                 // set this user into the session
+                out.write("try to set user into session");
                 request.getSession().setAttribute("user", new User(username));
                 request.getSession().setAttribute("customerID", customerID);
 
