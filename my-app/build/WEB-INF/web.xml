@@ -14,7 +14,7 @@
 
     <!-- Register the master DataSource which defined in META-INF/context.xml-->
     <resource-ref>
-        <description>DB Connection</description>
+        <description>DB Connection Master</description>
         <res-ref-name>jdbc/zotrides-master</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
@@ -22,7 +22,7 @@
 
     <!-- Register the slave DataSource which defined in META-INF/context.xml-->
     <resource-ref>
-        <description>DB Connection</description>
+        <description>DB Connection Slave</description>
         <res-ref-name>jdbc/zotrides-slave</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
