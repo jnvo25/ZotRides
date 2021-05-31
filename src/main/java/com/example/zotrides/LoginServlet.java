@@ -45,11 +45,13 @@ public class LoginServlet extends HttpServlet {
 
         // Output stream to STDOUT
         PrintWriter out = response.getWriter();
+        out.write("attempting data source connection");
 
         /* verify username / password from database */
         boolean isValid = false;
         int customerID = -1;
         try (Connection conn = dataSource.getConnection()) {
+            out.write("successfully formed connection");
             /* new version */
             String query = "SELECT id, password\n" +
                     "FROM Customers\n" +
@@ -82,6 +84,7 @@ public class LoginServlet extends HttpServlet {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("errorMessage", e.getMessage());
             out.write(jsonObject.toString());
+            out.write("didn't work :((");
 
             System.out.println("Error: " + e.getMessage());
 
