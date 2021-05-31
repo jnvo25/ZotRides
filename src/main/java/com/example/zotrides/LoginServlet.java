@@ -79,7 +79,6 @@ public class LoginServlet extends HttpServlet {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("errorMessage", e.getMessage());
             out.write(jsonObject.toString());
-            out.write("didn't work :((");
 
             System.out.println("Error: " + e.getMessage());
 
@@ -93,14 +92,10 @@ public class LoginServlet extends HttpServlet {
         JsonObject responseJsonObject = new JsonObject();
         if (isValid) {
             try {
-
-                out.write("try to verify recaptcha");
                 String gRecaptchaResponse = request.getParameter("recaptcha");
                 RecaptchaVerifyUtils.verify(gRecaptchaResponse);
-                out.write("verified recaptcha successfully");
 
                 // set this user into the session
-                out.write("try to set user into session");
                 request.getSession().setAttribute("user", new User(username));
                 request.getSession().setAttribute("customerID", customerID);
 
