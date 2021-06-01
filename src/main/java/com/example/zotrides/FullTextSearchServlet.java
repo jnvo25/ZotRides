@@ -27,15 +27,15 @@ public class FullTextSearchServlet extends HttpServlet {
     private static final long serialVersionUID = 2L;
 
     // Create a dataSource which registered in web.xml
-    private DataSource dataSource;
-
-    public void init(ServletConfig config) {
-        try {
-            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides");
-        } catch (NamingException e) {
-            e.printStackTrace();
-        }
-    }
+//    private DataSource dataSource;
+//
+//    public void init(ServletConfig config) {
+//        try {
+//            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides");
+//        } catch (NamingException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
@@ -156,7 +156,7 @@ public class FullTextSearchServlet extends HttpServlet {
 
         // Run query & return response
         response.setContentType("application/json"); // Response mime type
-        try (Connection conn = dataSource.getConnection()) {
+        try (Connection conn = ((DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides-master")).getConnection()) {
             // run query
             query = previousSettings.toQuery();
             PreparedStatement statement = conn.prepareStatement(query);
@@ -250,6 +250,21 @@ public class FullTextSearchServlet extends HttpServlet {
             rs.close();
             statement.close();
 
+
+        } catch (Exception e) {
+            // write error message JSON object to output
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("errorMessage", e.getMessage());
+            out.write(jsonObject.toString());
+
+            // display on backend (more detailed)
+            System.out.println("error: " + e.getMessage());
+
+            // set response status to 500 (Internal Server Error)
+            response.setStatus(500);
+        }
+
+        try (Connection conn = ((DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides-slave")).getConnection()) {
             // get the max number of results
             String len =  "SELECT COUNT(DISTINCT Cars.id) as numResults \n" +
                     "\tFROM category_of_car, Category, Cars\n" +
@@ -257,11 +272,11 @@ public class FullTextSearchServlet extends HttpServlet {
                     "\t\t\tAND Cars.id = category_of_car.carID \n" +
                     "\t\t\tAND (MATCH(model) AGAINST (? IN BOOLEAN MODE) OR edth(model, ?, \"+ fuzzyThreshold + \"));"; //TODO : EDITED THIS FOR FUZZY
 
-            statement = conn.prepareStatement(len);
+            PreparedStatement statement = conn.prepareStatement(len);
             statement.setString(1, additional);
             statement.setString(2, token.trim()); //TODO: ADDED THIS
 //            System.out.println("-----------------\n" + statement.toString());
-            rs = statement.executeQuery(); // Perform the query
+            ResultSet rs = statement.executeQuery(); // Perform the query
             if (rs.next()) {
                 int maxResults = rs.getInt("numResults");
                 synchronized (previousSettings) {
