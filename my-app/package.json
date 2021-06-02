@@ -1,7 +1,7 @@
 {
   "name": "my-app",
   "version": "0.1.0",
-  "homepage": "http://54.152.236.48:8080/ZotRides/",
+  "homepage": "http://172.31.28.21:8080/ZotRides/",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.10",
