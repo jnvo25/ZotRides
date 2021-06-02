@@ -270,7 +270,7 @@ public class FullTextSearchServlet extends HttpServlet {
                     "\tFROM category_of_car, Category, Cars\n" +
                     "\tWHERE category_of_car.categoryID = Category.id\n" +
                     "\t\t\tAND Cars.id = category_of_car.carID \n" +
-                    "\t\t\tAND (MATCH(model) AGAINST (? IN BOOLEAN MODE) OR edth(model, ?, \"+ fuzzyThreshold + \"));"; //TODO : EDITED THIS FOR FUZZY
+                    "\t\t\tAND (MATCH(model) AGAINST (? IN BOOLEAN MODE) OR edth(model, ?, "+ fuzzyThreshold + "));"; //TODO : EDITED THIS FOR FUZZY
 
             PreparedStatement statement = conn.prepareStatement(len);
             statement.setString(1, additional);
