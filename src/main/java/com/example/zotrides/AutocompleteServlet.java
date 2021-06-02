@@ -27,7 +27,7 @@ public class AutocompleteServlet extends HttpServlet {
 
     public void init(ServletConfig config) {
         try {
-            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides");
+            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides-slave");
         } catch (NamingException e) {
             e.printStackTrace();
         }

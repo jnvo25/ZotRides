@@ -22,15 +22,15 @@ import java.util.ArrayList;
 public class PaymentServlet extends HttpServlet {
 
     // Create a dataSource which registered in web.xml
-    private DataSource dataSource;
-
-    public void init(ServletConfig config) {
-        try {
-            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides");
-        } catch (NamingException e) {
-            e.printStackTrace();
-        }
-    }
+//    private DataSource dataSource;
+//
+//    public void init(ServletConfig config) {
+//        try {
+//            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides");
+//        } catch (NamingException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     /**
      * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
@@ -43,10 +43,15 @@ public class PaymentServlet extends HttpServlet {
 
         // Output stream to STDOUT
         PrintWriter out = response.getWriter();
+        // Get shopping cart
+        HttpSession session = request.getSession();
+        ArrayList<CartItem> previousItems = (ArrayList<CartItem>) session.getAttribute("previousItems");
+        // Get current sale ID
+        SaleMetaInfo saleInfo = (SaleMetaInfo) session.getAttribute("saleMetaInfo");
 
         /* verify username / password from database */
         boolean isValid = false;
-        try (Connection conn = dataSource.getConnection()) {
+        try (Connection conn = ((DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides-slave")).getConnection()) {
             String query = "SELECT id\n" +
                     "FROM CreditCards\n" +
                     "WHERE firstName = ? AND lastName = ?" +
@@ -81,12 +86,6 @@ public class PaymentServlet extends HttpServlet {
             // NOTE : at this point payment info is valid --> need to update database with items
             System.out.println("valid payment info");
 
-            // Get shopping cart
-            HttpSession session = request.getSession();
-            ArrayList<CartItem> previousItems = (ArrayList<CartItem>) session.getAttribute("previousItems");
-
-            // Get current sale ID
-            SaleMetaInfo saleInfo = (SaleMetaInfo) session.getAttribute("saleMetaInfo");
             if (saleInfo == null) {
                 // perform query
                 query = "SELECT MAX(saleID) AS base FROM Reservations;";
@@ -110,34 +109,24 @@ public class PaymentServlet extends HttpServlet {
                 statement.close();
                 rs.close();
             }
+        } catch (Exception e) {
 
-            /* old */
-            /*
-            // Generate data update query
-            query = previousItems != null && !previousItems.isEmpty()
-                    ? "INSERT INTO Reservations(startDate, endDate, customerID, carID, saleDate, saleID) VALUES"
-                    : "";
-            String customerID = session.getAttribute("customerID").toString();
-            int i;
-            for (i = 0; i < previousItems.size() - 1; ++i) {
-                query += previousItems.get(i).toQuery(customerID, saleInfo.getSaleID()) + ",\n";
-            }
-            query += (previousItems.size() - 1 >= 0
-                        ? previousItems.get(i).toQuery(customerID, saleInfo.getSaleID()) + ";"
-                        : "");
+            // write error message JSON object to output
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("errorMessage", e.getMessage());
+            out.write(jsonObject.toString());
 
-            System.out.println("update query is: " + query);
+            // for more detail
+            System.out.println(e.getMessage());
 
-            // Execute data update query
-            statement = conn.prepareStatement(query);
-            int rowsUpdated = statement.executeUpdate();
-            statement.close();
-            System.out.println("updated " + rowsUpdated + " rows!"); */
+            // set response status to 500 (Internal Server Error)
+            response.setStatus(500);
+        }
 
-
+        try (Connection conn = ((DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides-master")).getConnection()) {
             // Generate data update query
             if (previousItems != null && !previousItems.isEmpty()) {
-                query = "INSERT INTO Reservations(startDate, endDate, customerID, carID, saleDate, saleID) VALUES";
+                String query = "INSERT INTO Reservations(startDate, endDate, customerID, carID, saleDate, saleID) VALUES";
                 String customerID = session.getAttribute("customerID").toString();
 
                 /* NOTE : for our convenience encapsulated manually using '?' inside the CartItem.java class's toQuery method
@@ -155,7 +144,7 @@ public class PaymentServlet extends HttpServlet {
                 System.out.println("update query is: " + query);
 
                 // Execute data update query
-                statement = conn.prepareStatement(query);
+                PreparedStatement statement = conn.prepareStatement(query);
                 int rowsUpdated = statement.executeUpdate();
                 statement.close();
                 System.out.println("updated " + rowsUpdated + " rows!");
@@ -190,7 +179,8 @@ public class PaymentServlet extends HttpServlet {
 
             // set response status to 500 (Internal Server Error)
             response.setStatus(500);
+        } finally {
+            out.close();
         }
-        out.close();
     }
 }
