@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/ZotRides/static/css/main.ff76d3d1.chunk.css",
-    "main.js": "/ZotRides/static/js/main.09eaefd2.chunk.js",
-    "main.js.map": "/ZotRides/static/js/main.09eaefd2.chunk.js.map",
+    "main.js": "/ZotRides/static/js/main.bdc0c44b.chunk.js",
+    "main.js.map": "/ZotRides/static/js/main.bdc0c44b.chunk.js.map",
     "runtime-main.js": "/ZotRides/static/js/runtime-main.472110d3.js",
     "runtime-main.js.map": "/ZotRides/static/js/runtime-main.472110d3.js.map",
     "static/css/2.372916c9.chunk.css": "/ZotRides/static/css/2.372916c9.chunk.css",
@@ -20,6 +20,6 @@
     "static/css/2.372916c9.chunk.css",
     "static/js/2.4ce443da.chunk.js",
     "static/css/main.ff76d3d1.chunk.css",
-    "static/js/main.09eaefd2.chunk.js"
+    "static/js/main.bdc0c44b.chunk.js"
   ]
 }
