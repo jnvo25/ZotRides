@@ -1,2 +1,2 @@
 // export default "https://localhost:8443/ZotRides/";
-export default "http://54.145.31.39:8080/ZotRides/";
+export default "http://54.152.236.48:8080/ZotRides/";
