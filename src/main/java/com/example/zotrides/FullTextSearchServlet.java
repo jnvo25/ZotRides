@@ -12,8 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -49,6 +48,7 @@ public class FullTextSearchServlet extends HttpServlet {
      * handles POST requests to store query in session
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        long TSStart = System.nanoTime();
         /* API
          *   - Input : entire string that user entered on search form
          *   - Output : same as regular search */
@@ -144,18 +144,20 @@ public class FullTextSearchServlet extends HttpServlet {
 
         // Store base query into session (to maintain consistency when jumping back to CarsList page)
         if (previousSettings == null) {
-            previousSettings = new CarListSettings(query, 1, 20, true, false, false, params);
+            previousSettings = new CarListSettings(query, 1, 50, true, false, false, params);
             session.setAttribute("previousSettings", previousSettings);
         } else {
             // prevent corrupted states through sharing under multi-threads
             // will only be executed by one thread at a time
             synchronized (previousSettings) {
-                previousSettings.reset(query, 1, 20, true, false, false, params);
+                previousSettings.reset(query, 1, 50, true, false, false, params);
             }
         }
 
         // Run query & return response
         response.setContentType("application/json"); // Response mime type
+        long TJStart = System.nanoTime();
+        long TJEnd = TJStart;
         try (Connection conn = ((DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides-master")).getConnection()) {
             // run query
             query = previousSettings.toQuery();
@@ -165,6 +167,8 @@ public class FullTextSearchServlet extends HttpServlet {
 
 //            System.out.println("query:\n" + statement.toString() + "\n");
             ResultSet rs = statement.executeQuery();
+
+            TJEnd = System.nanoTime();
 
             // process results
             JsonArray jsonArray = new JsonArray();
@@ -237,13 +241,13 @@ public class FullTextSearchServlet extends HttpServlet {
 //            System.out.println(jsonArray);
 
             // return results
-            JsonArray firstTwenty = new JsonArray();
-            for (int i = 0; i < 20 && i < jsonArray.size(); ++i) {
-                firstTwenty.add(jsonArray.get(i));
+            JsonArray firstFifty = new JsonArray();
+            for (int i = 0; i < 50 && i < jsonArray.size(); ++i) {
+                firstFifty.add(jsonArray.get(i));
             }
 
             JsonObject result = new JsonObject();
-            result.add("results", firstTwenty);
+            result.add("results", firstFifty);
             result.addProperty("message", previousSettings.getPaginationMessage());
             out.write(result.toString());
             response.setStatus(200);         // set response status to 200 (OK)
@@ -253,6 +257,7 @@ public class FullTextSearchServlet extends HttpServlet {
 
         } catch (Exception e) {
             // write error message JSON object to output
+            TJEnd = System.nanoTime();
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("errorMessage", e.getMessage());
             out.write(jsonObject.toString());
@@ -301,6 +306,51 @@ public class FullTextSearchServlet extends HttpServlet {
             response.setStatus(500);
         } finally {
             out.close();
+        }
+        long TSEnd = System.nanoTime();
+
+
+
+        // Write to log
+        long TS = TSEnd - TSStart;
+        long TJ = TJEnd - TJStart;
+        String xmlFilePath = "";
+        try {
+            String contextPath = request.getSession().getServletContext().getRealPath("/");
+            xmlFilePath=contextPath+"test";
+            System.out.println(xmlFilePath);
+            File myfile = new File(xmlFilePath);
+            if(myfile.createNewFile()) {
+                System.out.println("Custom log created");
+            } else {
+                System.out.println("Custom log file already exists");
+            }
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+
+//        try {
+//            FileWriter myWriter = new FileWriter("test");
+//            myWriter.write("Files in Java might be tricky, but it is fun enough!");
+//            myWriter.write("TS: " + TS);
+//            myWriter.write("TJ: " + TJ);
+//            myWriter.flush();
+//            myWriter.close();
+//            System.out.println("Successfully wrote to the file.");
+//        } catch (IOException e) {
+//            System.out.println("An error occurred.");
+//            e.printStackTrace();
+//        }
+        try {
+            BufferedWriter myWriter = new BufferedWriter(new FileWriter(xmlFilePath, true));
+            myWriter.write("TS: " + TS + " TJ: " + TJ);
+            myWriter.newLine();
+            myWriter.flush();
+            myWriter.close();
+            System.out.println("Successfully written to file");
+        } catch (IOException e) {
+            System.out.println("exception occurred " + e);
         }
     }
 }
