@@ -19,7 +19,7 @@ export default function(props) {
                     dataType: "json",
                     method: "POST",
                     data: values,
-                    url: HOST + "api/employee-login",
+                    url: "/ZotRides/api/employee-login",
                     success: (resultData) => {
                         props.setLoading(false);
                         console.log(JSON.stringify(resultData));

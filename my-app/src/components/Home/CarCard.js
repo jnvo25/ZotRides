@@ -12,7 +12,7 @@ export default function CarCard(props) {
             dataType: "json",
             method: "GET",
             data: {make: jankyCarMake(props.name), category: props.category},
-            url: HOST + "/api/get-image",
+            url: "/ZotRides/api/get-image",
             success: (resultData) => {
                 setImageurl(resultData.imageurl);
             }

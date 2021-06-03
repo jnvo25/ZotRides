@@ -37,7 +37,7 @@ export default function Home() {
                 dataType: "json",
                 method: "POST",
                 data: {token: input.toLowerCase()},
-                url: HOST + "api/autocomplete",
+                url: "/ZotRides/api/autocomplete",
                 success: (resultData) => {
                     setOptions(resultData.results);
                     const temp = cache;

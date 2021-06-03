@@ -16,7 +16,7 @@ export default function() {
         jQuery.ajax({
             dataType: "json",
             method: "GET",
-            url: HOST + "api/categories",
+            url: "/ZotRides/api/categories",
             success: (resultData) => {
                 console.log(resultData);
                 setCategories(resultData.map((element) => {

@@ -21,7 +21,7 @@ export default function(props) {
             jQuery.ajax({
                 dataType: "json",
                 method: "GET",
-                url: HOST + "api/jump",
+                url: "/ZotRides/api/jump",
                 success: (resultData) => {
                     console.log(resultData);
                     setFirst(resultData.sorting.ratingFirst);
@@ -37,7 +37,7 @@ export default function(props) {
                 dataType: "json",
                 method: "POST",
                 data: {model: query.key},
-                url: HOST + "api/browse-car",
+                url: "/ZotRides/api/browse-car",
                 success: (resultData) => {
                     setCars(resultData.results);
                     setMessage(resultData.message);
@@ -49,7 +49,7 @@ export default function(props) {
                 dataType: "json",
                 method: "POST",
                 data: {category: query.key},
-                url: HOST + "api/browse-car",
+                url: "/ZotRides/api/browse-car",
                 success: (resultData) => {
                     setMessage(resultData.message);
                     setCars(resultData.results);
@@ -60,7 +60,7 @@ export default function(props) {
                 dataType: "json",
                 method: "POST",
                 data: {token: query.fulltext.replace("%20", " ")},
-                url: HOST + "api/full-text-search",
+                url: "/ZotRides/api/full-text-search",
                 success: (resultData) => {
 
                     setMessage(resultData.message);
@@ -72,7 +72,7 @@ export default function(props) {
                 dataType: "json",
                 method: "POST",
                 data: removeEmpty(props.match.params),
-                url: HOST + "api/search-car",
+                url: "/ZotRides/api/search-car",
                 success: (resultData) => {
                     if (resultData.status === "fail")
                         props.setError("Login failed (Invalid username/password");
@@ -92,7 +92,7 @@ export default function(props) {
             dataType: "json",
             method: "POST",
             data: {pageStatus: 1},
-            url: HOST + "api/paginate",
+            url: "/ZotRides/api/paginate",
             success: (resultData) => {
                 if (resultData.status === "fail")
                     props.setError("Login failed (Invalid username/password");
@@ -111,7 +111,7 @@ export default function(props) {
             dataType: "json",
             method: "POST",
             data: {pageStatus: -1},
-            url: HOST + "api/paginate",
+            url: "/ZotRides/api/paginate",
             success: (resultData) => {
                 if (resultData.status === "fail")
                     props.setError("Login failed (Invalid username/password");
@@ -131,7 +131,7 @@ export default function(props) {
             dataType: "json",
             method: "POST",
             data: {resultsPerPage: event.target.value},
-            url: HOST + "api/paginate",
+            url: "/ZotRides/api/paginate",
             success: (resultData) => {
                 if (resultData.status === "fail")
                     props.setError("Login failed (Invalid username/password");
@@ -181,7 +181,7 @@ export default function(props) {
             dataType: "json",
             method: "POST",
             data: data,
-            url: HOST + "api/sort",
+            url: "/ZotRides/api/sort",
             success: (resultData) => {
                 if (resultData.status === "fail")
                     props.setError("Login failed (Invalid username/password");
@@ -201,7 +201,7 @@ export default function(props) {
             dataType: "json",
             method: "POST",
             data: {category: key},
-            url: HOST + "api/browse-car",
+            url: "/ZotRides/api/browse-car",
             success: (resultData) => {
                 setMessage(resultData.message);
                 setCars(resultData.results);
