@@ -145,13 +145,13 @@ public class FullTextSearchServlet extends HttpServlet {
 
         // Store base query into session (to maintain consistency when jumping back to CarsList page)
         if (previousSettings == null) {
-            previousSettings = new CarListSettings(query, 1, 20, true, false, false, params);
+            previousSettings = new CarListSettings(query, 1, 50, true, false, false, params);
             session.setAttribute("previousSettings", previousSettings);
         } else {
             // prevent corrupted states through sharing under multi-threads
             // will only be executed by one thread at a time
             synchronized (previousSettings) {
-                previousSettings.reset(query, 1, 20, true, false, false, params);
+                previousSettings.reset(query, 1, 50, true, false, false, params);
             }
         }
 
@@ -242,13 +242,13 @@ public class FullTextSearchServlet extends HttpServlet {
 //            System.out.println(jsonArray);
 
             // return results
-            JsonArray firstTwenty = new JsonArray();
-            for (int i = 0; i < 20 && i < jsonArray.size(); ++i) {
-                firstTwenty.add(jsonArray.get(i));
+            JsonArray firstFifty = new JsonArray();
+            for (int i = 0; i < 50 && i < jsonArray.size(); ++i) {
+                firstFifty.add(jsonArray.get(i));
             }
 
             JsonObject result = new JsonObject();
-            result.add("results", firstTwenty);
+            result.add("results", firstFifty);
             result.addProperty("message", previousSettings.getPaginationMessage());
             out.write(result.toString());
             response.setStatus(200);         // set response status to 200 (OK)
