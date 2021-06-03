@@ -12,8 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -49,6 +48,7 @@ public class FullTextSearchServlet extends HttpServlet {
      * handles POST requests to store query in session
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        long TSStart = System.nanoTime();
         /* API
          *   - Input : entire string that user entered on search form
          *   - Output : same as regular search */
@@ -97,28 +97,28 @@ public class FullTextSearchServlet extends HttpServlet {
         int fuzzyThreshold = token.trim().length() / 3;
 
         // query with fuzzy search
-        String query = "WITH pickupCarCounts AS (SELECT pickupLocationID, COUNT(DISTINCT carID) as numCars \n" +
-                "\tFROM pickup_car_from \n" +
-                "    GROUP BY pickupLocationID),\n" +
-                "    \n" +
-                "    car_info AS (SELECT Cars.id as id, model, make, year, name, price, rating, numVotes\n" +
-                "\tFROM (((category_of_car, Category, Cars) LEFT OUTER JOIN CarPrices ON Cars.id = CarPrices.carID)\n" +
-                "\t\t\tLEFT OUTER JOIN Ratings ON Ratings.carID = Cars.id)\n" +
-                "\tWHERE category_of_car.categoryID = Category.id\n" +
-                "\t\t\tAND Cars.id = category_of_car.carID \n" +
-                "\t\t\tAND (MATCH(model) AGAINST (? IN BOOLEAN MODE) OR edth(model, ?, "+ fuzzyThreshold + ")))\n" + //TODO: added edth for fuzzy
-                "    \n" +
-                "SELECT car_info.id as id, group_concat(DISTINCT concat_ws(' ', make, model, year)) as name, \n" +
-                "\t\tname as category, price, rating, numVotes,\n" +
-                "        group_concat(DISTINCT address ORDER BY numCars DESC, address SEPARATOR ';') as address, \n" +
-                "        group_concat(DISTINCT phoneNumber ORDER BY numCars DESC, address SEPARATOR ';') as phoneNumber,\n" +
-                "        group_concat(DISTINCT PickupLocation.id ORDER BY numCars DESC, address SEPARATOR ';') as pickupID\n" +
-                "FROM ((car_info LEFT OUTER JOIN pickup_car_from ON pickup_car_from.carID = car_info.id) \n" +
-                "\tLEFT OUTER JOIN pickupCarCounts ON pickup_car_from.pickupLocationID = pickupCarCounts.pickupLocationID)\n" +
-                "\tLEFT OUTER JOIN PickupLocation ON pickup_car_from.pickupLocationID = PickupLocation.id\n" +
-                "GROUP BY car_info.id\n";
+//        String query = "WITH pickupCarCounts AS (SELECT pickupLocationID, COUNT(DISTINCT carID) as numCars \n" +
+//                "\tFROM pickup_car_from \n" +
+//                "    GROUP BY pickupLocationID),\n" +
+//                "    \n" +
+//                "    car_info AS (SELECT Cars.id as id, model, make, year, name, price, rating, numVotes\n" +
+//                "\tFROM (((category_of_car, Category, Cars) LEFT OUTER JOIN CarPrices ON Cars.id = CarPrices.carID)\n" +
+//                "\t\t\tLEFT OUTER JOIN Ratings ON Ratings.carID = Cars.id)\n" +
+//                "\tWHERE category_of_car.categoryID = Category.id\n" +
+//                "\t\t\tAND Cars.id = category_of_car.carID \n" +
+//                "\t\t\tAND (MATCH(model) AGAINST (? IN BOOLEAN MODE) OR edth(model, ?, "+ fuzzyThreshold + ")))\n" + //TODO: added edth for fuzzy
+//                "    \n" +
+//                "SELECT car_info.id as id, group_concat(DISTINCT concat_ws(' ', make, model, year)) as name, \n" +
+//                "\t\tname as category, price, rating, numVotes,\n" +
+//                "        group_concat(DISTINCT address ORDER BY numCars DESC, address SEPARATOR ';') as address, \n" +
+//                "        group_concat(DISTINCT phoneNumber ORDER BY numCars DESC, address SEPARATOR ';') as phoneNumber,\n" +
+//                "        group_concat(DISTINCT PickupLocation.id ORDER BY numCars DESC, address SEPARATOR ';') as pickupID\n" +
+//                "FROM ((car_info LEFT OUTER JOIN pickup_car_from ON pickup_car_from.carID = car_info.id) \n" +
+//                "\tLEFT OUTER JOIN pickupCarCounts ON pickup_car_from.pickupLocationID = pickupCarCounts.pickupLocationID)\n" +
+//                "\tLEFT OUTER JOIN PickupLocation ON pickup_car_from.pickupLocationID = PickupLocation.id\n" +
+//                "GROUP BY car_info.id\n";
 
-        /* // query without fuzzy search
+        // query without fuzzy search
         String query = "WITH pickupCarCounts AS (SELECT pickupLocationID, COUNT(DISTINCT carID) as numCars \n" +
                 "\tFROM pickup_car_from \n" +
                 "    GROUP BY pickupLocationID),\n" +
@@ -138,7 +138,7 @@ public class FullTextSearchServlet extends HttpServlet {
                 "FROM ((car_info LEFT OUTER JOIN pickup_car_from ON pickup_car_from.carID = car_info.id) \n" +
                 "\tLEFT OUTER JOIN pickupCarCounts ON pickup_car_from.pickupLocationID = pickupCarCounts.pickupLocationID)\n" +
                 "\tLEFT OUTER JOIN PickupLocation ON pickup_car_from.pickupLocationID = PickupLocation.id\n" +
-                "GROUP BY car_info.id\n"; */
+                "GROUP BY car_info.id\n";
 
 //        System.out.println("query: \n" + query);
 
@@ -156,15 +156,19 @@ public class FullTextSearchServlet extends HttpServlet {
 
         // Run query & return response
         response.setContentType("application/json"); // Response mime type
+        long TJStart = System.nanoTime();
+        long TJEnd = TJStart;
         try (Connection conn = dataSource.getConnection()) {
             // run query
             query = previousSettings.toQuery();
             PreparedStatement statement = conn.prepareStatement(query);
             statement.setString(1, additional);
-            statement.setString(2, token.trim()); //TODO: ADDED THIS
+//            statement.setString(2, token.trim()); //TODO: ADDED THIS
 
 //            System.out.println("query:\n" + statement.toString() + "\n");
             ResultSet rs = statement.executeQuery();
+
+            TJEnd = System.nanoTime();
 
             // process results
             JsonArray jsonArray = new JsonArray();
@@ -251,15 +255,19 @@ public class FullTextSearchServlet extends HttpServlet {
             statement.close();
 
             // get the max number of results
-            String len =  "SELECT COUNT(DISTINCT Cars.id) as numResults \n" +
+//            String len =  "SELECT COUNT(DISTINCT Cars.id) as numResults \n" +
+//                    "\tFROM category_of_car, Category, Cars\n" +
+//                    "\tWHERE category_of_car.categoryID = Category.id\n" +
+//                    "\t\t\tAND Cars.id = category_of_car.carID \n" +
+//                    "\t\t\tAND (MATCH(model) AGAINST (? IN BOOLEAN MODE) OR edth(model, ?, \"+ fuzzyThreshold + \"));"; //TODO : EDITED THIS FOR FUZZY
+            String len = "SELECT COUNT(DISTINCT Cars.id) as numResults \n" +
                     "\tFROM category_of_car, Category, Cars\n" +
                     "\tWHERE category_of_car.categoryID = Category.id\n" +
                     "\t\t\tAND Cars.id = category_of_car.carID \n" +
-                    "\t\t\tAND (MATCH(model) AGAINST (? IN BOOLEAN MODE) OR edth(model, ?, \"+ fuzzyThreshold + \"));"; //TODO : EDITED THIS FOR FUZZY
-
+                    "\t\t\tAND (MATCH(model) AGAINST (? IN BOOLEAN MODE));";
             statement = conn.prepareStatement(len);
             statement.setString(1, additional);
-            statement.setString(2, token.trim()); //TODO: ADDED THIS
+//            statement.setString(2, token.trim()); //TODO: ADDED THIS
 //            System.out.println("-----------------\n" + statement.toString());
             rs = statement.executeQuery(); // Perform the query
             if (rs.next()) {
@@ -275,6 +283,7 @@ public class FullTextSearchServlet extends HttpServlet {
 
         } catch (Exception e) {
             // write error message JSON object to output
+            TJEnd = System.nanoTime();
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("errorMessage", e.getMessage());
             out.write(jsonObject.toString());
@@ -286,6 +295,51 @@ public class FullTextSearchServlet extends HttpServlet {
             response.setStatus(500);
         } finally {
             out.close();
+        }
+        long TSEnd = System.nanoTime();
+
+
+
+        // Write to log
+        long TS = TSEnd - TSStart;
+        long TJ = TJEnd - TJStart;
+        String xmlFilePath = "";
+        try {
+            String contextPath = request.getSession().getServletContext().getRealPath("/");
+            xmlFilePath=contextPath+"test";
+            System.out.println(xmlFilePath);
+            File myfile = new File(xmlFilePath);
+            if(myfile.createNewFile()) {
+                System.out.println("Custom log created");
+            } else {
+                System.out.println("Custom log file already exists");
+            }
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+
+//        try {
+//            FileWriter myWriter = new FileWriter("test");
+//            myWriter.write("Files in Java might be tricky, but it is fun enough!");
+//            myWriter.write("TS: " + TS);
+//            myWriter.write("TJ: " + TJ);
+//            myWriter.flush();
+//            myWriter.close();
+//            System.out.println("Successfully wrote to the file.");
+//        } catch (IOException e) {
+//            System.out.println("An error occurred.");
+//            e.printStackTrace();
+//        }
+        try {
+            BufferedWriter myWriter = new BufferedWriter(new FileWriter(xmlFilePath, true));
+            myWriter.write("TS: " + TS + " TJ: " + TJ);
+            myWriter.newLine();
+            myWriter.flush();
+            myWriter.close();
+            System.out.println("Successfully written to file");
+        } catch (IOException e) {
+            System.out.println("exception occurred " + e);
         }
     }
 }
