@@ -18,7 +18,7 @@ export default function(props) {
                         ccNumber: values.cc,
                         expDate: values.year + "/" + values.month + "/" + values.day
                     },
-                    url: HOST + "api/payment",
+                    url: "/ZotRides/api/payment",
                     success: (resultData) => {
                         console.log(resultData);
                         if(resultData.status === "fail") {

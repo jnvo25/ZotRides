@@ -26,7 +26,7 @@ export default function(props) {
                         endDate: dateToString(values.endDate),
                         startDate: dateToString(values.startDate)
                     },
-                    url: HOST + "api/shopping-cart",
+                    url: "/ZotRides/api/shopping-cart",
                     success: (resultData) => {
                         console.log(JSON.stringify(resultData));
                         setSubmitted(true);

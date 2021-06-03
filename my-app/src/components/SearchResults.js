@@ -14,7 +14,7 @@ export default function(props) {
             dataType: "json",
             method: "POST",
             data: removeEmpty(props.match.params),
-            url: HOST + "api/search-car",
+            url: "/ZotRides/api/search-car",
             success: (resultData) => {
                 if (resultData.status === "fail")
                     props.setError("Login failed (Invalid username/password");

@@ -20,7 +20,7 @@ export default function (props) {
             dataType: "json",
             method: "POST",
             data: data,
-            url: HOST + "api/browse-car",
+            url: "/ZotRides/api/browse-car",
             success: (resultData) => {
                 setCars(resultData);
                 setLoading(false);
@@ -31,7 +31,7 @@ export default function (props) {
         jQuery.ajax({
             dataType: "json",
             method: "GET",
-            url: HOST + "api/categories",
+            url: "/ZotRides/api/categories",
             success: (resultData) => {
                 setCategories(resultData.map(type => type.category));
                 // console.log(categories);
@@ -52,7 +52,7 @@ export default function (props) {
             dataType: "json",
             method: "POST",
             data: data,
-            url: HOST + "api/browse-car",
+            url: "/ZotRides/api/browse-car",
             success: (resultData) => {
                 setCars(resultData);
                 setLoading(false);

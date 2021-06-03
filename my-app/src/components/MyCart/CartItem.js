@@ -19,7 +19,7 @@ export default function(props) {
             data: {
                 itemID: props.id
             },
-            url: HOST + "api/delete-cart-item",
+            url: "/ZotRides/api/delete-cart-item",
             success: (resultData) => {
                 console.log(resultData);
                 window.location.reload(false);
