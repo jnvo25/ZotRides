@@ -35,7 +35,7 @@ export default function(props) {
                     dataType: "json",
                     method: "POST",
                     data: values,
-                    url: HOST + "api/add-car",
+                    url: "/ZotRides/api/add-car",
                     success: (resultData) => {
                         if(resultData.errorMessage != null) {
                             props.setError([resultData.errorMessage, ""]);

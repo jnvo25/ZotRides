@@ -20,7 +20,7 @@ export default function SingleCar(props) {
         jQuery.ajax({
             dataType: "json",
             method: "GET",
-            url: HOST + "api/single-car?id=" + props.match.params.carId,
+            url: "/ZotRides/api/single-car?id=" + props.match.params.carId,
             success: (resultData) => {
                 setCar(resultData[0]);
                 setLoading(false);

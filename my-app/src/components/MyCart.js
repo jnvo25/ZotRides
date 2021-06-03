@@ -14,7 +14,7 @@ export default function() {
         jQuery.ajax({
             dataType: "json",
             method: "GET",
-            url: HOST + "api/shopping-cart",
+            url: "/ZotRides/api/shopping-cart",
             success: (resultData) => {
                 setCars(resultData.previousItems);
                 setLoading(false);

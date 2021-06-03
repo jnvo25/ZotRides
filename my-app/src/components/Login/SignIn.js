@@ -18,7 +18,7 @@ export default function(props) {
                     dataType: "json",
                     method: "POST",
                     data: values,
-                    url: HOST + "api/login",
+                    url: /*HOST + */"/ZotRides/api/login",
                     success: (resultData) => {
                         //setCar(resultData[0]);
                         //setLoading(false);

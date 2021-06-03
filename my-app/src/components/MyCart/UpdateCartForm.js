@@ -18,7 +18,7 @@ export default function(props) {
                         startDate: dateToString(values.startDate),
                         itemID: props.id
                     },
-                    url: HOST + "api/modify-cart-item",
+                    url: "/ZotRides/api/modify-cart-item",
                     success: (resultData) => {
                         console.log(resultData)
                         window.location.reload(false);

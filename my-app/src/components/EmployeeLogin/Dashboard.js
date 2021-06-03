@@ -15,7 +15,7 @@ export default function() {
         jQuery.ajax({
             dataType: "json",
             method: "GET",
-            url: HOST + "api/metadata",
+            url: "/ZotRides/api/metadata",
             success: (resultData) => {
                 setTables(Object.values(resultData));
                 setLoading(false);
