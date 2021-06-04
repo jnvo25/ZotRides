@@ -165,7 +165,7 @@ public class FullTextSearchServlet extends HttpServlet {
             statement.setString(1, additional);
 //            statement.setString(2, token.trim()); //TODO: ADDED THIS
 
-//            System.out.println("query:\n" + statement.toString() + "\n");
+            System.out.println("query:\n" + statement.toString() + "\n");
             ResultSet rs = statement.executeQuery();
 
             TJEnd = System.nanoTime();
@@ -251,35 +251,22 @@ public class FullTextSearchServlet extends HttpServlet {
             result.addProperty("message", previousSettings.getPaginationMessage());
             out.write(result.toString());
             response.setStatus(200);         // set response status to 200 (OK)
-            rs.close();
-            statement.close();
 
-            // get the max number of results
-//            String len =  "SELECT COUNT(DISTINCT Cars.id) as numResults \n" +
-//                    "\tFROM category_of_car, Category, Cars\n" +
-//                    "\tWHERE category_of_car.categoryID = Category.id\n" +
-//                    "\t\t\tAND Cars.id = category_of_car.carID \n" +
-//                    "\t\t\tAND (MATCH(model) AGAINST (? IN BOOLEAN MODE) OR edth(model, ?, \"+ fuzzyThreshold + \"));"; //TODO : EDITED THIS FOR FUZZY
-            String len = "SELECT COUNT(DISTINCT Cars.id) as numResults \n" +
-                    "\tFROM category_of_car, Category, Cars\n" +
-                    "\tWHERE category_of_car.categoryID = Category.id\n" +
-                    "\t\t\tAND Cars.id = category_of_car.carID \n" +
-                    "\t\t\tAND (MATCH(model) AGAINST (? IN BOOLEAN MODE));";
-            statement = conn.prepareStatement(len);
-            statement.setString(1, additional);
-//            statement.setString(2, token.trim()); //TODO: ADDED THIS
-//            System.out.println("-----------------\n" + statement.toString());
-            rs = statement.executeQuery(); // Perform the query
-            if (rs.next()) {
-                int maxResults = rs.getInt("numResults");
+            // store number of results
+            while (rs.next()) {
+                count++;
+            }
+            if (count > 0) {
+                int maxResults = count;
                 synchronized (previousSettings) {
                     previousSettings.setMaxNumResults(maxResults);
                 }
                 System.out.println("stored max results: " + maxResults);
             }
+            System.out.println("no issues");
+
             rs.close();
             statement.close();
-            System.out.println("no issues");
 
         } catch (Exception e) {
             // write error message JSON object to output
@@ -301,45 +288,34 @@ public class FullTextSearchServlet extends HttpServlet {
 
 
         // Write to log
-        long TS = TSEnd - TSStart;
-        long TJ = TJEnd - TJStart;
-        String xmlFilePath = "";
-        try {
-            String contextPath = request.getSession().getServletContext().getRealPath("/");
-            xmlFilePath=contextPath+"test";
-            System.out.println(xmlFilePath);
-            File myfile = new File(xmlFilePath);
-            if(myfile.createNewFile()) {
-                System.out.println("Custom log created");
-            } else {
-                System.out.println("Custom log file already exists");
-            }
-        } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-
+//        long TS = TSEnd - TSStart;
+//        long TJ = TJEnd - TJStart;
+//        String xmlFilePath = "";
 //        try {
-//            FileWriter myWriter = new FileWriter("test");
-//            myWriter.write("Files in Java might be tricky, but it is fun enough!");
-//            myWriter.write("TS: " + TS);
-//            myWriter.write("TJ: " + TJ);
-//            myWriter.flush();
-//            myWriter.close();
-//            System.out.println("Successfully wrote to the file.");
+//            String contextPath = request.getSession().getServletContext().getRealPath("/");
+//            xmlFilePath=contextPath+"test";
+//            System.out.println(xmlFilePath);
+//            File myfile = new File(xmlFilePath);
+//            if(myfile.createNewFile()) {
+//                System.out.println("Custom log created");
+//            } else {
+//                System.out.println("Custom log file already exists");
+//            }
 //        } catch (IOException e) {
 //            System.out.println("An error occurred.");
 //            e.printStackTrace();
 //        }
-        try {
-            BufferedWriter myWriter = new BufferedWriter(new FileWriter(xmlFilePath, true));
-            myWriter.write("TS: " + TS + " TJ: " + TJ);
-            myWriter.newLine();
-            myWriter.flush();
-            myWriter.close();
-            System.out.println("Successfully written to file");
-        } catch (IOException e) {
-            System.out.println("exception occurred " + e);
-        }
+
+        // write to file
+//        try {
+//            BufferedWriter myWriter = new BufferedWriter(new FileWriter(xmlFilePath, true));
+//            myWriter.write("TS: " + TS + " TJ: " + TJ);
+//            myWriter.newLine();
+//            myWriter.flush();
+//            myWriter.close();
+//            System.out.println("Successfully written to file");
+//        } catch (IOException e) {
+//            System.out.println("exception occurred " + e);
+//        }
     }
 }
