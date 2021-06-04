@@ -30,7 +30,7 @@ public class FullTextSearchServlet extends HttpServlet {
 
     public void init(ServletConfig config) {
         try {
-            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides-master");
+            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides-slave");
         } catch (NamingException e) {
             e.printStackTrace();
         }
