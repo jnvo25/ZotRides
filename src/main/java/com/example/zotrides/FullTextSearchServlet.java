@@ -290,33 +290,33 @@ public class FullTextSearchServlet extends HttpServlet {
 
 
         // Write to log
-        long TS = TSEnd - TSStart;
-        long TJ = TJEnd - TJStart;
-        if (xmlFilePath.equals("")) {
-            try {
-                String contextPath = request.getSession().getServletContext().getRealPath("/");
-                xmlFilePath=contextPath+"test";
-                System.out.println(xmlFilePath);
-                File myfile = new File(xmlFilePath);
-                if(myfile.createNewFile()) {
-                    System.out.println("Custom log created");
-                } else {
-                    System.out.println("Custom log file already exists");
-                }
-            } catch (IOException e) {
-                System.out.println("An error occurred.");
-                e.printStackTrace();
-            }
-        }
-
-        // write to file
-        try (BufferedWriter myWriter = new BufferedWriter(new FileWriter(xmlFilePath, true));) {
-            myWriter.write("TS: " + TS + " TJ: " + TJ);
-            myWriter.newLine();
-            myWriter.flush();
-            System.out.println("Successfully written to file");
-        } catch (IOException e) {
-            System.out.println("exception occurred " + e);
-        }
+//        long TS = TSEnd - TSStart;
+//        long TJ = TJEnd - TJStart;
+//        if (xmlFilePath.equals("")) {
+//            try {
+//                String contextPath = request.getSession().getServletContext().getRealPath("/");
+//                xmlFilePath=contextPath+"test";
+//                System.out.println(xmlFilePath);
+//                File myfile = new File(xmlFilePath);
+//                if(myfile.createNewFile()) {
+//                    System.out.println("Custom log created");
+//                } else {
+//                    System.out.println("Custom log file already exists");
+//                }
+//            } catch (IOException e) {
+//                System.out.println("An error occurred.");
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        // write to file
+//        try (BufferedWriter myWriter = new BufferedWriter(new FileWriter(xmlFilePath, true));) {
+//            myWriter.write("TS: " + TS + " TJ: " + TJ);
+//            myWriter.newLine();
+//            myWriter.flush();
+//            System.out.println("Successfully written to file");
+//        } catch (IOException e) {
+//            System.out.println("exception occurred " + e);
+//        }
     }
 }
