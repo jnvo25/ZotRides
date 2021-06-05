@@ -9,7 +9,7 @@ import random
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
 
-    readfile = open('test', 'r')
+    readfile = open('./jmetertest_logs/single-case4.txt', 'r')
 
     count = 0
     sum_TS = 0
@@ -19,7 +19,7 @@ if __name__ == '__main__':
         sum_TS += int(line_tokens[1])
         sum_TJ += int(line_tokens[3])
         count += 1
-    print("Average TS: " + str(sum_TS / count))
-    print("Average TJ: " + str(sum_TJ / count))
+    print("Average TS: " + str((sum_TS / count)/1000000))
+    print("Average TJ: " + str((sum_TJ / count)/1000000))
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
