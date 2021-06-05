@@ -29,15 +29,15 @@ public class SearchServlet extends HttpServlet {
     private static final long serialVersionUID = 2L;
 
     // Create a dataSource which registered in web.xml
-    private DataSource dataSource;
-
-    public void init(ServletConfig config) {
-        try {
-            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides");
-        } catch (NamingException e) {
-            e.printStackTrace();
-        }
-    }
+//    private DataSource dataSource;
+//
+//    public void init(ServletConfig config) {
+//        try {
+//            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides");
+//        } catch (NamingException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
@@ -124,7 +124,7 @@ public class SearchServlet extends HttpServlet {
         // Run query & return response
         response.setContentType("application/json"); // Response mime type
         PrintWriter out = response.getWriter();
-        try (Connection conn = dataSource.getConnection()) {
+        try (Connection conn = ((DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides-master")).getConnection()) {
             // store query in temporary table
             String query = previousSettings.toQuery();
             PreparedStatement statement = conn.prepareStatement(query);
@@ -229,14 +229,27 @@ public class SearchServlet extends HttpServlet {
             response.setStatus(200);         // set response status to 200 (OK)
             rs.close();
             statement.close();
+        } catch (Exception e) {
+            // write error message JSON object to output
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("errorMessage", e.getMessage());
+            out.write(jsonObject.toString());
 
+            // display on backend (more detailed)
+            System.out.println("error: " + e.getMessage());
+
+            // set response status to 500 (Internal Server Error)
+            response.setStatus(500);
+        }
+
+        try (Connection conn = ((DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides-slave")).getConnection()) {
             // get the max number of results
             String countLength = "SELECT COUNT(DISTINCT car_info.id) AS numResults\n" +
                     "FROM ((car_info LEFT OUTER JOIN pickup_car_from ON pickup_car_from.carID = car_info.id) \n" +
                     "\tLEFT OUTER JOIN pickupCarCounts ON pickup_car_from.pickupLocationID = pickupCarCounts.pickupLocationID)\n" +
                     "\tLEFT OUTER JOIN PickupLocation ON pickup_car_from.pickupLocationID = PickupLocation.id\n;";
-            statement = conn.prepareStatement(query1 + countLength);
-            counter = 1;
+            PreparedStatement statement = conn.prepareStatement(query1 + countLength);
+            int counter = 1;
             if (model != null && !model.isEmpty()) {
                 statement.setString(counter++, model);
             }
@@ -251,7 +264,7 @@ public class SearchServlet extends HttpServlet {
             }
 
             System.out.println("-----------------\n" + statement.toString());
-            rs = statement.executeQuery(); // Perform the query
+            ResultSet rs = statement.executeQuery(); // Perform the query
             if (rs.next()) {
                 int maxResults = rs.getInt("numResults");
                 synchronized (previousSettings) {
@@ -262,7 +275,6 @@ public class SearchServlet extends HttpServlet {
             rs.close();
             statement.close();
             System.out.println("no issues");
-
         } catch (Exception e) {
             // write error message JSON object to output
             JsonObject jsonObject = new JsonObject();

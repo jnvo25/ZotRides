@@ -28,15 +28,15 @@ public class BrowseServlet extends HttpServlet {
     private static final long serialVersionUID = 2L;
 
     // Create a dataSource which registered in web.xml
-    private DataSource dataSource;
-
-    public void init(ServletConfig config) {
-        try {
-            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides");
-        } catch (NamingException e) {
-            e.printStackTrace();
-        }
-    }
+//    private DataSource dataSource;
+//
+//    public void init(ServletConfig config) {
+//        try {
+//            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides");
+//        } catch (NamingException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
@@ -122,7 +122,7 @@ public class BrowseServlet extends HttpServlet {
         // Run query & return response
         response.setContentType("application/json"); // Response mime type
         PrintWriter out = response.getWriter();      // Output stream to STDOUT
-        try (Connection conn = dataSource.getConnection()) {
+        try (Connection conn = ((DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides-master")).getConnection()) {
             // store query in temporary table
             String query = previousSettings.toQuery();
             PreparedStatement statement = conn.prepareStatement(query);
@@ -226,6 +226,20 @@ public class BrowseServlet extends HttpServlet {
             rs.close();
             statement.close();
 
+        } catch (Exception e) {
+            // write error message JSON object to output
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("errorMessage", e.getMessage());
+            out.write(jsonObject.toString());
+
+            // display on backend (more detailed)
+            System.out.println("Error: " + e.getMessage());
+
+            // set response status to 500 (Internal Server Error)
+            response.setStatus(500);
+        }
+
+        try (Connection conn = ((DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides-slave")).getConnection()) {
             // get the max number of results
             String getCount = "SELECT COUNT(DISTINCT Cars.id) AS numResults\n" +
                     "FROM (((((category_of_car, Category, Cars) LEFT OUTER JOIN CarPrices ON Cars.id = CarPrices.carID)\n" +
@@ -234,10 +248,10 @@ public class BrowseServlet extends HttpServlet {
                     "        LEFT OUTER JOIN pickupCarCounts ON pickup_car_from.pickupLocationID = pickupCarCounts.pickupLocationID)\n" +
                     "        LEFT OUTER JOIN PickupLocation ON pickup_car_from.pickupLocationID = PickupLocation.id\n" +
                     "WHERE category_of_car.categoryID = Category.id AND category_of_car.carID = Cars.id" + additional + "\n";
-            statement = conn.prepareStatement(query1 + getCount);
+            PreparedStatement statement = conn.prepareStatement(query1 + getCount);
 
             // update query parameters
-            counter = 1;
+            int counter = 1;
             if (category != null && !category.isEmpty()) {
                 statement.setString(counter++, category);
             }
@@ -250,7 +264,7 @@ public class BrowseServlet extends HttpServlet {
 //            System.out.println("------------------\n" + statement.toString());
 
             // perform query & get results
-            rs = statement.executeQuery();
+            ResultSet rs = statement.executeQuery();
             if (rs.next()) {
                 int maxResults = rs.getInt("numResults");
                 synchronized (previousSettings) {
@@ -262,7 +276,6 @@ public class BrowseServlet extends HttpServlet {
             // clean up
             rs.close();
             statement.close();
-
         } catch (Exception e) {
             // write error message JSON object to output
             JsonObject jsonObject = new JsonObject();

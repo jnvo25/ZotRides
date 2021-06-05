@@ -26,10 +26,14 @@ public class LoginServlet extends HttpServlet {
 
     public void init(ServletConfig config) {
         try {
-            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides");
+            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides-master");
         } catch (NamingException e) {
             e.printStackTrace();
         }
+    }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        doPost(request, response);
     }
 
     /**
@@ -61,11 +65,8 @@ public class LoginServlet extends HttpServlet {
             isValid = rs.next();
             if (isValid) {
                 customerID = rs.getInt("id");
-                boolean success = new StrongPasswordEncryptor().checkPassword(password, rs.getString("password"));
-                System.out.println(success);
-                if(!success)
-                    throw new Exception("Incorrect password");
-                System.out.println("success");
+                isValid = new StrongPasswordEncryptor().checkPassword(password, rs.getString("password"));
+                System.out.println(isValid);
             }
 
 //            System.out.println("the user/pass combo is: " + isValid);
@@ -93,7 +94,6 @@ public class LoginServlet extends HttpServlet {
             try {
                 String gRecaptchaResponse = request.getParameter("recaptcha");
                 RecaptchaVerifyUtils.verify(gRecaptchaResponse);
-
 
                 // set this user into the session
                 request.getSession().setAttribute("user", new User(username));

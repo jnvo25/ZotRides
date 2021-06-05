@@ -24,7 +24,7 @@ public class AddCarServlet extends HttpServlet {
 
     public void init(ServletConfig config) {
         try {
-            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides");
+            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides-master");
         } catch (NamingException e) {
             e.printStackTrace();
         }

@@ -4,7 +4,7 @@
 
     <!-- Defines a Data Source Connecting to localhost moviedb-->
 <!--    updated to use Connection Pooling-->
-    <Resource name="jdbc/zotrides"
+    <Resource name="jdbc/zotrides-master"
               auth="Container"
               driverClassName="com.mysql.jdbc.Driver"
               factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
@@ -12,5 +12,32 @@
               type="javax.sql.DataSource"
               username="mytestuser"
               password="My6$Password"
-              url="jdbc:mysql://localhost:3306/zotrides?autoReconnect=true&amp;sslMode=DISABLED&amp;cachePrepStmts=true"/>
+              url="jdbc:mysql://172.31.28.39:3306/zotrides?autoReconnect=true&amp;sslMode=DISABLED&amp;cachePrepStmts=true"/>
+
+    <Resource name="jdbc/zotrides-slave"
+              auth="Container"
+              driverClassName="com.mysql.jdbc.Driver"
+              factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+              maxTotal="100" maxIdle="30" maxWaitMillis="10000"
+              type="javax.sql.DataSource"
+              username="mytestuser"
+              password="My6$Password"
+              url="jdbc:mysql://172.31.28.21:3306/zotrides?autoReconnect=true&amp;sslMode=DISABLED&amp;cachePrepStmts=true"/>
+
+    <!-- no connection pooling -->
+<!--    <Resource name="jdbc/zotrides-master"-->
+<!--              auth="Container"-->
+<!--              driverClassName="com.mysql.jdbc.Driver"-->
+<!--              type="javax.sql.DataSource"-->
+<!--              username="mytestuser"-->
+<!--              password="My6$Password"-->
+<!--              url="jdbc:mysql://172.31.28.39:3306/zotrides"/>-->
+
+<!--    <Resource name="jdbc/zotrides-slave"-->
+<!--              auth="Container"-->
+<!--              driverClassName="com.mysql.jdbc.Driver"-->
+<!--              type="javax.sql.DataSource"-->
+<!--              username="mytestuser"-->
+<!--              password="My6$Password"-->
+<!--              url="jdbc:mysql://172.31.28.21:3306/zotrides"/>-->
 </Context>

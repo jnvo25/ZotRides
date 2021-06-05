@@ -30,7 +30,7 @@ public class FullTextSearchServlet extends HttpServlet {
 
     public void init(ServletConfig config) {
         try {
-            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides");
+            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/zotrides-master");
         } catch (NamingException e) {
             e.printStackTrace();
         }
@@ -97,28 +97,6 @@ public class FullTextSearchServlet extends HttpServlet {
         int fuzzyThreshold = token.trim().length() / 3;
 
         // query with fuzzy search
-//        String query = "WITH pickupCarCounts AS (SELECT pickupLocationID, COUNT(DISTINCT carID) as numCars \n" +
-//                "\tFROM pickup_car_from \n" +
-//                "    GROUP BY pickupLocationID),\n" +
-//                "    \n" +
-//                "    car_info AS (SELECT Cars.id as id, model, make, year, name, price, rating, numVotes\n" +
-//                "\tFROM (((category_of_car, Category, Cars) LEFT OUTER JOIN CarPrices ON Cars.id = CarPrices.carID)\n" +
-//                "\t\t\tLEFT OUTER JOIN Ratings ON Ratings.carID = Cars.id)\n" +
-//                "\tWHERE category_of_car.categoryID = Category.id\n" +
-//                "\t\t\tAND Cars.id = category_of_car.carID \n" +
-//                "\t\t\tAND (MATCH(model) AGAINST (? IN BOOLEAN MODE) OR edth(model, ?, "+ fuzzyThreshold + ")))\n" + //TODO: added edth for fuzzy
-//                "    \n" +
-//                "SELECT car_info.id as id, group_concat(DISTINCT concat_ws(' ', make, model, year)) as name, \n" +
-//                "\t\tname as category, price, rating, numVotes,\n" +
-//                "        group_concat(DISTINCT address ORDER BY numCars DESC, address SEPARATOR ';') as address, \n" +
-//                "        group_concat(DISTINCT phoneNumber ORDER BY numCars DESC, address SEPARATOR ';') as phoneNumber,\n" +
-//                "        group_concat(DISTINCT PickupLocation.id ORDER BY numCars DESC, address SEPARATOR ';') as pickupID\n" +
-//                "FROM ((car_info LEFT OUTER JOIN pickup_car_from ON pickup_car_from.carID = car_info.id) \n" +
-//                "\tLEFT OUTER JOIN pickupCarCounts ON pickup_car_from.pickupLocationID = pickupCarCounts.pickupLocationID)\n" +
-//                "\tLEFT OUTER JOIN PickupLocation ON pickup_car_from.pickupLocationID = PickupLocation.id\n" +
-//                "GROUP BY car_info.id\n";
-
-        // query without fuzzy search
         String query = "WITH pickupCarCounts AS (SELECT pickupLocationID, COUNT(DISTINCT carID) as numCars \n" +
                 "\tFROM pickup_car_from \n" +
                 "    GROUP BY pickupLocationID),\n" +
@@ -128,7 +106,7 @@ public class FullTextSearchServlet extends HttpServlet {
                 "\t\t\tLEFT OUTER JOIN Ratings ON Ratings.carID = Cars.id)\n" +
                 "\tWHERE category_of_car.categoryID = Category.id\n" +
                 "\t\t\tAND Cars.id = category_of_car.carID \n" +
-                "\t\t\tAND MATCH(model) AGAINST (? IN BOOLEAN MODE))\n" +
+                "\t\t\tAND (MATCH(model) AGAINST (? IN BOOLEAN MODE) OR edth(model, ?, "+ fuzzyThreshold + ")))\n" + //TODO: added edth for fuzzy
                 "    \n" +
                 "SELECT car_info.id as id, group_concat(DISTINCT concat_ws(' ', make, model, year)) as name, \n" +
                 "\t\tname as category, price, rating, numVotes,\n" +
@@ -140,17 +118,41 @@ public class FullTextSearchServlet extends HttpServlet {
                 "\tLEFT OUTER JOIN PickupLocation ON pickup_car_from.pickupLocationID = PickupLocation.id\n" +
                 "GROUP BY car_info.id\n";
 
+
+        // query without fuzzy search
+//        String query = "WITH pickupCarCounts AS (SELECT pickupLocationID, COUNT(DISTINCT carID) as numCars \n" +
+//                "\tFROM pickup_car_from \n" +
+//                "    GROUP BY pickupLocationID),\n" +
+//                "    \n" +
+//                "    car_info AS (SELECT Cars.id as id, model, make, year, name, price, rating, numVotes\n" +
+//                "\tFROM (((category_of_car, Category, Cars) LEFT OUTER JOIN CarPrices ON Cars.id = CarPrices.carID)\n" +
+//                "\t\t\tLEFT OUTER JOIN Ratings ON Ratings.carID = Cars.id)\n" +
+//                "\tWHERE category_of_car.categoryID = Category.id\n" +
+//                "\t\t\tAND Cars.id = category_of_car.carID \n" +
+//                "\t\t\tAND MATCH(model) AGAINST (? IN BOOLEAN MODE))\n" +
+//                "    \n" +
+//                "SELECT car_info.id as id, group_concat(DISTINCT concat_ws(' ', make, model, year)) as name, \n" +
+//                "\t\tname as category, price, rating, numVotes,\n" +
+//                "        group_concat(DISTINCT address ORDER BY numCars DESC, address SEPARATOR ';') as address, \n" +
+//                "        group_concat(DISTINCT phoneNumber ORDER BY numCars DESC, address SEPARATOR ';') as phoneNumber,\n" +
+//                "        group_concat(DISTINCT PickupLocation.id ORDER BY numCars DESC, address SEPARATOR ';') as pickupID\n" +
+//                "FROM ((car_info LEFT OUTER JOIN pickup_car_from ON pickup_car_from.carID = car_info.id) \n" +
+//                "\tLEFT OUTER JOIN pickupCarCounts ON pickup_car_from.pickupLocationID = pickupCarCounts.pickupLocationID)\n" +
+//                "\tLEFT OUTER JOIN PickupLocation ON pickup_car_from.pickupLocationID = PickupLocation.id\n" +
+//                "GROUP BY car_info.id\n";
+
+
 //        System.out.println("query: \n" + query);
 
         // Store base query into session (to maintain consistency when jumping back to CarsList page)
         if (previousSettings == null) {
-            previousSettings = new CarListSettings(query, 1, 20, true, false, false, params);
+            previousSettings = new CarListSettings(query, 1, 50, true, false, false, params);
             session.setAttribute("previousSettings", previousSettings);
         } else {
             // prevent corrupted states through sharing under multi-threads
             // will only be executed by one thread at a time
             synchronized (previousSettings) {
-                previousSettings.reset(query, 1, 20, true, false, false, params);
+                previousSettings.reset(query, 1, 50, true, false, false, params);
             }
         }
 
@@ -163,7 +165,7 @@ public class FullTextSearchServlet extends HttpServlet {
             query = previousSettings.toQuery();
             PreparedStatement statement = conn.prepareStatement(query);
             statement.setString(1, additional);
-//            statement.setString(2, token.trim()); //TODO: ADDED THIS
+            statement.setString(2, token.trim()); //TODO: ADDED THIS
 
             System.out.println("query:\n" + statement.toString() + "\n");
             ResultSet rs = statement.executeQuery();
@@ -241,13 +243,13 @@ public class FullTextSearchServlet extends HttpServlet {
 //            System.out.println(jsonArray);
 
             // return results
-            JsonArray firstTwenty = new JsonArray();
-            for (int i = 0; i < 20 && i < jsonArray.size(); ++i) {
-                firstTwenty.add(jsonArray.get(i));
+            JsonArray firstFifty = new JsonArray();
+            for (int i = 0; i < 50 && i < jsonArray.size(); ++i) {
+                firstFifty.add(jsonArray.get(i));
             }
 
             JsonObject result = new JsonObject();
-            result.add("results", firstTwenty);
+            result.add("results", firstFifty);
             result.addProperty("message", previousSettings.getPaginationMessage());
             out.write(result.toString());
             response.setStatus(200);         // set response status to 200 (OK)
@@ -288,34 +290,34 @@ public class FullTextSearchServlet extends HttpServlet {
 
 
         // Write to log
-//        long TS = TSEnd - TSStart;
-//        long TJ = TJEnd - TJStart;
-//        String xmlFilePath = "";
-//        try {
-//            String contextPath = request.getSession().getServletContext().getRealPath("/");
-//            xmlFilePath=contextPath+"test";
-//            System.out.println(xmlFilePath);
-//            File myfile = new File(xmlFilePath);
-//            if(myfile.createNewFile()) {
-//                System.out.println("Custom log created");
-//            } else {
-//                System.out.println("Custom log file already exists");
-//            }
-//        } catch (IOException e) {
-//            System.out.println("An error occurred.");
-//            e.printStackTrace();
-//        }
+        long TS = TSEnd - TSStart;
+        long TJ = TJEnd - TJStart;
+        String xmlFilePath = "";
+        try {
+            String contextPath = request.getSession().getServletContext().getRealPath("/");
+            xmlFilePath=contextPath+"test";
+            System.out.println(xmlFilePath);
+            File myfile = new File(xmlFilePath);
+            if(myfile.createNewFile()) {
+                System.out.println("Custom log created");
+            } else {
+                System.out.println("Custom log file already exists");
+            }
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
 
         // write to file
-//        try {
-//            BufferedWriter myWriter = new BufferedWriter(new FileWriter(xmlFilePath, true));
-//            myWriter.write("TS: " + TS + " TJ: " + TJ);
-//            myWriter.newLine();
-//            myWriter.flush();
-//            myWriter.close();
-//            System.out.println("Successfully written to file");
-//        } catch (IOException e) {
-//            System.out.println("exception occurred " + e);
-//        }
+        try {
+            BufferedWriter myWriter = new BufferedWriter(new FileWriter(xmlFilePath, true));
+            myWriter.write("TS: " + TS + " TJ: " + TJ);
+            myWriter.newLine();
+            myWriter.flush();
+            myWriter.close();
+            System.out.println("Successfully written to file");
+        } catch (IOException e) {
+            System.out.println("exception occurred " + e);
+        }
     }
 }
